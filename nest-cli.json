@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json.schemastore.org/nest-cli",
+  "collection": "@nestjs/schematics",
+  "sourceRoot": "src",
+  "compilerOptions": {
+    "deleteOutDir": true,
+    "webpack": false
+  },
+  "generateOptions": {
+    "spec": false
+  },
+  "projects": {},
+  "monorepo": false,
+  "root": "src",
+  "entryFile": "main",
+  "watchOptions": {
+    "watchExclude": ["frontend/**/*"]
+  }
+}

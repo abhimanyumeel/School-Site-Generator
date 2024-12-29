@@ -1,0 +1,25 @@
+{{ define "main" }}
+<div class="list-page">
+    <header class="list-header">
+        <h1>{{ .Title }}</h1>
+        {{ with .Description }}
+        <p>{{ . }}</p>
+        {{ end }}
+    </header>
+
+    <div class="posts-list">
+        {{ range .Pages }}
+        <article class="article">
+            <h2 class="article-title"><a href="{{ .RelPermalink }}">{{ .Title }}</a></h2>
+            <div class="article-meta">
+                <time>{{ .Date.Format "January 2, 2006" }}</time>
+            </div>
+            <p>{{ .Summary }}</p>
+            <a href="{{ .RelPermalink }}" class="read-more">Read More →</a>
+        </article>
+        {{ end }}
+    </div>
+
+    {{ template "_internal/pagination.html" . }}
+</div>
+{{ end }}

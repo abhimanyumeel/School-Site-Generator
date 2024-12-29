@@ -1,0 +1,98 @@
+// Theme Schema
+
+{
+    "theme": "xyz",
+    "pages": {
+        "home": {
+            "sections": {
+                "hero": {
+                    "fields": {
+                        "title": {
+                            "type": "short-text",
+                            "required": true,
+                            "minLength": 10,
+                            "maxLength": 100
+                        },
+                        "description": {
+                            "type": "long-text",
+                            "required": true,
+                            "minLength": 10,
+                            "maxLength": 1000
+                        },
+                        "image": {
+                            "type": "image",
+                            "required": true,
+                            "ratio": "16:9",
+                            "showCroppingTool": true
+                        },
+                        "images": {
+                            "type": "image-set",
+                            "required": true,
+                            "minCount": 1,
+                            "maxCount": 10,
+                            "ratio": "16:9",
+                            "showCroppingTool": true
+                        }
+                    }
+                }
+            }
+        },
+        "about": {
+            "sections": {
+                "hero": {
+                    "fields": {
+                        "title": "About Us"
+                    }
+                }
+            }
+        },
+        "tc": {
+            "sections": {
+                "hero": {
+                    "fields": {
+                        "title": "Terms and Conditions",
+
+                    }
+                }
+            }
+        }
+    }
+}
+
+----
+Filled
+
+data.json: 
+{
+    "theme": "xyz",
+    "pages": {
+        "home": {
+            "sections": {
+                "hero": {
+                    "fields": {
+                        "title": "Hello World",
+                        "description": "This is a test description",
+                        "image": "https://picsum.photos/200/300",
+                        "images": [
+                            "https://picsum.photos/200/300",
+                            "https://picsum.photos/200/300",
+                            "https://picsum.photos/200/300"
+                        ]
+                    }
+                }
+            }
+        }
+    },
+    "about": {
+        "sections": {
+            "hero": {
+                "fields": {
+                    "title": "About Us"
+                }
+            }
+        }
+    }
+}
+
+
+/api/tc/paignate/:scoolId

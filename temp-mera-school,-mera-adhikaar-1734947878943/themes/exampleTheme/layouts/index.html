@@ -1,0 +1,13 @@
+{{ define "main" }}
+<div class="home-content">
+    <section class="hero">
+        <h1>{{ if .Site.Data.data }}{{ .Site.Data.data.name }}{{ else }}No Name Found{{ end }}</h1>
+        <p class="lead">{{ if .Site.Data.data }}{{ .Site.Data.data.description }}{{ else }}No Description Found{{ end }}</p>
+        <p>Author: {{ if .Site.Data.data }}{{ .Site.Data.data.author }}{{ else }}No Author Found{{ end }}</p>
+    </section>
+
+    <section class="content">
+        <!-- Add any additional content here -->
+    </section>
+</div>
+{{ end }}
