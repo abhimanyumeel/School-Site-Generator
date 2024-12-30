@@ -5,7 +5,8 @@ import {
   Body, 
   HttpStatus, 
   HttpCode,
-  HttpException
+  HttpException,
+  Param
 } from '@nestjs/common';
 import { ThemeService } from '../services/theme.service';
 import { CreateThemeDataDto } from '../dto/create-theme-data.dto';
@@ -33,6 +34,17 @@ export class ThemeController {
         HttpStatus.INTERNAL_SERVER_ERROR
       );
     }
+  }
+
+  @Get(':themeId')
+  async getTheme(@Param('themeId') themeId: string) {
+    const theme = await this.themeService.getThemeMetadata(themeId);
+    return {
+      id: themeId,
+      name: theme.displayName || themeId,
+      previewPath: `/images/themes/${themeId}/preview.jpg`,
+      metadata: theme
+    };
   }
 
   @Post('generate')

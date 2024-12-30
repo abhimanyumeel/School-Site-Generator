@@ -28,7 +28,7 @@ export default function CreateWebsite() {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const response = await axios.get('/auth/me');
+        const response = await axios.get('/auth/profile');
         setUser(response.data);
       } catch (error) {
         console.error('Failed to fetch user:', error);
@@ -69,7 +69,12 @@ export default function CreateWebsite() {
       
       <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
         <div className="px-4 py-6 sm:px-0">
-          <Breadcrumb />
+          <Breadcrumb 
+            items={[
+              { label: 'Home', href: '/' },
+              { label: 'Create Website', href: '#' }
+            ]} 
+          />
           <div className="mb-8">
             <h1 className="text-2xl font-bold text-gray-900">Choose a Theme</h1>
             <p className="mt-2 text-sm text-gray-600">

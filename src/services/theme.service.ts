@@ -4,6 +4,7 @@ import * as path from 'path';
 import { exec } from 'child_process';
 import { CreateThemeDataDto } from '../dto/create-theme-data.dto';
 import { existsSync } from 'fs';
+import { ThemeMetadata, Theme } from '../types/theme.types';
 
 @Injectable()
 export class ThemeService {
@@ -12,14 +13,30 @@ export class ThemeService {
 
   async getAllThemes() {
     try {
-      // Read all directories in the themes folder
       const themeDirectories = await fs.readdir(this.themesDirectory);
       
-      // Map each directory to a theme object
-      const themes = themeDirectories.map(directory => ({
-        id: directory,
-        name: directory,
-        previewPath: `/themes/${directory}/images/preview.png` // Assuming each theme has a preview image
+      const themes = await Promise.all(themeDirectories.map(async directory => {
+        const metadataPath = path.join(this.themesDirectory, directory, 'metadata.json');
+        let metadata: ThemeMetadata;
+        
+        try {
+          const metadataContent = await fs.readFile(metadataPath, 'utf-8');
+          metadata = JSON.parse(metadataContent);
+        } catch (error) {
+          this.logger.warn(`No metadata found for theme ${directory}`);
+          metadata = {
+            theme: directory,
+            displayName: directory,
+            pages: {}
+          };
+        }
+
+        return {
+          id: directory,
+          name: metadata.displayName || directory,
+          previewPath: `/images/themes/${directory}/preview.jpg`,
+          metadata
+        };
       }));
 
       return themes;
@@ -212,6 +229,16 @@ This is the ${title} page for ${themeData.name}.
       this.logger.log(`Cleaned up temporary folder: ${temporaryFolderPath}`);
     } catch (error) {
       this.logger.error(`Failed to clean up temporary folder: ${error.message}`);
+    }
+  }
+
+  async getThemeMetadata(themeId: string): Promise<ThemeMetadata> {
+    const metadataPath = path.join(this.themesDirectory, themeId, 'metadata.json');
+    try {
+      const metadataContent = await fs.readFile(metadataPath, 'utf-8');
+      return JSON.parse(metadataContent);
+    } catch (error) {
+      throw new NotFoundException(`Theme metadata not found for ${themeId}`);
     }
   }
 }

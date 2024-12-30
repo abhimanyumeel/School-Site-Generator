@@ -1,13 +1,75 @@
 {{ define "main" }}
 <div class="home-content">
-    <section class="hero">
-        <h1>{{ if .Site.Data.data }}{{ .Site.Data.data.name }}{{ else }}No Name Found{{ end }}</h1>
-        <p class="lead">{{ if .Site.Data.data }}{{ .Site.Data.data.description }}{{ else }}No Description Found{{ end }}</p>
-        <p>Author: {{ if .Site.Data.data }}{{ .Site.Data.data.author }}{{ else }}No Author Found{{ end }}</p>
+    <!-- Hero Section -->
+    <section class="hero" id="hero">
+        <div class="hero-content">
+            <h1>{{ if .Site.Data.data }}{{ .Site.Data.data.heroTitle | default .Site.Data.data.name }}{{ else }}Welcome to Our School{{ end }}</h1>
+            <p class="lead">{{ if .Site.Data.data }}{{ .Site.Data.data.heroSubtitle }}{{ else }}Empowering Minds, Shaping Futures{{ end }}</p>
+            <div class="hero-buttons">
+                <a href="#about" class="primary-button">Learn More</a>
+                <a href="/contact" class="secondary-button">Contact Us</a>
+            </div>
+        </div>
     </section>
 
-    <section class="content">
-        <!-- Add any additional content here -->
+    <!-- Features Section -->
+    <section class="features" id="features">
+        <h2>Why Choose Us</h2>
+        <div class="features-grid">
+            {{ range .Site.Data.data.features | default slice }}
+            <div class="feature-card">
+                <img src="{{ .icon }}" alt="{{ .title }}">
+                <h3>{{ .title }}</h3>
+                <p>{{ .description }}</p>
+            </div>
+            {{ end }}
+        </div>
+    </section>
+
+    <!-- News & Updates Section -->
+    <section class="news" id="news">
+        <h2>Latest News</h2>
+        <div class="news-grid">
+            {{ range first 3 .Site.Data.data.news | default slice }}
+            <article class="news-card">
+                <img src="{{ .image }}" alt="{{ .title }}">
+                <div class="news-content">
+                    <h3>{{ .title }}</h3>
+                    <p>{{ .summary }}</p>
+                    <time>{{ .date }}</time>
+                </div>
+            </article>
+            {{ end }}
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="stats" id="stats">
+        <div class="stats-grid">
+            {{ range .Site.Data.data.stats | default slice }}
+            <div class="stat-item">
+                <span class="stat-number">{{ .number }}</span>
+                <span class="stat-label">{{ .label }}</span>
+            </div>
+            {{ end }}
+        </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section class="testimonials" id="testimonials">
+        <h2>What People Say</h2>
+        <div class="testimonials-slider">
+            {{ range .Site.Data.data.testimonials | default slice }}
+            <div class="testimonial">
+                <blockquote>{{ .quote }}</blockquote>
+                <cite>
+                    <img src="{{ .avatar }}" alt="{{ .name }}">
+                    <span>{{ .name }}</span>
+                    <span>{{ .role }}</span>
+                </cite>
+            </div>
+            {{ end }}
+        </div>
     </section>
 </div>
 {{ end }}
