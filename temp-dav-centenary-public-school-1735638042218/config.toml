@@ -1,0 +1,25 @@
+baseURL = '/'
+languageCode = 'en-us'
+title = 'DAV centenary public school'
+theme = 'exampleTheme'
+
+[params]
+  description = "School for everyone"
+  author = "Anonymous"
+  
+[menu]
+  [[menu.main]]
+    identifier = "home"
+    name = "Home"
+    url = "/"
+    weight = 1
+  [[menu.main]]
+    identifier = "about"
+    name = "About"
+    url = "/about/"
+    weight = 2
+  [[menu.main]]
+    identifier = "contact"
+    name = "Contact"
+    url = "/contact/"
+    weight = 3

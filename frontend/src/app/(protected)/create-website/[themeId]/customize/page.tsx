@@ -3,8 +3,10 @@
 import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import axios from '@/lib/axios';
+import { isAxiosError } from 'axios';
 import Navbar from '@/components/layout/Navbar';
 import Breadcrumb from '@/components/layout/Breadcrumb';
+import { HiHome, HiTemplate, HiColorSwatch, HiCog, HiInformationCircle, HiMail } from 'react-icons/hi';
 
 // Types for our theme metadata
 interface ThemeMetadata {
@@ -112,20 +114,38 @@ export default function CustomizeTheme() {
 
     if (isLastPage) {
       try {
-        await axios.post('/themes/generate', {
+        const payload = {
           themeName: theme?.id,
-          name: updatedFormData.home?.hero?.title || 'My Website',
-          description: updatedFormData.home?.hero?.description || '',
           data: updatedFormData
-        });
+        };
 
+        // Debug logs
+        console.log('Payload being sent:', JSON.stringify(payload, null, 2));
+
+        await axios.post('/themes/generate', payload);
         router.push('/websites');
       } catch (error) {
+        if (isAxiosError(error)) {
+          console.error('Full error response:', JSON.stringify(error.response?.data, null, 2));
+        }
         console.error('Failed to generate website:', error);
       }
     } else {
       setCurrentPage(pageIds[currentIndex + 1]);
     }
+  };
+
+  // Add this helper function to get icon for each step
+  const getStepIcon = (page: string) => {
+    const icons = {
+      home: HiHome,
+      about: HiInformationCircle,
+      contact: HiMail,
+      content: HiTemplate,
+      style: HiColorSwatch,
+      settings: HiCog,
+    };
+    return icons[page as keyof typeof icons] || HiTemplate;
   };
 
   if (isLoading) {
@@ -178,9 +198,9 @@ export default function CustomizeTheme() {
   const currentPageData = theme.metadata.pages[currentPage];
 
   return (
-    <div>
+    <div className='min-h-screen bg-gradient-to-b from-gray-50 to-gray-100'>
       <Navbar user={user} />
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-4 py-12">
         <Breadcrumb
           items={[
             { label: 'Home', href: '/' },
@@ -190,45 +210,92 @@ export default function CustomizeTheme() {
         />
 
         <div className="max-w-4xl mx-auto">
-          <h1 className="text-3xl font-bold text-gray-900 mb-8">
-            Customize {theme.name}
-          </h1>
+          <div className="mb-10">
+            <h1 className="text-5xl font-black tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-violet-600 via-blue-500 to-purple-600 animate-gradient-x">
+              Customize {theme.name}
+            </h1>
+            <p className="mt-3 text-lg text-gray-600">
+              Personalize your website design and content
+            </p>
+          </div>
 
-          {/* Progress Indicator */}
-          <div className="mb-8">
-            <div className="flex items-center justify-between mb-4">
-              <span className="text-sm font-medium text-gray-600">
-                Customizing: {currentPageData.title}
+          {/* Progress Indicator - Fixed alignment */}
+          <div className="mb-12 bg-white rounded-xl p-8 shadow-sm">
+            <div className="flex items-center justify-between mb-8">
+              <span className="text-sm font-semibold text-gray-700">
+                Customizing: <span className="text-blue-600">{currentPageData.title}</span>
               </span>
-              <span className="text-sm font-medium text-gray-600">
-                Page {Object.keys(theme.metadata.pages).indexOf(currentPage) + 1} of{' '}
+              <span className="text-sm font-medium text-gray-700 bg-blue-50 px-4 py-1.5 rounded-full">
+                Step {Object.keys(theme.metadata.pages).indexOf(currentPage) + 1} of{' '}
                 {Object.keys(theme.metadata.pages).length}
               </span>
             </div>
-            <div className="w-full bg-gray-200 rounded-full h-2.5">
-              <div
-                className="bg-blue-600 h-2.5 rounded-full transition-all duration-300"
-                style={{
-                  width: `${
-                    ((Object.keys(theme.metadata.pages).indexOf(currentPage) + 1) /
-                      Object.keys(theme.metadata.pages).length) *
-                    100
-                  }%`,
+            
+            <div className="relative">
+              {/* Progress bar background - Adjusted positioning */}
+              <div 
+                className="absolute left-0 w-full h-1 bg-gray-200"
+                style={{ top: '24px' }} // Center the line relative to the circles
+              ></div>
+              
+              {/* Active progress bar - Adjusted positioning */}
+              <div 
+                className="absolute h-1 bg-blue-500 transition-all duration-300"
+                style={{ 
+                  top: '24px',
+                  left: 0,
+                  width: `${(Object.keys(theme.metadata.pages).indexOf(currentPage) / (Object.keys(theme.metadata.pages).length - 1)) * 100}%` 
                 }}
               ></div>
+
+              {/* Steps */}
+              <div className="relative z-10 flex justify-between">
+                {Object.entries(theme.metadata.pages).map(([pageId, page], index) => {
+                  const StepIcon = getStepIcon(pageId);
+                  const isActive = index <= Object.keys(theme.metadata.pages).indexOf(currentPage);
+                  const isCurrent = pageId === currentPage;
+
+                  return (
+                    <div key={pageId} className="flex flex-col items-center">
+                      <div 
+                        className={`
+                          w-12 h-12 rounded-full flex items-center justify-center
+                          transition-all duration-300 
+                          ${isActive 
+                            ? 'bg-blue-500 text-white shadow-lg shadow-blue-200' 
+                            : 'bg-white border-2 border-gray-200 text-gray-400'}
+                          ${isCurrent 
+                            ? 'ring-4 ring-blue-100' 
+                            : ''}
+                        `}
+                      >
+                        <StepIcon size="1.5em" />
+                      </div>
+                      <span 
+                        className={`
+                          mt-2 text-sm font-medium whitespace-nowrap
+                          ${isActive ? 'text-blue-600' : 'text-gray-500'}
+                        `}
+                      >
+                        {page.title}
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
             </div>
           </div>
 
-          {/* Page Navigation */}
-          <div className="flex space-x-4 mb-8">
+          {/* Page Navigation - Updated styling */}
+          <div className="flex space-x-4 mb-8 bg-white p-2 rounded-lg shadow-sm">
             {Object.entries(theme.metadata.pages).map(([pageId, page]) => (
               <button
                 key={pageId}
                 onClick={() => setCurrentPage(pageId)}
-                className={`px-4 py-2 rounded-md text-sm font-medium ${
+                className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
                   currentPage === pageId
-                    ? 'bg-blue-100 text-blue-700'
-                    : 'text-gray-500 hover:text-gray-700'
+                    ? 'bg-blue-600 text-white shadow-md'
+                    : 'text-gray-600 hover:bg-gray-100'
                 }`}
               >
                 {page.title}
@@ -236,32 +303,38 @@ export default function CustomizeTheme() {
             ))}
           </div>
 
-          {/* Form */}
+          {/* Form - Modern styling */}
           <form onSubmit={handleSubmit}>
             {Object.entries(currentPageData.sections).map(([sectionId, section]) => (
-              <div key={sectionId} className="bg-white shadow rounded-lg p-6 mb-6">
-                <h3 className="text-lg font-medium text-gray-900 mb-4">
+              <div key={sectionId} className="bg-white shadow-sm rounded-xl p-8 mb-8 border border-gray-100 hover:shadow-md transition-shadow duration-200">
+                <h3 className="text-xl font-semibold text-gray-900 mb-6 flex items-center">
                   {section.title}
                 </h3>
-                <div className="space-y-4">
+                <div className="space-y-6">
                   {Object.entries(section.fields).map(([fieldId, field]) => (
-                    <div key={fieldId}>
+                    <div key={fieldId} className="relative">
                       <label
                         htmlFor={`${sectionId}.${fieldId}`}
-                        className="block text-sm font-medium text-gray-700 mb-1"
+                        className="block text-sm font-medium text-gray-700 mb-2"
                       >
                         {field.label}
+                        {field.required && <span className="text-red-500 ml-1">*</span>}
                       </label>
                       {field.type === 'short-text' && (
                         <input
                           type="text"
                           id={`${sectionId}.${fieldId}`}
                           name={`${sectionId}.${fieldId}`}
-                          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                          className="w-full px-4 py-2.5 rounded-lg border border-gray-300 text-gray-900
+                            focus:ring-2 focus:ring-blue-500 focus:border-blue-500
+                            placeholder:text-gray-400
+                            transition-all duration-200
+                            hover:border-gray-400"
                           required={field.required}
                           minLength={field.minLength}
                           maxLength={field.maxLength}
                           defaultValue={formData[currentPage]?.[sectionId]?.[fieldId]}
+                          placeholder={`Enter ${field.label.toLowerCase()}`}
                         />
                       )}
                       {field.type === 'long-text' && (
@@ -269,12 +342,23 @@ export default function CustomizeTheme() {
                           id={`${sectionId}.${fieldId}`}
                           name={`${sectionId}.${fieldId}`}
                           rows={4}
-                          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                          className="w-full px-4 py-2.5 rounded-lg border border-gray-300 text-gray-900
+                            focus:ring-2 focus:ring-blue-500 focus:border-blue-500
+                            placeholder:text-gray-400
+                            transition-all duration-200
+                            hover:border-gray-400
+                            resize-y min-h-[100px]"
                           required={field.required}
                           minLength={field.minLength}
                           maxLength={field.maxLength}
                           defaultValue={formData[currentPage]?.[sectionId]?.[fieldId]}
+                          placeholder={`Enter ${field.label.toLowerCase()}`}
                         />
+                      )}
+                      {field.maxLength && (
+                        <div className="mt-1 text-sm text-gray-500">
+                          Maximum {field.maxLength} characters
+                        </div>
                       )}
                     </div>
                   ))}
@@ -282,17 +366,26 @@ export default function CustomizeTheme() {
               </div>
             ))}
 
-            <div className="flex justify-end space-x-4">
+            {/* Form buttons - Updated styling */}
+            <div className="flex justify-end space-x-4 sticky bottom-4 bg-white p-4 rounded-lg shadow-lg border border-gray-100 backdrop-blur-sm bg-opacity-90">
               <button
                 type="button"
                 onClick={() => router.push('/create-website')}
-                className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50"
+                className="px-6 py-2.5 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 
+                  hover:bg-gray-50 hover:border-gray-400
+                  transition-all duration-200
+                  focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
               >
                 Cancel
               </button>
               <button
                 type="submit"
-                className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                className="px-6 py-2.5 rounded-lg text-sm font-medium text-white
+                  bg-gradient-to-r from-blue-600 to-blue-700
+                  hover:from-blue-700 hover:to-blue-800
+                  transition-all duration-200
+                  focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500
+                  shadow-sm hover:shadow-md"
               >
                 {currentPage === Object.keys(theme.metadata.pages).slice(-1)[0]
                   ? 'Generate Website'

@@ -60,7 +60,12 @@ export class ThemeService {
       // Build the site
       const buildResult = await this.buildSite(temporaryFolderPath, buildFolderPath);
 
-      return buildResult;
+      return {
+        status: 'success',
+        message: 'Theme generated successfully',
+        buildPath: buildFolderPath,
+        timestamp: new Date().toISOString()
+      };
     } catch (error) {
       this.logger.error(`Failed to generate theme: ${error.message}`);
       throw error;
@@ -69,7 +74,9 @@ export class ThemeService {
 
   private async createPaths(themeData: CreateThemeDataDto) {
     const theme = themeData.themeName;
-    const siteName = themeData.name.toLowerCase().replace(/\s+/g, '-');
+    const siteName = (themeData.data.home?.hero?.title || 'my-website')
+      .toLowerCase()
+      .replace(/\s+/g, '-');
     const temporaryFolderName = `temp-${siteName}-${Date.now()}`;
 
     return {
@@ -87,17 +94,29 @@ export class ThemeService {
   ) {
     // Verify theme exists
     if (!existsSync(themeFolderPath)) {
+      this.logger.error(`Theme folder not found: ${themeFolderPath}`);
       throw new NotFoundException(`Theme "${path.basename(themeFolderPath)}" not found`);
     }
 
     // Create temporary directories
-    await fs.mkdir(path.dirname(tempThemesPath), { recursive: true });
+    try {
+      await fs.mkdir(path.dirname(tempThemesPath), { recursive: true });
+      this.logger.log(`Created temporary directory: ${path.dirname(tempThemesPath)}`);
+    } catch (error) {
+      this.logger.error(`Failed to create temporary directory: ${error}`);
+      throw error;
+    }
     
     // Copy theme files
     try {
       await fs.cp(themeFolderPath, tempThemesPath, { recursive: true });
       this.logger.log(`Theme files copied successfully to ${tempThemesPath}`);
+
+      // List copied files for verification
+      const files = await fs.readdir(tempThemesPath);
+      this.logger.log('Copied theme files:', files);
     } catch (error) {
+      this.logger.error(`Failed to copy theme files: ${error}`);
       throw new Error(`Failed to copy theme files: ${error.message}`);
     }
   }
@@ -127,10 +146,11 @@ export class ThemeService {
     await fs.writeFile(
       dataJsonPath, 
       JSON.stringify({
-          name: themeData.name,
-          description: themeData.description,
-          author: themeData.author,
-          createdAt: new Date().toISOString()
+        name: themeData.data.home?.hero?.title || 'My Website',
+        description: themeData.data.home?.hero?.subtitle || 'My Website Description',
+        author: 'Anonymous',
+        createdAt: new Date().toISOString(),
+        ...themeData.data  // Include all form data
       }, null, 2)
     );
   }
@@ -140,12 +160,12 @@ export class ThemeService {
     const configContent = `
 baseURL = '/'
 languageCode = 'en-us'
-title = '${themeData.name}'
+title = '${themeData.data.home?.hero?.title || 'My Website'}'
 theme = '${themeData.themeName}'
 
 [params]
-  description = "${themeData.description}"
-  author = "${themeData.author}"
+  description = "${themeData.data.home?.hero?.subtitle || 'My Website Description'}"
+  author = "Anonymous"
   
 [menu]
   [[menu.main]]
@@ -190,7 +210,7 @@ date: ${new Date().toISOString()}
 draft: false
 ---
 
-This is the ${title} page for ${themeData.name}.
+This is the ${title} page for ${themeData.data.home?.hero?.title || 'My Website'}.
 `
       );
     }
@@ -198,15 +218,46 @@ This is the ${title} page for ${themeData.name}.
 
   private async buildSite(temporaryFolderPath: string, buildFolderPath: string): Promise<any> {
     return new Promise((resolve, reject) => {
-      const hugoCommand = `hugo -s ${temporaryFolderPath} -d ${buildFolderPath}`;
+      // Remove the --verbose flag
+      const hugoCommand = `cd "${temporaryFolderPath}" && hugo -d finalBuild`;
       
-      exec(hugoCommand, {
-        cwd: temporaryFolderPath
-      }, async (error, stdout, stderr) => {
+      this.logger.log(`Executing command: ${hugoCommand}`);
+      this.logger.log(`Working directory: ${temporaryFolderPath}`);
+
+      // Log directory structure before running Hugo
+      this.logger.log('Theme directory structure:');
+      exec('dir /s /b', { cwd: temporaryFolderPath }, (error, stdout) => {
+        this.logger.log(stdout);
+      });
+
+      exec(hugoCommand, async (error, stdout, stderr) => {
         if (error) {
-          this.logger.error('Hugo build error:', { error, stderr });
+          this.logger.error('Hugo build error:', { 
+            error, 
+            stdout,
+            stderr,
+            command: hugoCommand,
+            cwd: temporaryFolderPath
+          });
+
+          // Check config.toml content
+          try {
+            const configContent = await fs.readFile(path.join(temporaryFolderPath, 'config.toml'), 'utf-8');
+            this.logger.log('config.toml content:', configContent);
+          } catch (e) {
+            this.logger.error('Failed to read config.toml:', e);
+          }
+
+          // Check theme directory structure
+          try {
+            const themeFiles = await fs.readdir(path.join(temporaryFolderPath, 'themes', 'exampleTheme', 'layouts'));
+            this.logger.log('Theme layouts directory contents:', themeFiles);
+          } catch (e) {
+            this.logger.error('Failed to read theme layouts directory:', e);
+          }
+
           await this.cleanup(temporaryFolderPath);
-          reject(new Error(`Failed to generate static files: ${stderr || error.message}`));
+          reject(new Error(`Failed to generate static files: ${stderr || stdout || error.message}`));
           return;
         }
 
@@ -216,7 +267,7 @@ This is the ${title} page for ${themeData.name}.
         resolve({
           status: 'success',
           message: 'Theme generated successfully',
-          buildPath: buildFolderPath,
+          buildPath: path.join(temporaryFolderPath, 'finalBuild'),
           timestamp: new Date().toISOString()
         });
       });

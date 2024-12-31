@@ -30,15 +30,18 @@
     <section class="news" id="news">
         <h2>Latest News</h2>
         <div class="news-grid">
-            {{ range first 3 .Site.Data.data.news | default slice }}
-            <article class="news-card">
-                <img src="{{ .image }}" alt="{{ .title }}">
-                <div class="news-content">
-                    <h3>{{ .title }}</h3>
-                    <p>{{ .summary }}</p>
-                    <time>{{ .date }}</time>
-                </div>
-            </article>
+            {{ $news := .Site.Data.data.news | default slice }}
+            {{ range $index, $item := $news }}
+                {{ if lt $index 3 }}
+                <article class="news-card">
+                    <img src="{{ .image }}" alt="{{ .title }}">
+                    <div class="news-content">
+                        <h3>{{ .title }}</h3>
+                        <p>{{ .summary }}</p>
+                        <time>{{ .date }}</time>
+                    </div>
+                </article>
+                {{ end }}
             {{ end }}
         </div>
     </section>
