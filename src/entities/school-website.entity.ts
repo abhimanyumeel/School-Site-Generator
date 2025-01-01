@@ -3,6 +3,7 @@ import { School } from './school.entity';
 import { Theme } from './theme.entity';
 import { DocumentGroup } from './document-group.entity';
 import { FormSubmission } from './form-submission.entity';
+import { User } from './user.entity';
 
 @Entity('school_websites')
 export class SchoolWebsite {
@@ -47,4 +48,10 @@ export class SchoolWebsite {
 
   @OneToMany(() => FormSubmission, submission => submission.schoolWebsite)
   formSubmissions: FormSubmission[];
+
+  @Column()
+  userId: string;
+
+  @ManyToOne(() => User)
+  user: User;
 } 

@@ -44,6 +44,17 @@ interface User {
     role: string;
   }
 
+interface GenerateResponse {
+  statusCode: number;
+  message: string;
+  data: {
+    status: string;
+    message: string;
+    buildPath: string;
+    timestamp: string;
+  };
+}
+
 export default function CustomizeTheme() {
   const params = useParams();
   const router = useRouter();
@@ -52,6 +63,7 @@ export default function CustomizeTheme() {
   const [formData, setFormData] = useState<Record<string, any>>({});
   const [isLoading, setIsLoading] = useState(true);
   const [user, setUser] = useState<User | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   // Fetch theme metadata when component mounts
 
@@ -89,6 +101,7 @@ export default function CustomizeTheme() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setError(null);
     const formElement = e.currentTarget;
     const formDataObj = new FormData(formElement);
     const pageData: Record<string, Record<string, string>> = {};
@@ -119,16 +132,33 @@ export default function CustomizeTheme() {
           data: updatedFormData
         };
 
-        // Debug logs
-        console.log('Payload being sent:', JSON.stringify(payload, null, 2));
+        console.log('Sending payload:', JSON.stringify(payload, null, 2));
 
-        await axios.post('/themes/generate', payload);
-        router.push('/websites');
+        const response = await axios.post<GenerateResponse>('/themes/generate', payload);
+        console.log('Response received:', response.data);
+
+        // Access the nested data property
+        const buildData = response.data.data;
+
+        if (buildData?.buildPath) {
+          router.push(`/create-website/${params.themeId}/success?buildPath=${encodeURIComponent(buildData.buildPath)}`);
+        } else {
+          console.error('Invalid response structure:', response.data);
+          setError('Invalid response from server. Missing build path.');
+        }
       } catch (error) {
         if (isAxiosError(error)) {
-          console.error('Full error response:', JSON.stringify(error.response?.data, null, 2));
+          const errorMessage = error.response?.data?.message || error.message;
+          console.error('API Error:', {
+            status: error.response?.status,
+            data: error.response?.data,
+            message: errorMessage
+          });
+          setError(`Failed to generate website: ${errorMessage}`);
+        } else {
+          console.error('Unexpected error:', error);
+          setError('An unexpected error occurred while generating the website');
         }
-        console.error('Failed to generate website:', error);
       }
     } else {
       setCurrentPage(pageIds[currentIndex + 1]);
@@ -393,6 +423,12 @@ export default function CustomizeTheme() {
               </button>
             </div>
           </form>
+
+          {error && (
+            <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
+              <p className="text-red-600">{error}</p>
+            </div>
+          )}
         </div>
       </div>
     </div>

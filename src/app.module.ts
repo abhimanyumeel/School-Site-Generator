@@ -7,6 +7,9 @@ import { getDatabaseConfig } from './config/database.config';
 import { ThemeModule } from './modules/theme.module';
 import { entities } from './entities';
 import { AuthModule } from './modules/auth.module';
+import { WebsiteService } from './services/website.service';
+import { WebsiteController } from './controllers/website.controller';
+import { SchoolWebsite } from './entities/school-website.entity';
 
 @Module({
   imports: [
@@ -15,15 +18,16 @@ import { AuthModule } from './modules/auth.module';
       imports: [ConfigModule],
       useFactory: (configService: ConfigService) => ({
         ...getDatabaseConfig(configService),
-        entities: Object.values(entities),
-        synchronize: process.env.NODE_ENV !== 'production', // Be careful with this in production
+        entities: [...Object.values(entities), SchoolWebsite],
+        synchronize: process.env.NODE_ENV !== 'production',
       }),
       inject: [ConfigService],
     }),
+    TypeOrmModule.forFeature([SchoolWebsite]),
     ThemeModule,
     AuthModule,
   ],
-  controllers: [AppController],
-  providers: [AppService],
+  controllers: [AppController, WebsiteController],
+  providers: [AppService, WebsiteService],
 })
 export class AppModule {}

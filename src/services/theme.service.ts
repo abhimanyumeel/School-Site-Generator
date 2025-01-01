@@ -5,11 +5,19 @@ import { exec } from 'child_process';
 import { CreateThemeDataDto } from '../dto/create-theme-data.dto';
 import { existsSync } from 'fs';
 import { ThemeMetadata, Theme } from '../types/theme.types';
+import { InjectConnection } from '@nestjs/typeorm';
+import { Connection } from 'typeorm';
+import { SchoolWebsite } from '../entities/school-website.entity';
 
 @Injectable()
 export class ThemeService {
   private readonly logger = new Logger(ThemeService.name);
   private readonly themesDirectory = path.resolve(__dirname, '../../themes');
+
+  constructor(
+    @InjectConnection()
+    private connection: Connection
+  ) {}
 
   async getAllThemes() {
     try {
@@ -46,7 +54,7 @@ export class ThemeService {
     }
   }
 
-  async generateTheme(themeData: CreateThemeDataDto) {
+  async generateTheme(themeData: CreateThemeDataDto, userId: string) {
     try {
       const { themeFolderPath, temporaryFolderPath, buildFolderPath, tempThemesPath } = 
         await this.createPaths(themeData);
@@ -59,6 +67,20 @@ export class ThemeService {
 
       // Build the site
       const buildResult = await this.buildSite(temporaryFolderPath, buildFolderPath);
+
+      // Save website data to database
+      const websiteRepository = this.connection.getRepository(SchoolWebsite);
+      const website = websiteRepository.create({
+        name: themeData.data.home?.hero?.title || 'Untitled Website',
+        themeId: themeData.themeName,
+        userId: userId,
+        data: themeData.data,
+        version: '1.0',
+        status: 'active',
+        schoolId: null // You can update this based on your requirements
+      });
+
+      await websiteRepository.save(website);
 
       return {
         status: 'success',

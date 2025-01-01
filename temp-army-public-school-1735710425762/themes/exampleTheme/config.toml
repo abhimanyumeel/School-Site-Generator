@@ -1,0 +1,120 @@
+baseURL = "https://example.com"
+title = "ExampleTheme"
+languageCode = "en-us"
+defaultContentLanguage = "en"
+theme = "exampleTheme"
+
+# Enable emoji support
+enableEmoji = true
+
+# Enable Git Info for lastmod
+enableGitInfo = true
+
+# Pagination
+paginate = 6
+
+# Disable taxonomy pages
+disableKinds = ["taxonomy", "term"]
+
+# Site Parameters
+[params]
+    # Site description for SEO
+    description = "A modern and clean Hugo theme for blogs and personal websites"
+    
+    # Default featured image for social sharing and SEO
+    images = ["img/default-featured.jpg"]
+    
+    # Copyright text in footer
+    copyright = "© 2024 ExampleTheme. All rights reserved."
+    
+    # Social media links
+    [params.social]
+        twitter = "https://twitter.com/example"
+        github = "https://github.com/example"
+        linkedin = "https://linkedin.com/in/example"
+        instagram = "https://instagram.com/example"
+        email = "contact@example.com"
+    
+    # Theme colors
+    [params.colors]
+        primary = "#2563eb"
+        secondary = "#1e40af"
+        text = "#1f2937"
+        background = "#f3f4f6"
+        
+    # Enable/Disable features
+    [params.features]
+        search = true
+        darkMode = true
+        newsletter = true
+        comments = true
+
+# Main Menu
+[menu]
+    [[menu.main]]
+        name = "Home"
+        url = "/"
+        weight = 1
+    [[menu.main]]
+        name = "Blog"
+        url = "/posts/"
+        weight = 2
+    [[menu.main]]
+        name = "About"
+        url = "/about/"
+        weight = 3
+    [[menu.main]]
+        name = "Contact"
+        url = "/contact/"
+        weight = 4
+
+# Footer Menu
+    [[menu.footer]]
+        name = "Privacy Policy"
+        url = "/privacy/"
+        weight = 1
+    [[menu.footer]]
+        name = "Terms"
+        url = "/terms/"
+        weight = 2
+    [[menu.footer]]
+        name = "Contact"
+        url = "/contact/"
+        weight = 3
+
+# Privacy Configuration
+[privacy]
+    [privacy.disqus]
+        disable = true
+    [privacy.googleAnalytics]
+        anonymizeIP = true
+        disable = false
+        respectDoNotTrack = true
+    [privacy.twitter]
+        disable = false
+        enableDNT = true
+        simple = true
+
+# Output Formats
+[outputs]
+    home = ["HTML", "RSS"]
+    section = ["HTML", "RSS"]
+    page = ["HTML"]
+
+# Markup Configuration
+[markup]
+    [markup.highlight]
+        codeFences = true
+        guessSyntax = true
+        lineNos = true
+        lineNumbersInTable = true
+        style = "monokai"
+    [markup.goldmark]
+        [markup.goldmark.renderer]
+            unsafe = true
+
+# RSS Configuration
+[services]
+    [services.rss]
+        limit = 20
+
