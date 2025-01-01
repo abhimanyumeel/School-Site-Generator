@@ -1,0 +1,7 @@
+name = "exampleTheme"
+license = "MIT"
+description = "A modern school website theme"
+min_version = "0.41.0"
+
+[author]
+  name = "Your Name"

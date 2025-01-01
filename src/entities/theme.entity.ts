@@ -18,6 +18,6 @@ export class Theme {
   @UpdateDateColumn()
   updatedAt: Date;
 
-  @OneToMany(() => SchoolWebsite, website => website.theme)
-  websites: SchoolWebsite[];
+  // @OneToMany(() => SchoolWebsite, website => website.theme)
+  // websites: SchoolWebsite[];
 } 

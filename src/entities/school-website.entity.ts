@@ -1,6 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, OneToMany } from 'typeorm';
 import { School } from './school.entity';
-import { Theme } from './theme.entity';
 import { DocumentGroup } from './document-group.entity';
 import { FormSubmission } from './form-submission.entity';
 import { User } from './user.entity';
@@ -13,10 +12,10 @@ export class SchoolWebsite {
   @Column()
   name: string;
 
-  @Column()
+  @Column({ nullable: true })
   schoolId: string;
 
-  @Column()
+  @Column({ type: 'varchar' })
   themeId: string;
 
   @Column('jsonb', { nullable: true })
@@ -37,11 +36,11 @@ export class SchoolWebsite {
   @UpdateDateColumn()
   updatedAt: Date;
 
-  @ManyToOne(() => School, school => school.websites)
+  @ManyToOne(() => School, school => school.websites, { nullable: true })
   school: School;
 
-  @ManyToOne(() => Theme, theme => theme.websites)
-  theme: Theme;
+  // @ManyToOne(() => Theme, theme => theme.websites)
+  // theme: Theme;
 
   @OneToMany(() => DocumentGroup, group => group.schoolWebsite)
   documentGroups: DocumentGroup[];

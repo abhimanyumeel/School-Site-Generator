@@ -13,7 +13,7 @@ export class WebsiteService {
   async getUserWebsites(userId: string) {
     return this.websiteRepository.find({
       where: { userId },
-      relations: ['theme'],
+      relations: ['school', 'user', 'documentGroups', 'formSubmissions'],
       order: { createdAt: 'DESC' }
     });
   }

@@ -1,0 +1,37 @@
+{{ define "main" }}
+<div class="about-page">
+    <!-- Mission Section -->
+    <section class="mission">
+        <h1>{{ .Site.Data.data.aboutTitle | default "About Us" }}</h1>
+        <p class="mission-statement">{{ .Site.Data.data.missionStatement }}</p>
+    </section>
+
+    <!-- Values Section -->
+    <section class="values">
+        <h2>Our Values</h2>
+        <div class="values-grid">
+            {{ range .Site.Data.data.values | default slice }}
+            <div class="value-card">
+                <h3>{{ .title }}</h3>
+                <p>{{ .description }}</p>
+            </div>
+            {{ end }}
+        </div>
+    </section>
+
+    <!-- Team Section -->
+    <section class="team">
+        <h2>Our Team</h2>
+        <div class="team-grid">
+            {{ range .Site.Data.data.team | default slice }}
+            <div class="team-member">
+                <img src="{{ .photo }}" alt="{{ .name }}">
+                <h3>{{ .name }}</h3>
+                <p class="role">{{ .role }}</p>
+                <p class="bio">{{ .bio }}</p>
+            </div>
+            {{ end }}
+        </div>
+    </section>
+</div>
+{{ end }}

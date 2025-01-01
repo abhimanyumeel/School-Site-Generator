@@ -5,16 +5,31 @@ const instance = axios.create({
   withCredentials: true
 });
 
-// Add a request interceptor to add the auth token
+// Add request interceptor
 instance.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('token') || sessionStorage.getItem('token');
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
+    console.log('Request config:', { 
+      url: config.url, 
+      method: config.method,
+      headers: config.headers 
+    });
     return config;
   },
   (error) => {
+    console.error('Request error:', error);
+    return Promise.reject(error);
+  }
+);
+
+// Add response interceptor for better error handling
+instance.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    console.error('Response error:', error.response?.data || error.message);
     return Promise.reject(error);
   }
 );
