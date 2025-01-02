@@ -20,6 +20,8 @@ export default function SuccessPage() {
   const [downloadUrl, setDownloadUrl] = useState<string>('');
   const [previewUrl, setPreviewUrl] = useState<string>('');
   const [user, setUser] = useState<User | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isPreviewActive, setIsPreviewActive] = useState(false);
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -43,6 +45,38 @@ export default function SuccessPage() {
     setDownloadUrl(`/api/download?path=${encodeURIComponent(buildPath)}`);
     setPreviewUrl(`/api/preview?path=${encodeURIComponent(buildPath)}`);
   }, [searchParams, router]);
+
+  // Cleanup preview server when component unmounts
+  useEffect(() => {
+    return () => {
+      if (isPreviewActive) {
+        axios.get('/api/preview/stop').catch(console.error);
+      }
+    };
+  }, [isPreviewActive]);
+
+  const handlePreview = async () => {
+    setIsLoading(true);
+    try {
+      console.log('Requesting preview for:', previewUrl);
+      const response = await axios.get(previewUrl);
+      console.log('Preview response:', response.data);
+      
+      const { previewUrl: hugoPreviewUrl } = response.data;
+      
+      // Wait a moment for the Hugo server to start
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      // Open preview in new tab
+      window.open(hugoPreviewUrl, '_blank');
+      setIsPreviewActive(true);
+    } catch (error: any) {
+      console.error('Preview failed:', error.response?.data || error);
+      alert(`Failed to generate preview: ${error.response?.data?.error || error.message}`);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white">
@@ -106,11 +140,12 @@ export default function SuccessPage() {
             {/* Action Buttons */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-12">
               <button
-                onClick={() => window.open(previewUrl, '_blank')}
-                className="flex items-center justify-center gap-2 px-6 py-4 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-all duration-200 shadow-lg hover:shadow-xl"
+                onClick={handlePreview}
+                disabled={isLoading}
+                className="flex items-center justify-center gap-2 px-6 py-4 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-all duration-200 shadow-lg hover:shadow-xl disabled:bg-blue-400 disabled:cursor-not-allowed"
               >
                 <HiEye size={20} />
-                <span>Preview Website</span>
+                <span>{isLoading ? 'Loading Preview...' : 'Preview Website'}</span>
                 <HiExternalLink size={16} />
               </button>
 

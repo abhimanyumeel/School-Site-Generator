@@ -10,6 +10,8 @@ import { AuthModule } from './modules/auth.module';
 import { WebsiteService } from './services/website.service';
 import { WebsiteController } from './controllers/website.controller';
 import { SchoolWebsite } from './entities/school-website.entity';
+import { PreviewController } from './controllers/preview.controller';
+import { PreviewService } from './services/preview.service';
 
 @Module({
   imports: [
@@ -27,7 +29,7 @@ import { SchoolWebsite } from './entities/school-website.entity';
     ThemeModule,
     AuthModule,
   ],
-  controllers: [AppController, WebsiteController],
-  providers: [AppService, WebsiteService],
+  controllers: [AppController, WebsiteController, PreviewController],
+  providers: [AppService, WebsiteService, PreviewService],
 })
 export class AppModule {}
