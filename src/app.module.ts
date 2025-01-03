@@ -12,6 +12,7 @@ import { WebsiteController } from './controllers/website.controller';
 import { SchoolWebsite } from './entities/school-website.entity';
 import { PreviewController } from './controllers/preview.controller';
 import { PreviewService } from './services/preview.service';
+import { WebsiteVersion } from './entities/website-version.entity';
 
 @Module({
   imports: [
@@ -20,12 +21,12 @@ import { PreviewService } from './services/preview.service';
       imports: [ConfigModule],
       useFactory: (configService: ConfigService) => ({
         ...getDatabaseConfig(configService),
-        entities: [...Object.values(entities), SchoolWebsite],
+        entities: [...Object.values(entities), SchoolWebsite, WebsiteVersion],
         synchronize: process.env.NODE_ENV !== 'production',
       }),
       inject: [ConfigService],
     }),
-    TypeOrmModule.forFeature([SchoolWebsite]),
+    TypeOrmModule.forFeature([SchoolWebsite, WebsiteVersion]),
     ThemeModule,
     AuthModule,
   ],

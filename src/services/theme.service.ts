@@ -8,6 +8,7 @@ import { ThemeMetadata, Theme } from '../types/theme.types';
 import { InjectConnection } from '@nestjs/typeorm';
 import { Connection } from 'typeorm';
 import { SchoolWebsite } from '../entities/school-website.entity';
+import { WebsiteVersion } from '../entities/website-version.entity';
 
 @Injectable()
 export class ThemeService {
@@ -75,12 +76,26 @@ export class ThemeService {
         themeId: themeData.themeName,
         userId: userId,
         data: themeData.data,
-        version: '1.0',
+        currentVersion: 1,
+        currentBuildPath: buildFolderPath,
         status: 'active',
-        schoolId: null // You can update this based on your requirements
+        schoolId: null
       });
 
       await websiteRepository.save(website);
+
+      // Create initial version
+      const versionRepository = this.connection.getRepository(WebsiteVersion);
+      const initialVersion = versionRepository.create({
+        websiteId: website.id,
+        versionNumber: 1,
+        data: themeData.data,
+        buildPath: buildFolderPath,
+        isActive: true,
+        changeDescription: 'Initial version'
+      });
+
+      await versionRepository.save(initialVersion);
 
       return {
         status: 'success',

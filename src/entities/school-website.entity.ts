@@ -3,6 +3,7 @@ import { School } from './school.entity';
 import { DocumentGroup } from './document-group.entity';
 import { FormSubmission } from './form-submission.entity';
 import { User } from './user.entity';
+import { WebsiteVersion } from './website-version.entity';
 
 @Entity('school_websites')
 export class SchoolWebsite {
@@ -21,14 +22,17 @@ export class SchoolWebsite {
   @Column('jsonb', { nullable: true })
   data: any;
 
-  @Column()
-  version: string;
-
   @Column({ nullable: true })
   remarks: string;
 
   @Column({ default: 'inactive' })
   status: 'active' | 'inactive';
+
+  @Column({ default: 1 })
+  currentVersion: number;
+
+  @Column({ nullable: true })
+  currentBuildPath: string;
 
   @CreateDateColumn()
   createdAt: Date;
@@ -53,4 +57,24 @@ export class SchoolWebsite {
 
   @ManyToOne(() => User)
   user: User;
+
+  @OneToMany(() => WebsiteVersion, version => version.website)
+  versions: WebsiteVersion[];
+
+  // Helper methods for version management
+  getLatestVersion(): WebsiteVersion | undefined {
+    if (!this.versions || this.versions.length === 0) return undefined;
+    return this.versions.reduce((latest, current) => {
+      return current.versionNumber > latest.versionNumber ? current : latest;
+    });
+  }
+
+  getActiveVersion(): WebsiteVersion | undefined {
+    if (!this.versions) return undefined;
+    return this.versions.find(version => version.isActive);
+  }
+
+  hasVersion(versionNumber: number): boolean {
+    return this.versions?.some(version => version.versionNumber === versionNumber) ?? false;
+  }
 } 
