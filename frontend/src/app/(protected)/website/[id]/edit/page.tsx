@@ -14,6 +14,7 @@ interface Version {
   createdAt: string;
   changeDescription: string;
   isActive: boolean;
+  data: Record<string, any>;
 }
 
 interface Website {
@@ -84,8 +85,13 @@ export default function EditWebsitePage() {
         changeDescription
       });
       
-      // Refresh versions list
-      const versionsRes = await axios.get(`/websites/${params.id}/versions`);
+      // Refresh both website and versions data
+      const [websiteRes, versionsRes] = await Promise.all([
+        axios.get(`/websites/${params.id}`),
+        axios.get(`/websites/${params.id}/versions`)
+      ]);
+      
+      setWebsite(websiteRes.data);
       setVersions(versionsRes.data);
     } catch (error) {
       console.error('Failed to save changes:', error);
@@ -96,8 +102,14 @@ export default function EditWebsitePage() {
   const handleActivateVersion = async (versionId: string) => {
     try {
       await axios.post(`/websites/${params.id}/versions/${versionId}/activate`);
-      // Refresh versions
-      const versionsRes = await axios.get(`/websites/${params.id}/versions`);
+      
+      // Refresh both website and versions data
+      const [websiteRes, versionsRes] = await Promise.all([
+        axios.get(`/websites/${params.id}`),
+        axios.get(`/websites/${params.id}/versions`)
+      ]);
+      
+      setWebsite(websiteRes.data);
       setVersions(versionsRes.data);
     } catch (error) {
       console.error('Failed to activate version:', error);
@@ -147,12 +159,13 @@ export default function EditWebsitePage() {
             )}
           </div>
 
-          {/* Version history sidebar - slimmer */}
+          {/* Version history sidebar */}
           <div className="lg:col-span-1">
             <div className="sticky top-8">
               <VersionHistory
                 versions={versions}
                 onActivate={handleActivateVersion}
+                currentData={website?.data || {}}
               />
             </div>
           </div>

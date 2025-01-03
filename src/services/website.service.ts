@@ -106,10 +106,19 @@ export class WebsiteService {
         throw new NotFoundException(`Website with ID ${websiteId} not found`);
       }
 
-      // 2. Calculate next version number
-      const nextVersionNumber = website.currentVersion + 1;
+      // 2. Get all versions to calculate next version number
+      const versions = await queryRunner.manager.find(WebsiteVersion, {
+        where: { websiteId },
+        order: { versionNumber: 'DESC' },
+        take: 1
+      });
 
-      // 3. Deactivate all current versions using raw query to avoid TypeORM cascade issues
+      // Calculate next version number based on highest existing version
+      const nextVersionNumber = versions.length > 0 
+        ? versions[0].versionNumber + 1 
+        : 1;
+
+      // 3. Deactivate all current versions using raw query
       await queryRunner.query(
         `UPDATE website_versions SET "isActive" = false WHERE "websiteId" = $1`,
         [websiteId]
