@@ -92,7 +92,8 @@ export class ThemeService {
         data: themeData.data,
         buildPath: buildFolderPath,
         isActive: true,
-        changeDescription: 'Initial version'
+        changeDescription: 'Initial version',
+        createdById: userId
       });
 
       await versionRepository.save(initialVersion);

@@ -20,7 +20,6 @@ export default function WebsiteForm({
   const [changeDescription, setChangeDescription] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState(false);
-  const [validFields, setValidFields] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     if (initialData) {
@@ -62,38 +61,22 @@ export default function WebsiteForm({
     });
   };
 
-  const validateField = (value: string, path: string) => {
-    if (value && value.length > 0) {
-      setValidFields(prev => new Set(prev).add(path));
-    } else {
-      setValidFields(prev => {
-        const newSet = new Set(prev);
-        newSet.delete(path);
-        return newSet;
-      });
-    }
-  };
-
   return (
     <form onSubmit={handleSubmit} className="max-w-5xl mx-auto space-y-8">
       {isEdit && (
-        <div className="bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-lg 
-                     border border-gray-100 dark:border-gray-700 transition-all duration-300">
+        <div className="bg-indigo-200 rounded-xl p-8 shadow-sm border border-gray-400 hover:shadow-xl">
           <div className="relative group">
-            <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300
-                           transition-transform duration-200 group-focus-within:-translate-y-6 
-                           group-focus-within:text-sm">
+            <label className="block text-sm font-medium mb-2 text-gray-700">
               Description of Changes *
             </label>
             <textarea
               value={changeDescription}
               onChange={(e) => setChangeDescription(e.target.value)}
-              className="w-full px-5 py-4 rounded-xl border bg-transparent
+              className="w-full px-5 py-4 rounded-lg  bg-white
                        transition-all duration-200 resize-none
-                       dark:bg-gray-900 dark:text-white
-                       focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500
-                       hover:border-indigo-300 dark:hover:border-indigo-400
-                       placeholder-gray-400 dark:placeholder-gray-500"
+                       hover:border-indigo-300
+                       text-gray-900
+                       placeholder-gray-400"
               placeholder="Describe your changes..."
               required={isEdit}
               rows={4}
@@ -104,12 +87,8 @@ export default function WebsiteForm({
 
       {Object.entries(formData).map(([section, fields]: [string, any]) => (
         <div key={section} 
-          className="bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-lg 
-                   border border-gray-100 dark:border-gray-700
-                   hover:shadow-xl transition-all duration-300">
-          <h3 className="text-xl font-semibold mb-8 inline-block
-                       bg-gradient-to-r from-indigo-600 to-purple-600 
-                       bg-clip-text text-transparent capitalize">
+          className="bg-indigo-200 rounded-xl p-8 shadow-sm border border-gray-400 hover:shadow-xl">
+          <h3 className="text-xl font-semibold mb-8 text-gray-900 capitalize">
             {section.replace(/([A-Z])/g, ' $1').trim()}
           </h3>
 
@@ -118,16 +97,9 @@ export default function WebsiteForm({
               if (typeof fieldData === 'object' && fieldData !== null) {
                 return (
                   <div key={field} className="col-span-full">
-                    <div className="bg-gradient-to-r from-indigo-50/30 to-transparent 
-                                dark:from-indigo-900/20 dark:to-transparent
-                                rounded-xl p-6 border-l-4 border-indigo-400">
-                      <h4 className="font-medium text-gray-800 dark:text-gray-200 mb-4 capitalize flex items-center">
+                    <div className="bg-white rounded-md p-6 border border-gray-200">
+                      <h4 className="font-medium text-gray-800 mb-4 capitalize flex items-center">
                         {field.replace(/([A-Z])/g, ' $1').trim()}
-                        <Tooltip content="Nested field group">
-                          <span className="ml-2 text-gray-400 hover:text-indigo-500 transition-colors duration-200">
-                            <HiOutlineInformationCircle size={20} />
-                          </span>
-                        </Tooltip>
                       </h4>
                       <div className="space-y-6">
                         {Object.entries(fieldData).map(([subField, value]: [string, any]) => (
@@ -137,8 +109,6 @@ export default function WebsiteForm({
                             value={value}
                             path={`${section}.${field}.${subField}`}
                             onChange={handleInputChange}
-                            isValid={validFields.has(`${section}.${field}.${subField}`)}
-                            onValidate={validateField}
                           />
                         ))}
                       </div>
@@ -154,8 +124,6 @@ export default function WebsiteForm({
                   value={fieldData}
                   path={`${section}.${field}`}
                   onChange={handleInputChange}
-                  isValid={validFields.has(`${section}.${field}`)}
-                  onValidate={validateField}
                 />
               );
             })}
@@ -167,11 +135,9 @@ export default function WebsiteForm({
         <button
           type="submit"
           disabled={isSaving}
-          className="px-8 py-4 bg-gradient-to-r from-indigo-600 to-purple-600 
-                   text-white rounded-xl disabled:opacity-50 
-                   transform transition-all duration-200
-                   hover:translate-y-[-2px] hover:shadow-lg hover:shadow-indigo-500/25
-                   active:translate-y-[0px] active:shadow-sm
+          className="px-8 py-4 bg-indigo-600 text-white rounded-lg 
+                   disabled:opacity-50 transition-all duration-200
+                   hover:bg-indigo-700 hover:shadow-xl
                    focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
         >
           {isSaving ? (
@@ -190,10 +156,8 @@ export default function WebsiteForm({
       </div>
 
       {error && (
-        <div className="fixed bottom-4 left-4 p-4 bg-red-50 dark:bg-red-900/50
-                     border border-red-200 dark:border-red-800 rounded-xl 
-                     animate-slide-up shadow-lg">
-          <p className="text-red-600 dark:text-red-400 flex items-center">
+        <div className="fixed bottom-4 left-4 p-4 bg-red-50 border border-red-200 rounded-lg animate-slide-up shadow-lg">
+          <p className="text-red-600 flex items-center">
             <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
               <path fillRule="evenodd" 
                     d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" 
@@ -212,20 +176,16 @@ function FormField({
   label, 
   value, 
   path, 
-  onChange, 
-  isValid, 
-  onValidate 
+  onChange 
 }: { 
   label: string;
   value: string;
   path: string;
   onChange: (path: string, value: string) => void;
-  isValid: boolean;
-  onValidate: (value: string, path: string) => void;
 }) {
   return (
     <div className="relative group">
-      <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300
+      <label className="block text-sm font-medium mb-2 text-gray-500 
                      transition-transform duration-200 group-focus-within:-translate-y-6 
                      group-focus-within:text-sm capitalize">
         {label.replace(/([A-Z])/g, ' $1').trim()}
@@ -236,23 +196,15 @@ function FormField({
           value={value || ''}
           onChange={(e) => {
             onChange(path, e.target.value);
-            onValidate(e.target.value, path);
           }}
           className={`
-            w-full px-5 py-4 rounded-xl border bg-transparent
+            w-full px-5 py-4 rounded-md border bg-transparent
             transition-all duration-200
-            dark:bg-gray-900 dark:text-white
-            focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500
-            hover:border-indigo-300 dark:hover:border-indigo-400
-            placeholder-gray-400 dark:placeholder-gray-500
-            ${isValid ? 'border-green-500' : 'border-gray-300 dark:border-gray-600'}
+            hover:border-indigo-300
+            placeholder-gray-400 
+            border-gray-300 text-gray-900
           `}
         />
-        {isValid && (
-          <div className="absolute right-3 top-1/2 -translate-y-1/2 text-green-500 text-xl animate-scale-in">
-            <IoCheckmarkCircle size={20} />
-          </div>
-        )}
       </div>
     </div>
   );

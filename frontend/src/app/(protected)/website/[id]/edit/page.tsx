@@ -142,14 +142,14 @@ export default function EditWebsitePage() {
         <div className="mt-8 grid grid-cols-1 lg:grid-cols-4 gap-8">
           {/* Main editing area - wider space for the form */}
           <div className="lg:col-span-3">
-            <div className="flex items-center justify-between mb-6">
-              <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-purple-600">
+            <div className="flex items-center text-center justify-between mb-6">
+              <h1 className="text-3xl font-bold bg-clip-text text-gray-900">
                 Edit Website
               </h1>
             </div>
             
             {website && (
-              <div className="bg-white rounded-2xl shadow-sm border border-gray-100">
+              <div className="bg-transparent">
                 <WebsiteForm
                   initialData={website.data}
                   onSave={handleSaveChanges}

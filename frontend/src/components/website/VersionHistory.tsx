@@ -114,7 +114,7 @@ export default function VersionHistory({ versions, onActivate, currentData }: Ve
                       ${expandedVersion === version.id ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'}
                     `}
                   >
-                    <div className="mt-3 p-4 border rounded-lg bg-gray-50 border-gray-300">
+                    <div className="mt-3 pt-2 border-t border-gray-300">
                       <h4 className="text-sm font-medium text-gray-700 mb-2">Changes made:</h4>
                       <ul className="text-sm text-gray-600 space-y-1.5">
                         {compareVersions(version.data).map((change, index) => (
