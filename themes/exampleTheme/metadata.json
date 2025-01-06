@@ -36,6 +36,28 @@
                 "url": "url",
                 "style": "select:primary,secondary"
               }
+            },
+            "backgroundImage": {
+              "type": "image",
+              "label": "Hero Background",
+              "required": true,
+              "ratio": "21:9",
+              "showCroppingTool": true,
+              "minWidth": 1920,
+              "minHeight": 1080,
+              "description": "Large banner image for hero section"
+            },
+            "carousel": {
+              "type": "image-set",
+              "label": "Hero Carousel",
+              "required": false,
+              "minCount": 1,
+              "maxCount": 5,
+              "ratio": "16:9",
+              "showCroppingTool": true,
+              "minWidth": 1200,
+              "minHeight": 675,
+              "description": "Slideshow images for hero section"
             }
           }
         },
@@ -61,6 +83,30 @@
                 "title": "short-text",
                 "description": "long-text"
               }
+            }
+          }
+        },
+        "gallery": {
+          "title": "Photo Gallery",
+           "fields": {
+              "title": {
+                "type": "short-text",
+                "label": "Gallery Title",
+                "default": "Our Gallery"
+            },
+            "description": {
+              "type": "long-text",
+              "label": "Gallery Description"
+            },
+            "images": {
+              "type": "image-set",
+              "label": "Gallery Images",
+              "minCount": 6,
+              "maxCount": 24,
+              "ratio": "4:3",
+              "showCroppingTool": true,
+              "layout": "grid",
+              "thumbnailSize": "medium"
             }
           }
         },
@@ -240,6 +286,35 @@
     "fonts": {
       "heading": "Inter",
       "body": "Inter"
+    }
+  },
+  "fieldTypes": {
+    "image": {
+      "allowedTypes": ["image/jpeg", "image/png", "image/webp"],
+      "maxSize": 5242880,
+      "compressionOptions": {
+        "quality": 80,
+        "format": "webp"
+      },
+      "thumbnails": {
+        "small": {
+          "width": 300,
+          "height": 300
+        },
+        "medium": {
+          "width": 800,
+          "height": 600
+        },
+        "large": {
+          "width": 1920,
+          "height": 1080
+        }
+      }
+    },
+    "image-set": {
+      "extends": "image",
+      "sortable": true,
+      "bulkUpload": true
     }
   }
 }

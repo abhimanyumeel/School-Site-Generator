@@ -1,16 +1,19 @@
 {{ define "main" }}
 <div class="about-page">
     <!-- Mission Section -->
+    {{ with .Site.Data.data.about.mission }}
     <section class="mission">
-        <h1>{{ .Site.Data.data.aboutTitle | default "About Us" }}</h1>
-        <p class="mission-statement">{{ .Site.Data.data.missionStatement }}</p>
+        <h1>{{ .title }}</h1>
+        <p class="mission-statement">{{ .missionStatement }}</p>
     </section>
+    {{ end }}
 
     <!-- Values Section -->
+    {{ with .Site.Data.data.about.values }}
     <section class="values">
         <h2>Our Values</h2>
         <div class="values-grid">
-            {{ range .Site.Data.data.values | default slice }}
+            {{ range .items }}
             <div class="value-card">
                 <h3>{{ .title }}</h3>
                 <p>{{ .description }}</p>
@@ -18,14 +21,18 @@
             {{ end }}
         </div>
     </section>
+    {{ end }}
 
     <!-- Team Section -->
+    {{ with .Site.Data.data.about.team }}
     <section class="team">
         <h2>Our Team</h2>
         <div class="team-grid">
-            {{ range .Site.Data.data.team | default slice }}
+            {{ range .members }}
             <div class="team-member">
-                <img src="{{ .photo }}" alt="{{ .name }}">
+                {{ with .photo }}
+                <img src="{{ . }}" alt="{{ $.name }}" class="member-photo">
+                {{ end }}
                 <h3>{{ .name }}</h3>
                 <p class="role">{{ .role }}</p>
                 <p class="bio">{{ .bio }}</p>
@@ -33,5 +40,6 @@
             {{ end }}
         </div>
     </section>
+    {{ end }}
 </div>
 {{ end }}

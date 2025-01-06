@@ -1,12 +1,13 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import axios from '@/lib/axios';
 import { isAxiosError } from 'axios';
 import Navbar from '@/components/layout/Navbar';
 import Breadcrumb from '@/components/layout/Breadcrumb';
 import { HiHome, HiTemplate, HiColorSwatch, HiCog, HiInformationCircle, HiMail } from 'react-icons/hi';
+import ImageUploadField from '@/components/form/ImageUploadField';
 
 // Types for our theme metadata
 interface ThemeMetadata {
@@ -55,6 +56,35 @@ interface GenerateResponse {
   };
 }
 
+// Add this interface before ImageField
+interface Field {
+  type: string;
+  label: string;
+  required?: boolean;
+  minLength?: number;
+  maxLength?: number;
+}
+
+interface ImageField extends Field {
+  type: 'image' | 'image-set';
+  ratio?: string;
+  showCroppingTool?: boolean;
+  minWidth?: number;
+  minHeight?: number;
+}
+
+interface Website {
+  id: string;
+  data: Record<string, any>;
+}
+
+interface UploadingImages {
+  [key: string]: boolean;
+}
+
+// Update the type definition for onUpload
+type UploadHandler = (file: File | null, fieldId: string, existingUrls?: string[]) => Promise<string | null>;
+
 export default function CustomizeTheme() {
   const params = useParams();
   const router = useRouter();
@@ -64,6 +94,9 @@ export default function CustomizeTheme() {
   const [isLoading, setIsLoading] = useState(true);
   const [user, setUser] = useState<User | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [uploadingImages, setUploadingImages] = useState<{ [key: string]: boolean }>({});
+  const [uploadError, setUploadError] = useState<string | null>(null);
+  const [website, setWebsite] = useState<Website | null>(null);
 
   // Fetch theme metadata when component mounts
 
@@ -99,69 +132,170 @@ export default function CustomizeTheme() {
     fetchTheme();
   }, [params.themeId]);
 
+  // Update the handleImageUpload function
+  const handleImageUpload = async (file: File | null, fieldId: string, existingUrls?: string[]) => {
+    try {
+      setUploadingImages(prev => ({ ...prev, [fieldId]: true }));
+      setError(null);
+
+      const [section, field] = fieldId.split('.');
+
+      // Handle image removal/update case
+      if (!file && existingUrls !== undefined) {
+        setFormData(prev => ({
+          ...prev,
+          [currentPage]: {
+            ...prev[currentPage],
+            [section]: {
+              ...prev[currentPage]?.[section],
+              [field]: existingUrls
+            }
+          }
+        }));
+        return null;
+      }
+
+      // Handle new file upload
+      if (!file) return null;
+
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('section', section);
+      formData.append('fieldId', field);
+
+      if (website?.id) {
+        formData.append('schoolWebsiteId', website.id);
+      }
+
+      const response = await axios.post('/upload', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+
+      // Update form data
+      const fieldConfig = theme?.metadata.pages[currentPage]?.sections[section]?.fields[field];
+      if (fieldConfig?.type === 'image-set') {
+        setFormData(prev => ({
+          ...prev,
+          [currentPage]: {
+            ...prev[currentPage],
+            [section]: {
+              ...prev[currentPage]?.[section],
+              [field]: [...(prev[currentPage]?.[section]?.[field] || []), response.data.url]
+            }
+          }
+        }));
+      } else {
+        setFormData(prev => ({
+          ...prev,
+          [currentPage]: {
+            ...prev[currentPage],
+            [section]: {
+              ...prev[currentPage]?.[section],
+              [field]: response.data.url
+            }
+          }
+        }));
+      }
+
+      return response.data.url;
+    } catch (error) {
+      console.error('Failed to upload image:', error);
+      setError('Failed to upload image. Please try again.');
+      return null;
+    } finally {
+      setUploadingImages(prev => ({ ...prev, [fieldId]: false }));
+    }
+  };
+
+  // Modify handleSubmit to handle image fields
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError(null);
-    const formElement = e.currentTarget;
-    const formDataObj = new FormData(formElement);
-    const pageData: Record<string, Record<string, string>> = {};
     
-    Array.from(formDataObj.entries()).forEach(([key, value]) => {
-      const [section, field] = key.split('.');
-      if (!pageData[section]) pageData[section] = {};
-      pageData[section][field] = value.toString();
-    });
-
-    // Update form data with the current page's data
-    const updatedFormData = {
-      ...formData,
-      [currentPage]: pageData
-    };
-    setFormData(updatedFormData);
-
-    // Check if this is the last page
-    const pages = theme?.metadata.pages || {};
-    const pageIds = Object.keys(pages);
-    const currentIndex = pageIds.indexOf(currentPage);
-    const isLastPage = currentIndex === pageIds.length - 1;
-
-    if (isLastPage) {
-      try {
-        const payload = {
-          themeName: theme?.id,
-          data: updatedFormData
-        };
-
-        console.log('Sending payload:', JSON.stringify(payload, null, 2));
-
-        const response = await axios.post<GenerateResponse>('/themes/generate', payload);
-        console.log('Response received:', response.data);
-
-        // Access the nested data property
-        const buildData = response.data.data;
-
-        if (buildData?.buildPath) {
-          router.push(`/create-website/${params.themeId}/success?buildPath=${encodeURIComponent(buildData.buildPath)}`);
-        } else {
-          console.error('Invalid response structure:', response.data);
-          setError('Invalid response from server. Missing build path.');
+    try {
+      const formElement = e.currentTarget;
+      const formDataObj = new FormData(formElement);
+      const pageData: Record<string, Record<string, any>> = {};
+      
+      // Process form data including images
+      Array.from(formDataObj.entries()).forEach(([key, value]) => {
+        const [section, field] = key.split('.');
+        if (!pageData[section]) pageData[section] = {};
+        
+        // Handle image fields differently
+        const fieldConfig = theme?.metadata.pages[currentPage]?.sections[section]?.fields[field] as ImageField;
+        if (fieldConfig?.type === 'image' || fieldConfig?.type === 'image-set') {
+          // For image fields, use the value from state instead of form data
+          const imageValue = formData[currentPage]?.[section]?.[field];
+          if (imageValue) {
+            pageData[section][field] = imageValue;
+          }
+          return;
         }
-      } catch (error) {
-        if (isAxiosError(error)) {
-          const errorMessage = error.response?.data?.message || error.message;
-          console.error('API Error:', {
-            status: error.response?.status,
-            data: error.response?.data,
-            message: errorMessage
-          });
-          setError(`Failed to generate website: ${errorMessage}`);
-        } else {
-          console.error('Unexpected error:', error);
-          setError('An unexpected error occurred while generating the website');
+        
+        pageData[section][field] = value.toString();
+      });
+
+      // Merge with existing form data
+      const updatedFormData = {
+        ...formData,
+        [currentPage]: {
+          ...formData[currentPage],
+          ...pageData,
+        },
+      };
+
+      setFormData(updatedFormData);
+
+      // Check if this is the last page
+      const pages = theme?.metadata.pages || {};
+      const pageIds = Object.keys(pages);
+      const currentIndex = pageIds.indexOf(currentPage);
+      const isLastPage = currentIndex === pageIds.length - 1;
+
+      if (isLastPage) {
+        try {
+          const payload = {
+            themeName: theme?.id,
+            data: updatedFormData
+          };
+
+          console.log('Sending payload:', JSON.stringify(payload, null, 2));
+
+          // Generate theme first
+          const response = await axios.post<GenerateResponse>('/themes/generate', payload);
+          console.log('Response received:', response.data);
+
+          const buildData = response.data.data;
+
+          if (buildData?.buildPath) {
+            router.push(`/create-website/${params.themeId}/success?buildPath=${encodeURIComponent(buildData.buildPath)}`);
+          } else {
+            console.error('Invalid response structure:', response.data);
+            setError('Invalid response from server. Missing build path.');
+          }
+        } catch (error) {
+          if (isAxiosError(error)) {
+            const errorMessage = error.response?.data?.message || error.message;
+            console.error('API Error:', {
+              status: error.response?.status,
+              data: error.response?.data,
+              message: errorMessage
+            });
+            setError(`Failed to generate website: ${errorMessage}`);
+          } else {
+            console.error('Unexpected error:', error);
+            setError('An unexpected error occurred while generating the website');
+          }
         }
+      } else {
+        setCurrentPage(pageIds[currentIndex + 1]);
       }
-    } else {
-      setCurrentPage(pageIds[currentIndex + 1]);
+    } catch (error) {
+      console.error('Form submission error:', error);
+      setError('Failed to submit form. Please try again.');
     }
   };
 
@@ -176,6 +310,25 @@ export default function CustomizeTheme() {
       settings: HiCog,
     };
     return icons[page as keyof typeof icons] || HiTemplate;
+  };
+
+  // Modify the form field rendering to include image upload components
+  const renderField = (sectionId: string, fieldId: string, field: Field) => {
+    if (field.type === 'image' || field.type === 'image-set') {
+      return (
+        <ImageUploadField
+          key={`${sectionId}.${fieldId}`}
+          id={`${sectionId}.${fieldId}`}
+          field={field as ImageField}
+          onUpload={handleImageUpload}
+          value={formData[currentPage]?.[sectionId]?.[fieldId]}
+          isUploading={uploadingImages[`${sectionId}.${fieldId}`]}
+          schoolWebsiteId={website?.id || ''}
+        />
+      );
+    }
+    
+    // ... existing field rendering logic ...
   };
 
   if (isLoading) {
@@ -350,6 +503,18 @@ export default function CustomizeTheme() {
                         {field.label}
                         {field.required && <span className="text-red-500 ml-1">*</span>}
                       </label>
+
+                      {(field.type === 'image' || field.type === 'image-set') && (
+                        <ImageUploadField
+                          id={`${sectionId}.${fieldId}`}
+                          field={field as ImageField}
+                          onUpload={handleImageUpload}
+                          value={formData[currentPage]?.[sectionId]?.[fieldId]}
+                          isUploading={uploadingImages[`${sectionId}.${fieldId}`]}
+                          schoolWebsiteId={website?.id || ''}
+                        />
+                      )}
+
                       {field.type === 'short-text' && (
                         <input
                           type="text"

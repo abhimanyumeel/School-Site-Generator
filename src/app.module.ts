@@ -13,6 +13,11 @@ import { SchoolWebsite } from './entities/school-website.entity';
 import { PreviewController } from './controllers/preview.controller';
 import { PreviewService } from './services/preview.service';
 import { WebsiteVersion } from './entities/website-version.entity';
+import { MulterModule } from '@nestjs/platform-express';
+import { UploadController } from './controllers/upload.controller';
+import { UploadService } from './services/upload.service';
+import { Document } from './entities/document.entity';
+import { DocumentGroup } from './entities/document-group.entity';
 
 @Module({
   imports: [
@@ -21,16 +26,21 @@ import { WebsiteVersion } from './entities/website-version.entity';
       imports: [ConfigModule],
       useFactory: (configService: ConfigService) => ({
         ...getDatabaseConfig(configService),
-        entities: [...Object.values(entities), SchoolWebsite, WebsiteVersion],
+        entities: [...Object.values(entities), SchoolWebsite, WebsiteVersion, Document, DocumentGroup],
         synchronize: process.env.NODE_ENV !== 'production',
       }),
       inject: [ConfigService],
     }),
-    TypeOrmModule.forFeature([SchoolWebsite, WebsiteVersion]),
+    TypeOrmModule.forFeature([SchoolWebsite, WebsiteVersion, Document, DocumentGroup]),
+    MulterModule.register({
+      limits: {
+        fileSize: 5 * 1024 * 1024, // 5MB
+      },
+    }),
     ThemeModule,
     AuthModule,
   ],
-  controllers: [AppController, WebsiteController, PreviewController],
-  providers: [AppService, WebsiteService, PreviewService],
+  controllers: [AppController, WebsiteController, PreviewController, UploadController],
+  providers: [AppService, WebsiteService, PreviewService, UploadService],
 })
 export class AppModule {}

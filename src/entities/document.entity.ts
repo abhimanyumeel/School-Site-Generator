@@ -27,6 +27,15 @@ export class Document {
   @Column()
   documentGroupId: string;
 
+  @Column({ nullable: true })
+  size: number;
+
+  @Column('json', { nullable: true })
+  dimensions: {
+    width: number;
+    height: number;
+  };
+
   @CreateDateColumn()
   createdAt: Date;
 

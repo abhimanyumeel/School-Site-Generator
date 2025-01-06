@@ -138,7 +138,7 @@ export class ThemeService {
 
     // Create temporary directories
     try {
-      await fs.mkdir(path.dirname(tempThemesPath), { recursive: true });
+    await fs.mkdir(path.dirname(tempThemesPath), { recursive: true });
       this.logger.log(`Created temporary directory: ${path.dirname(tempThemesPath)}`);
     } catch (error) {
       this.logger.error(`Failed to create temporary directory: ${error}`);

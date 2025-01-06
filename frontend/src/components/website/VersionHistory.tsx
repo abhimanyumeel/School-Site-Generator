@@ -36,7 +36,7 @@ export default function VersionHistory({ versions, onActivate, currentData }: Ve
   };
 
   return (
-    <div>
+              <div>
       <h2 className="text-xl text-center font-semibold mb-8 text-gray-800">
         Version History
       </h2>
@@ -79,12 +79,12 @@ export default function VersionHistory({ versions, onActivate, currentData }: Ve
                         Version {version.versionNumber}
                       </h3>
                     )}
-                    {version.isActive ? (
+                {version.isActive ? (
                       <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-200 text-green-700">
-                        Active
-                      </span>
-                    ) : (
-                      <button
+                    Active
+                  </span>
+                ) : (
+                  <button
                         onClick={(e) => {
                           e.stopPropagation();
                           onActivate(version.id);
@@ -130,7 +130,7 @@ export default function VersionHistory({ versions, onActivate, currentData }: Ve
               </div>
             </div>
           ))}
-        </div>
+          </div>
       </div>
     </div>
   );
