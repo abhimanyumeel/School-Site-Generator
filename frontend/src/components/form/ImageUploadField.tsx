@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { getApiUrl } from '@/lib/axios';
 
@@ -38,7 +38,7 @@ export default function ImageUploadField({
   isUploading,
   schoolWebsiteId,
 }: ImageUploadFieldProps) {
-  // Initialize previews from value
+  // Update state when value prop changes
   const [previews, setPreviews] = useState<string[]>(() => {
     if (!value) return [];
     return Array.isArray(value) 
@@ -46,11 +46,25 @@ export default function ImageUploadField({
       : [`${getApiUrl()}${value}`];
   });
   
-  // Initialize URLs from value
   const [urls, setUrls] = useState<string[]>(() => {
     if (!value) return [];
     return Array.isArray(value) ? value : [value];
   });
+
+  // Add useEffect to update state when value changes
+  useEffect(() => {
+    if (value) {
+      setPreviews(
+        Array.isArray(value)
+          ? value.map(url => `${getApiUrl()}${url}`)
+          : [`${getApiUrl()}${value}`]
+      );
+      setUrls(Array.isArray(value) ? value : [value]);
+    } else {
+      setPreviews([]);
+      setUrls([]);
+    }
+  }, [value]);
   
   const [error, setError] = useState<string | null>(null);
 

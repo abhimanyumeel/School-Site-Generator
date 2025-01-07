@@ -132,26 +132,48 @@ export default function CustomizeTheme() {
     fetchTheme();
   }, [params.themeId]);
 
+  // Load saved form data from localStorage when component mounts
+  useEffect(() => {
+    const savedFormData = localStorage.getItem(`formData-${params.themeId}`);
+    if (savedFormData) {
+      setFormData(JSON.parse(savedFormData));
+    }
+  }, [params.themeId]);
+
+  // Save form data to localStorage whenever it changes
+  useEffect(() => {
+    if (Object.keys(formData).length > 0) {
+      localStorage.setItem(`formData-${params.themeId}`, JSON.stringify(formData));
+    }
+  }, [formData, params.themeId]);
+
   // Update the handleImageUpload function
   const handleImageUpload = async (file: File | null, fieldId: string, existingUrls?: string[]) => {
     try {
+      const [section, field] = fieldId.split('.');
       setUploadingImages(prev => ({ ...prev, [fieldId]: true }));
       setError(null);
 
-      const [section, field] = fieldId.split('.');
-
       // Handle image removal/update case
       if (!file && existingUrls !== undefined) {
-        setFormData(prev => ({
-          ...prev,
-          [currentPage]: {
-            ...prev[currentPage],
-            [section]: {
-              ...prev[currentPage]?.[section],
-              [field]: existingUrls
+        // Log the update for debugging
+        console.log('Updating image set:', { section, field, existingUrls });
+        
+        setFormData(prev => {
+          const newData = {
+            ...prev,
+            [currentPage]: {
+              ...prev[currentPage],
+              [section]: {
+                ...prev[currentPage]?.[section],
+                [field]: existingUrls
+              }
             }
-          }
-        }));
+          };
+          // Log the new form data state
+          console.log('Updated form data:', newData);
+          return newData;
+        });
         return null;
       }
 
@@ -175,29 +197,24 @@ export default function CustomizeTheme() {
 
       // Update form data
       const fieldConfig = theme?.metadata.pages[currentPage]?.sections[section]?.fields[field];
-      if (fieldConfig?.type === 'image-set') {
-        setFormData(prev => ({
+      
+      setFormData(prev => {
+        const newData = {
           ...prev,
           [currentPage]: {
             ...prev[currentPage],
             [section]: {
               ...prev[currentPage]?.[section],
-              [field]: [...(prev[currentPage]?.[section]?.[field] || []), response.data.url]
+              [field]: fieldConfig?.type === 'image-set'
+                ? [...(prev[currentPage]?.[section]?.[field] || []), response.data.url]
+                : response.data.url
             }
           }
-        }));
-      } else {
-        setFormData(prev => ({
-          ...prev,
-          [currentPage]: {
-            ...prev[currentPage],
-            [section]: {
-              ...prev[currentPage]?.[section],
-              [field]: response.data.url
-            }
-          }
-        }));
-      }
+        };
+        // Log the new form data state
+        console.log('Updated form data after upload:', newData);
+        return newData;
+      });
 
       return response.data.url;
     } catch (error) {
@@ -276,6 +293,9 @@ export default function CustomizeTheme() {
             console.error('Invalid response structure:', response.data);
             setError('Invalid response from server. Missing build path.');
           }
+
+          // Clear localStorage after successful submission
+          localStorage.removeItem(`formData-${params.themeId}`);
         } catch (error) {
           if (isAxiosError(error)) {
             const errorMessage = error.response?.data?.message || error.message;
@@ -315,13 +335,21 @@ export default function CustomizeTheme() {
   // Modify the form field rendering to include image upload components
   const renderField = (sectionId: string, fieldId: string, field: Field) => {
     if (field.type === 'image' || field.type === 'image-set') {
+      // Log the value being passed to help debug
+      console.log('Image field value:', {
+        sectionId,
+        fieldId,
+        value: formData[currentPage]?.[sectionId]?.[fieldId],
+        type: field.type
+      });
+
       return (
         <ImageUploadField
           key={`${sectionId}.${fieldId}`}
           id={`${sectionId}.${fieldId}`}
           field={field as ImageField}
           onUpload={handleImageUpload}
-          value={formData[currentPage]?.[sectionId]?.[fieldId]}
+          value={formData[currentPage]?.[sectionId]?.[fieldId] || (field.type === 'image-set' ? [] : '')}
           isUploading={uploadingImages[`${sectionId}.${fieldId}`]}
           schoolWebsiteId={website?.id || ''}
         />
