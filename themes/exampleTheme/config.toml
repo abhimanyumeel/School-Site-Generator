@@ -1,20 +1,47 @@
-baseURL = "https://example.com"
+baseURL = "/"
 title = "ExampleTheme"
 languageCode = "en-us"
 defaultContentLanguage = "en"
 theme = "exampleTheme"
 
-# Enable emoji support
+# Enable emoji and git info
 enableEmoji = true
-
-# Enable Git Info for lastmod
 enableGitInfo = true
 
 # Pagination
 paginate = 6
 
-# Disable taxonomy pages
+# Only disable necessary features
 disableKinds = ["taxonomy", "term"]
+
+# Update static file directories to include all necessary paths
+staticDir = [
+    "static",
+    "public/uploads",
+    "uploads",
+    "finalBuild/static",
+    "finalBuild/uploads"
+]
+
+# Asset handling with updated module mounts
+[module]
+  [module.hugoVersion]
+    extended = true
+  [[module.mounts]]
+    source = "static"
+    target = "static"
+  [[module.mounts]]
+    source = "uploads"
+    target = "static/uploads"
+  [[module.mounts]]
+    source = "public/uploads"
+    target = "static/uploads"
+  [[module.mounts]]
+    source = "finalBuild/static"
+    target = "static"
+  [[module.mounts]]
+    source = "finalBuild/uploads"
+    target = "static/uploads"
 
 # Site Parameters
 [params]
@@ -26,6 +53,13 @@ disableKinds = ["taxonomy", "term"]
     
     # Copyright text in footer
     copyright = "© 2024 ExampleTheme. All rights reserved."
+    
+    # Asset handling configuration
+    [params.assets]
+        disableHLJS = true
+        # Relative to /static
+        customCSS = ["css/custom.css"]
+        customJS = ["js/custom.js"]
     
     # Social media links
     [params.social]
@@ -95,10 +129,10 @@ disableKinds = ["taxonomy", "term"]
         enableDNT = true
         simple = true
 
-# Output Formats
+# Output Formats - Updated to ensure HTML generation
 [outputs]
-    home = ["HTML", "RSS"]
-    section = ["HTML", "RSS"]
+    home = ["HTML"]
+    section = ["HTML"]
     page = ["HTML"]
 
 # Markup Configuration
@@ -113,8 +147,18 @@ disableKinds = ["taxonomy", "term"]
         [markup.goldmark.renderer]
             unsafe = true
 
-# RSS Configuration
-[services]
-    [services.rss]
-        limit = 20
+# Media handling
+[imaging]
+    quality = 85
+    anchor = "smart"
+    resampleFilter = "lanczos"
+
+# Security settings for resource handling
+[security]
+    [security.exec]
+        allow = ['^dart-sass-embedded$', '^go$', '^npx$', '^postcss$']
+    [security.funcs]
+        getenv = ['^HUGO_']
+    [security.http]
+        methods = ['GET', 'POST']
 

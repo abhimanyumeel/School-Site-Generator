@@ -1,123 +1,137 @@
 {{ define "main" }}
 <div class="home-content">
-    <!-- Hero Section -->
-    <section class="hero" id="hero">
-        {{ with .Site.Data.data.home.hero }}
-        <div class="hero-background">
-            {{ with .backgroundImage }}
-            <img src="{{ . }}" alt="Hero Background" class="hero-bg-image">
-            {{ end }}
-            
-            {{ with .carousel }}
-            <div class="hero-carousel">
-                {{ range . }}
-                <img src="{{ . }}" alt="Carousel Image" class="carousel-image">
+    <!-- Fallback content if no data is present -->
+    {{ if not .Site.Data.data }}
+        <div class="welcome-message" style="text-align: center; padding: 2rem;">
+            <h1>{{ .Site.Title }}</h1>
+            <p>Welcome to our website</p>
+        </div>
+    {{ else }}
+        <!-- Hero Section -->
+        <section class="hero" id="hero">
+            {{ with .Site.Data.data.home.hero }}
+            <div class="hero-background">
+                {{ with .backgroundImage }}
+                <img src="{{ . | replaceRE "^/uploads/temp/" "/uploads/" | relURL }}" alt="Hero Background" class="hero-bg-image">
                 {{ end }}
-            </div>
-            {{ end }}
-        </div>
-        
-        <div class="hero-content">
-            <h1>{{ .title }}</h1>
-            <p class="lead">{{ .subtitle }}</p>
-            {{ with .buttons }}
-            <div class="hero-buttons">
-                {{ range . }}
-                <a href="{{ .url }}" class="{{ .style }}-button">{{ .text }}</a>
-                {{ end }}
-            </div>
-            {{ end }}
-        </div>
-        {{ end }}
-    </section>
-
-    <!-- Features Section -->
-    <section class="features" id="features">
-        {{ with .Site.Data.data.home.features }}
-        <h2>{{ .title }}</h2>
-        <div class="features-grid">
-            {{ range .items }}
-            <div class="feature-card">
-                {{ with .icon }}
-                <img src="{{ . }}" alt="{{ $.title }}" class="feature-icon">
-                {{ end }}
-                <h3>{{ .title }}</h3>
-                <p>{{ .description }}</p>
-            </div>
-            {{ end }}
-        </div>
-        {{ end }}
-    </section>
-
-    <!-- Gallery Section -->
-    {{ with .Site.Data.data.home.gallery }}
-    <section class="gallery" id="gallery">
-        <h2>{{ .title }}</h2>
-        <p>{{ .description }}</p>
-        <div class="gallery-grid">
-            {{ range .images }}
-            <div class="gallery-item">
-                <img src="{{ . }}" alt="Gallery Image">
-            </div>
-            {{ end }}
-        </div>
-    </section>
-    {{ end }}
-
-    <!-- News Section -->
-    {{ with .Site.Data.data.home.news }}
-    <section class="news" id="news">
-        <h2>{{ .title }}</h2>
-        <div class="news-grid">
-            {{ range .articles }}
-            <article class="news-card">
-                {{ with .image }}
-                <img src="{{ . }}" alt="{{ $.title }}">
-                {{ end }}
-                <div class="news-content">
-                    <h3>{{ .title }}</h3>
-                    <p>{{ .summary }}</p>
-                    <time>{{ .date }}</time>
-                </div>
-            </article>
-            {{ end }}
-        </div>
-    </section>
-    {{ end }}
-
-    <!-- Stats Section -->
-    {{ with .Site.Data.data.home.stats }}
-    <section class="stats" id="stats">
-        <div class="stats-grid">
-            {{ range .items }}
-            <div class="stat-item">
-                <span class="stat-number">{{ .number }}</span>
-                <span class="stat-label">{{ .label }}</span>
-            </div>
-            {{ end }}
-        </div>
-    </section>
-    {{ end }}
-
-    <!-- Testimonials Section -->
-    {{ with .Site.Data.data.home.testimonials }}
-    <section class="testimonials" id="testimonials">
-        <h2>{{ .title }}</h2>
-        <div class="testimonials-slider">
-            {{ range .items }}
-            <div class="testimonial">
-                <blockquote>{{ .quote }}</blockquote>
-                <cite>
-                    {{ with .avatar }}
-                    <img src="{{ . }}" alt="{{ $.name }}">
+                
+                {{ with .carousel }}
+                <div class="hero-carousel">
+                    {{ range . }}
+                    <img src="{{ . | replaceRE "^/uploads/temp/" "/uploads/" | relURL }}" alt="Carousel Image" class="carousel-image">
                     {{ end }}
-                    <span class="name">{{ .name }}</span>
-                    <span class="role">{{ .role }}</span>
-                </cite>
+                </div>
+                {{ end }}
             </div>
             {{ end }}
-        </div>
-    </section>
+        </section>
+
+        <!-- Features Section -->
+        <section class="features" id="features">
+            {{ with .Site.Data.data.home.features }}
+            <h2>{{ .title }}</h2>
+            <div class="features-grid">
+                {{ range .items }}
+                <div class="feature-card">
+                    {{ with .icon }}
+                    <img src="{{ . | replaceRE "^/uploads/temp/" "/uploads/" | relURL }}" alt="{{ $.title }}" class="feature-icon">
+                    {{ end }}
+                    <h3>{{ .title }}</h3>
+                    <p>{{ .description }}</p>
+                </div>
+                {{ end }}
+            </div>
+            {{ end }}
+        </section>
+
+        <!-- Gallery Section -->
+        {{ with .Site.Data.data.home.gallery }}
+        <section class="gallery" id="gallery">
+            <h2>{{ .title }}</h2>
+            <p>{{ .description }}</p>
+            <div class="gallery-grid">
+                {{ range .images }}
+                <div class="gallery-item">
+                    <img src="{{ . | relURL }}" alt="Gallery Image">
+                </div>
+                {{ end }}
+            </div>
+        </section>
+        {{ end }}
+
+        <!-- News Section -->
+        {{ with .Site.Data.data.home.news }}
+        <section class="news" id="news">
+            <h2>{{ .title }}</h2>
+            <div class="news-grid">
+                {{ range .articles }}
+                <article class="news-card">
+                    {{ with .image }}
+                    <img src="{{ . | relURL }}" alt="{{ $.title }}">
+                    {{ end }}
+                    <div class="news-content">
+                        <h3>{{ .title }}</h3>
+                        <p>{{ .summary }}</p>
+                        <time>{{ .date }}</time>
+                    </div>
+                </article>
+                {{ end }}
+            </div>
+        </section>
+        {{ end }}
+
+        <!-- Stats Section -->
+        {{ with .Site.Data.data.home.stats }}
+        <section class="stats" id="stats">
+            <div class="stats-grid">
+                {{ range .items }}
+                <div class="stat-item">
+                    <span class="stat-number">{{ .number }}</span>
+                    <span class="stat-label">{{ .label }}</span>
+                </div>
+                {{ end }}
+            </div>
+        </section>
+        {{ end }}
+
+        <!-- Testimonials Section -->
+        {{ with .Site.Data.data.home.testimonials }}
+        <section class="testimonials" id="testimonials">
+            <h2>{{ .title }}</h2>
+            <div class="testimonials-slider">
+                {{ range .items }}
+                <div class="testimonial">
+                    <blockquote>{{ .quote }}</blockquote>
+                    <cite>
+                        {{ with .avatar }}
+                        <img src="{{ . | relURL }}" alt="{{ $.name }}">
+                        {{ end }}
+                        <span class="name">{{ .name }}</span>
+                        <span class="role">{{ .role }}</span>
+                    </cite>
+                </div>
+                {{ end }}
+            </div>
+        </section>
+        {{ end }}
+    {{ end }}
+
+    <!-- Enhanced Debug Info -->
+    {{ if hugo.IsServer }}
+    <div class="debug-info" style="background: #f0f0f0; padding: 20px; margin: 20px;">
+        <h4>Debug Information:</h4>
+        <pre>
+        Base URL: {{ .Site.BaseURL }}
+        Current Page: {{ .Page.RelPermalink }}
+        Data Present: {{ if .Site.Data.data }}Yes{{ else }}No{{ end }}
+        Template Path: {{ template.Name }}
+        Working Directory: {{ getenv "PWD" }}
+        {{ with .Site.Data.data }}
+        Data Structure:
+        {{ printf "%#v" . }}
+        {{ end }}
+        </pre>
+    </div>
     {{ end }}
 </div>
 {{ end }}

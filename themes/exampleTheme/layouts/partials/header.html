@@ -2,14 +2,14 @@
     <nav class="navbar">
         <div class="navbar-brand">
             <a href="{{ .Site.BaseURL }}" class="navbar-item">
-                {{ .Site.Title }}
+                {{ .Site.Data.data.name }}
             </a>
         </div>
         
         <div class="navbar-menu">
-            {{ range .Site.Menus.main }}
-            <a href="{{ .URL }}" class="navbar-item">{{ .Name }}</a>
-            {{ end }}
+            <a href="/" class="navbar-item">Home</a>
+            <a href="/about" class="navbar-item">About</a>
+            <a href="/contact" class="navbar-item">Contact</a>
         </div>
     </nav>
 </header>

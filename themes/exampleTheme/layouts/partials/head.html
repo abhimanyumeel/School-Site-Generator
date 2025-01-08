@@ -1,18 +1,29 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{{ if .IsHome }}{{ .Site.Title }}{{ else }}{{ .Title }} | {{ .Site.Title }}{{ end }}</title>
-    <meta name="description" content="{{ with .Description }}{{ . }}{{ else }}{{ .Site.Params.description }}{{ end }}">
+    <title>{{ if .IsHome }}{{ .Site.Data.data.name }}{{ else }}{{ .Title }} | {{ .Site.Data.data.name }}{{ end }}</title>
+    <meta name="description" content="{{ .Site.Data.data.description }}">
     
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
     
     <!-- CSS -->
-    <link rel="stylesheet" href="{{ "style.css" | relURL }}">
+    <link rel="stylesheet" href="{{ "css/style.css" | relURL }}">
     
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     
-    <!-- JavaScript -->
-    <script defer src="{{ "script.js" | relURL }}"></script>
+    <!-- Add this style for debugging -->
+    {{ if hugo.IsServer }}
+    <style>
+        img[src^="/uploads/"] {
+            border: 2px solid red;
+        }
+        img[src=""] {
+            border: 2px solid blue;
+            min-height: 100px;
+            background: #eee;
+        }
+    </style>
+    {{ end }}
 </head>
