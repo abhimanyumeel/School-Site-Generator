@@ -147,7 +147,7 @@ export default function CustomizeTheme() {
     }
   }, [formData, params.themeId]);
 
-  // Update the handleImageUpload function
+  // Update handleImageUpload to ensure proper image URL storage
   const handleImageUpload = async (file: File | null, fieldId: string, existingUrls?: string[]) => {
     try {
       const [section, field] = fieldId.split('.');
@@ -156,9 +156,6 @@ export default function CustomizeTheme() {
 
       // Handle image removal/update case
       if (!file && existingUrls !== undefined) {
-        // Log the update for debugging
-        console.log('Updating image set:', { section, field, existingUrls });
-        
         setFormData(prev => {
           const newData = {
             ...prev,
@@ -168,16 +165,18 @@ export default function CustomizeTheme() {
                 ...prev[currentPage]?.[section],
                 [field]: existingUrls
               }
+            },
+            images: {
+              ...prev.images,
+              [`${currentPage}.${section}.${field}`]: existingUrls
             }
           };
-          // Log the new form data state
-          console.log('Updated form data:', newData);
+          console.log('Updated form data for image set:', newData);
           return newData;
         });
         return null;
       }
 
-      // Handle new file upload
       if (!file) return null;
 
       const formData = new FormData();
@@ -195,10 +194,10 @@ export default function CustomizeTheme() {
         },
       });
 
-      // Update form data
       const fieldConfig = theme?.metadata.pages[currentPage]?.sections[section]?.fields[field];
       
       setFormData(prev => {
+        const imageUrl = response.data.url;
         const newData = {
           ...prev,
           [currentPage]: {
@@ -206,12 +205,17 @@ export default function CustomizeTheme() {
             [section]: {
               ...prev[currentPage]?.[section],
               [field]: fieldConfig?.type === 'image-set'
-                ? [...(prev[currentPage]?.[section]?.[field] || []), response.data.url]
-                : response.data.url
+                ? [...(prev[currentPage]?.[section]?.[field] || []), imageUrl]
+                : imageUrl
             }
+          },
+          images: {
+            ...prev.images,
+            [`${currentPage}.${section}.${field}`]: fieldConfig?.type === 'image-set'
+              ? [...(prev.images?.[`${currentPage}.${section}.${field}`] || []), imageUrl]
+              : imageUrl
           }
         };
-        // Log the new form data state
         console.log('Updated form data after upload:', newData);
         return newData;
       });
@@ -226,45 +230,48 @@ export default function CustomizeTheme() {
     }
   };
 
-  // Modify handleSubmit to handle image fields
+  // Update handleSubmit to ensure all metadata fields are included
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError(null);
     
     try {
-      const formElement = e.currentTarget;
-      const formDataObj = new FormData(formElement);
-      const pageData: Record<string, Record<string, any>> = {};
+      // Get current page metadata
+      const pageMetadata = theme?.metadata.pages[currentPage];
+      if (!pageMetadata) throw new Error('Page metadata not found');
+
+      // Create complete page data structure
+      const pageData: Record<string, any> = {};
       
-      // Process form data including images
-      Array.from(formDataObj.entries()).forEach(([key, value]) => {
-        const [section, field] = key.split('.');
-        if (!pageData[section]) pageData[section] = {};
+      // Process each section in the metadata
+      Object.entries(pageMetadata.sections).forEach(([sectionId, section]) => {
+        pageData[sectionId] = {};
         
-        // Handle image fields differently
-        const fieldConfig = theme?.metadata.pages[currentPage]?.sections[section]?.fields[field] as ImageField;
-        if (fieldConfig?.type === 'image' || fieldConfig?.type === 'image-set') {
-          // For image fields, use the value from state instead of form data
-          const imageValue = formData[currentPage]?.[section]?.[field];
-          if (imageValue) {
-            pageData[section][field] = imageValue;
+        // Process each field in the section
+        Object.entries(section.fields).forEach(([fieldId, field]) => {
+          const value = formData[currentPage]?.[sectionId]?.[fieldId];
+          if (field.type === 'image' || field.type === 'image-set') {
+            // Use existing image value from state
+            pageData[sectionId][fieldId] = value || (field.type === 'image-set' ? [] : '');
+          } 
+          else if (field.type === 'array') {
+            // Use form input value
+            const formValue = (e.currentTarget as HTMLFormElement)[`${sectionId}.${fieldId}`]?.value;
+            pageData[sectionId][fieldId] = formValue || [];
           }
-          return;
-        }
-        
-        pageData[section][field] = value.toString();
+          else {
+            // Use form input value
+            const formValue = (e.currentTarget as HTMLFormElement)[`${sectionId}.${fieldId}`]?.value;
+            pageData[sectionId][fieldId] = formValue || '';
+          }
+        });
       });
 
       // Merge with existing form data
       const updatedFormData = {
         ...formData,
-        [currentPage]: {
-          ...formData[currentPage],
-          ...pageData,
-        },
+        [currentPage]: pageData,
       };
-
-      setFormData(updatedFormData);
 
       // Check if this is the last page
       const pages = theme?.metadata.pages || {};
@@ -274,14 +281,20 @@ export default function CustomizeTheme() {
 
       if (isLastPage) {
         try {
+          // Prepare final payload with all required data
           const payload = {
             themeName: theme?.id,
-            data: updatedFormData
+            data: {
+              name: updatedFormData.home?.hero?.title || 'My Website',
+              description: updatedFormData.home?.hero?.subtitle || 'My Website Description',
+              author: 'Anonymous',
+              createdAt: new Date().toISOString(),
+              ...updatedFormData,
+            }
           };
 
-          console.log('Sending payload:', JSON.stringify(payload, null, 2));
+          console.log('Submitting complete payload:', payload);
 
-          // Generate theme first
           const response = await axios.post<GenerateResponse>('/themes/generate', payload);
           console.log('Response received:', response.data);
 
@@ -294,7 +307,6 @@ export default function CustomizeTheme() {
             setError('Invalid response from server. Missing build path.');
           }
 
-          // Clear localStorage after successful submission
           localStorage.removeItem(`formData-${params.themeId}`);
         } catch (error) {
           if (isAxiosError(error)) {
@@ -311,8 +323,12 @@ export default function CustomizeTheme() {
           }
         }
       } else {
+        // Move to next page
         setCurrentPage(pageIds[currentIndex + 1]);
       }
+
+      // Update form data state
+      setFormData(updatedFormData);
     } catch (error) {
       console.error('Form submission error:', error);
       setError('Failed to submit form. Please try again.');

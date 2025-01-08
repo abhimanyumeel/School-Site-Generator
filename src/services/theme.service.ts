@@ -9,6 +9,7 @@ import { InjectConnection } from '@nestjs/typeorm';
 import { Connection } from 'typeorm';
 import { SchoolWebsite } from '../entities/school-website.entity';
 import { WebsiteVersion } from '../entities/website-version.entity';
+import { UploadService } from './upload.service';
 
 @Injectable()
 export class ThemeService {
@@ -17,7 +18,8 @@ export class ThemeService {
 
   constructor(
     @InjectConnection()
-    private connection: Connection
+    private connection: Connection,
+    private readonly uploadService: UploadService
   ) {}
 
   async getAllThemes() {
@@ -60,16 +62,13 @@ export class ThemeService {
       const { themeFolderPath, temporaryFolderPath, buildFolderPath, tempThemesPath } = 
         await this.createPaths(themeData);
 
+      // Log the incoming data to verify image URLs
+      this.logger.log('Incoming theme data:', JSON.stringify(themeData.data, null, 2));
+
       // Verify and prepare directories
       await this.verifyAndPrepareDirectories(themeFolderPath, temporaryFolderPath, tempThemesPath);
 
-      // Generate site structure
-      await this.generateSiteStructure(temporaryFolderPath, themeData);
-
-      // Build the site
-      const buildResult = await this.buildSite(temporaryFolderPath, buildFolderPath);
-
-      // Save website data to database
+      // Create website record first to get the ID
       const websiteRepository = this.connection.getRepository(SchoolWebsite);
       const website = websiteRepository.create({
         name: themeData.data.home?.hero?.title || 'Untitled Website',
@@ -84,12 +83,86 @@ export class ThemeService {
 
       await websiteRepository.save(website);
 
-      // Create initial version
+      // 1. Create finalBuild/static/uploads directory
+      const uploadsPath = path.join(buildFolderPath, 'static', 'uploads');
+      await fs.mkdir(uploadsPath, { recursive: true });
+      
+      // 2. Copy images from temp to website's finalBuild/static/uploads directory
+      const tempUploadPath = path.join('public', 'uploads', 'temp');
+      const files = await fs.readdir(tempUploadPath);
+
+      // Log found files
+      this.logger.log('Found files in temp directory:', files);
+
+      for (const file of files) {
+        await fs.copyFile(
+          path.join(tempUploadPath, file),
+          path.join(uploadsPath, file)
+        );
+      }
+
+      // 3. Process data to include image URLs
+      const processedData = {
+        name: themeData.data.home?.hero?.title || 'My Website',
+        description: themeData.data.home?.hero?.subtitle || 'My Website Description',
+        author: 'Anonymous',
+        createdAt: new Date().toISOString(),
+        ...JSON.parse(JSON.stringify(themeData.data)),  // Deep clone to avoid reference issues
+        images: {}
+      };
+
+      // Log the structure before processing
+      this.logger.log('Data structure before processing:', JSON.stringify(processedData, null, 2));
+      
+      // Add image URLs to data - recursive function to handle nested objects
+      const processImageFields = (obj: any, path = '') => {
+        for (const key in obj) {
+          const value = obj[key];
+          const currentPath = path ? `${path}.${key}` : key;
+
+          if (typeof value === 'string' && value.startsWith('/uploads/temp/')) {
+            const newPath = value.replace('/uploads/temp/', '/uploads/');
+            obj[key] = newPath;
+            processedData.images[currentPath] = newPath;
+            this.logger.log(`Found image URL at ${currentPath}:`, newPath);
+          } else if (Array.isArray(value)) {
+            value.forEach((item, index) => {
+              if (typeof item === 'string' && item.startsWith('/uploads/temp/')) {
+                const newPath = item.replace('/uploads/temp/', '/uploads/');
+                value[index] = newPath;
+                processedData.images[`${currentPath}[${index}]`] = newPath;
+                this.logger.log(`Found image URL in array at ${currentPath}[${index}]:`, newPath);
+              } else if (typeof item === 'object' && item !== null) {
+                processImageFields(item, `${currentPath}[${index}]`);
+              }
+            });
+          } else if (typeof value === 'object' && value !== null) {
+            processImageFields(value, currentPath);
+          }
+        }
+      };
+
+      // Process all image URLs in the data
+      processImageFields(processedData);
+
+      // Log the processed data
+      this.logger.log('Processed data:', JSON.stringify(processedData, null, 2));
+
+      // Generate site with processed data
+      await this.generateSiteStructure(temporaryFolderPath, {
+        ...themeData,
+        data: processedData
+      });
+
+      // Build the site
+      const buildResult = await this.buildSite(temporaryFolderPath, buildFolderPath);
+
+      // Create initial version with processed data
       const versionRepository = this.connection.getRepository(WebsiteVersion);
       const initialVersion = versionRepository.create({
         websiteId: website.id,
         versionNumber: 1,
-        data: themeData.data,
+        data: processedData,
         buildPath: buildFolderPath,
         isActive: true,
         changeDescription: 'Initial version',
@@ -181,25 +254,52 @@ export class ThemeService {
     await fs.mkdir(dataDir, { recursive: true });
 
     const dataJsonPath = path.resolve(dataDir, 'data.json');
+    
+    // Write the processed data
     await fs.writeFile(
       dataJsonPath, 
-      JSON.stringify({
-        name: themeData.data.home?.hero?.title || 'My Website',
-        description: themeData.data.home?.hero?.subtitle || 'My Website Description',
-        author: 'Anonymous',
-        createdAt: new Date().toISOString(),
-        ...themeData.data  // Include all form data
-      }, null, 2)
+      JSON.stringify(themeData.data, null, 2)
     );
+
+    // Log the written data
+    this.logger.log('Written data.json content:', await fs.readFile(dataJsonPath, 'utf-8'));
   }
 
   private async createConfigFile(temporaryFolderPath: string, themeData: CreateThemeDataDto) {
     const configPath = path.resolve(temporaryFolderPath, 'config.toml');
     const configContent = `
-baseURL = '/'
-languageCode = 'en-us'
-title = '${themeData.data.home?.hero?.title || 'My Website'}'
-theme = '${themeData.themeName}'
+# Basic site configuration
+baseURL = "/"
+languageCode = "en-us"
+title = "${themeData.data.home?.hero?.title || 'My Website'}"
+theme = "${themeData.themeName}"
+
+# Content configuration
+contentDir = "content"
+dataDir = "data"
+
+# Static file configuration
+staticDir = ["static", "uploads"]
+
+# Output configuration
+publishDir = "finalBuild"
+
+# Ensure HTML generation
+disableKinds = []
+
+[outputs]
+  home = ["HTML"]
+  page = ["HTML"]
+  section = ["HTML"]
+
+# Static file handling
+[module]
+  [[module.mounts]]
+    source = "static"
+    target = "static"
+  [[module.mounts]]
+    source = "uploads"
+    target = "static/uploads"
 
 [params]
   description = "${themeData.data.home?.hero?.subtitle || 'My Website Description'}"
@@ -223,6 +323,9 @@ theme = '${themeData.themeName}'
     weight = 3
 `;
     await fs.writeFile(configPath, configContent.trim());
+
+    // Log the config for debugging
+    this.logger.log('Created config.toml with content:', configContent);
   }
 
   private async createContentStructure(temporaryFolderPath: string, themeData: CreateThemeDataDto) {
@@ -257,7 +360,7 @@ This is the ${title} page for ${themeData.data.home?.hero?.title || 'My Website'
   private async buildSite(temporaryFolderPath: string, buildFolderPath: string): Promise<any> {
     return new Promise((resolve, reject) => {
       // Remove the --verbose flag
-      const hugoCommand = `cd "${temporaryFolderPath}" && hugo -d finalBuild`;
+      const hugoCommand = `cd "${temporaryFolderPath}" && hugo --minify -d finalBuild --forceSyncStatic --ignoreCache `;
       
       this.logger.log(`Executing command: ${hugoCommand}`);
       this.logger.log(`Working directory: ${temporaryFolderPath}`);
@@ -290,6 +393,9 @@ This is the ${title} page for ${themeData.data.home?.hero?.title || 'My Website'
           try {
             const themeFiles = await fs.readdir(path.join(temporaryFolderPath, 'themes', 'exampleTheme', 'layouts'));
             this.logger.log('Theme layouts directory contents:', themeFiles);
+
+            const dataContent = await fs.readFile(path.join(temporaryFolderPath, 'data', 'data.json'), 'utf-8');
+            this.logger.log('data.json content:', dataContent);
           } catch (e) {
             this.logger.error('Failed to read theme layouts directory:', e);
           }
@@ -299,8 +405,28 @@ This is the ${title} page for ${themeData.data.home?.hero?.title || 'My Website'
           return;
         }
 
+        // Log build output
         if (stdout) this.logger.log('Hugo build output:', stdout);
         if (stderr) this.logger.warn('Hugo build warnings:', stderr);
+
+        // Verify build output
+        try {
+          const buildFiles = await fs.readdir(buildFolderPath);
+          this.logger.log('Generated files in build directory:', buildFiles);
+
+          // Check for index.html specifically
+          const indexPath = path.join(buildFolderPath, 'index.html');
+          const indexExists = await fs.access(indexPath)
+            .then(() => true)
+            .catch(() => false);
+
+          if (!indexExists) {
+            this.logger.warn('index.html not found in build directory');
+          }
+
+        } catch (error) {
+          this.logger.error('Error verifying build output:', error);
+        }
 
         resolve({
           status: 'success',
@@ -329,5 +455,31 @@ This is the ${title} page for ${themeData.data.home?.hero?.title || 'My Website'
     } catch (error) {
       throw new NotFoundException(`Theme metadata not found for ${themeId}`);
     }
+  }
+
+  private processImageUrls(data: any, websiteId: string): any {
+    const processValue = (value: any): any => {
+      if (typeof value === 'string' && value.startsWith('/uploads/temp/')) {
+        // Update URLs to point to the static directory
+        return value.replace('/uploads/temp/', '/uploads/');
+      }
+      if (Array.isArray(value)) {
+        return value.map(item => processValue(item));
+      }
+      if (typeof value === 'object' && value !== null) {
+        return processObject(value);
+      }
+      return value;
+    };
+
+    const processObject = (obj: any): any => {
+      const processed: any = {};
+      for (const [key, value] of Object.entries(obj)) {
+        processed[key] = processValue(value);
+      }
+      return processed;
+    };
+
+    return processObject(data);
   }
 }

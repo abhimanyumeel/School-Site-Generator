@@ -2,7 +2,6 @@ baseURL = "/"
 title = "ExampleTheme"
 languageCode = "en-us"
 defaultContentLanguage = "en"
-theme = "exampleTheme"
 
 # Enable emoji and git info
 enableEmoji = true
@@ -14,34 +13,22 @@ paginate = 6
 # Only disable necessary features
 disableKinds = ["taxonomy", "term"]
 
-# Update static file directories to include all necessary paths
-staticDir = [
-    "static",
-    "public/uploads",
-    "uploads",
-    "finalBuild/static",
-    "finalBuild/uploads"
-]
+# Simplified static file configuration
+staticDir = ["static"]
 
-# Asset handling with updated module mounts
+# Basic module configuration
 [module]
   [module.hugoVersion]
     extended = true
   [[module.mounts]]
     source = "static"
     target = "static"
-  [[module.mounts]]
-    source = "uploads"
-    target = "static/uploads"
-  [[module.mounts]]
-    source = "public/uploads"
-    target = "static/uploads"
-  [[module.mounts]]
-    source = "finalBuild/static"
-    target = "static"
-  [[module.mounts]]
-    source = "finalBuild/uploads"
-    target = "static/uploads"
+
+# Output Formats
+[outputs]
+    home = ["HTML"]
+    section = ["HTML"]
+    page = ["HTML"]
 
 # Site Parameters
 [params]
@@ -128,12 +115,6 @@ staticDir = [
         disable = false
         enableDNT = true
         simple = true
-
-# Output Formats - Updated to ensure HTML generation
-[outputs]
-    home = ["HTML"]
-    section = ["HTML"]
-    page = ["HTML"]
 
 # Markup Configuration
 [markup]

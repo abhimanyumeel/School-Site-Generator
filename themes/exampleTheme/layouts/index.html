@@ -12,7 +12,7 @@
             {{ with .Site.Data.data.home.hero }}
             <div class="hero-background">
                 {{ with .backgroundImage }}
-                <img src="{{ . | replaceRE "^/uploads/temp/" "/uploads/" | relURL }}" alt="Hero Background" class="hero-bg-image">
+                <img src="{{ . | relURL }}" alt="Hero Background" class="hero-bg-image">
                 {{ end }}
                 
                 {{ with .carousel }}
@@ -124,7 +124,6 @@
         Base URL: {{ .Site.BaseURL }}
         Current Page: {{ .Page.RelPermalink }}
         Data Present: {{ if .Site.Data.data }}Yes{{ else }}No{{ end }}
-        Template Path: {{ template.Name }}
         Working Directory: {{ getenv "PWD" }}
         {{ with .Site.Data.data }}
         Data Structure:

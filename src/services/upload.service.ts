@@ -28,6 +28,63 @@ export class UploadService {
     await fs.mkdir(path.join(this.uploadDir, this.tempDir), { recursive: true });
   }
 
+  async copyTempImagesToWebsite(websiteId: string) {
+    try {
+      const tempUploadPath = path.join(this.uploadDir, this.tempDir);
+      const tempHugoPath = path.join(this.hugoStaticDir, this.tempDir, 'static/uploads');
+      
+      const websiteUploadPath = path.join(this.uploadDir, websiteId);
+      const websiteHugoPath = path.join(this.hugoStaticDir, websiteId, 'static/uploads');
+
+      // Create destination directories
+      await fs.mkdir(websiteUploadPath, { recursive: true });
+      await fs.mkdir(websiteHugoPath, { recursive: true });
+
+      // Get list of files in temp directory
+      const files = await fs.readdir(tempHugoPath);
+
+      // Copy each file to the website directory
+      for (const file of files) {
+        await fs.copyFile(
+          path.join(tempHugoPath, file),
+          path.join(websiteHugoPath, file)
+        );
+        await fs.copyFile(
+          path.join(tempUploadPath, file),
+          path.join(websiteUploadPath, file)
+        );
+      }
+
+      // Clean up temp directories
+      await this.cleanTempDirectories();
+
+      return true;
+    } catch (error) {
+      console.error('Error copying temp images:', error);
+      throw new BadRequestException('Failed to copy images to website directory');
+    }
+  }
+
+  private async cleanTempDirectories() {
+    try {
+      const tempUploadPath = path.join(this.uploadDir, this.tempDir);
+      const tempHugoPath = path.join(this.hugoStaticDir, this.tempDir, 'static/uploads');
+
+      // Remove all files in temp directories
+      const [uploadFiles, hugoFiles] = await Promise.all([
+        fs.readdir(tempUploadPath),
+        fs.readdir(tempHugoPath)
+      ]);
+
+      await Promise.all([
+        ...uploadFiles.map(file => fs.unlink(path.join(tempUploadPath, file))),
+        ...hugoFiles.map(file => fs.unlink(path.join(tempHugoPath, file)))
+      ]);
+    } catch (error) {
+      console.error('Error cleaning temp directories:', error);
+    }
+  }
+
   async uploadImage(
     file: Express.Multer.File,
     schoolWebsiteId: string | undefined,
