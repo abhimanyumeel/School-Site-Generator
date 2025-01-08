@@ -1,20 +1,35 @@
-baseURL = "https://example.com"
+baseURL = "/"
 title = "ExampleTheme"
 languageCode = "en-us"
 defaultContentLanguage = "en"
 theme = "exampleTheme"
 
-# Enable emoji support
+# Enable emoji and git info
 enableEmoji = true
-
-# Enable Git Info for lastmod
 enableGitInfo = true
 
 # Pagination
 paginate = 6
 
-# Disable taxonomy pages
+# Only disable necessary features
 disableKinds = ["taxonomy", "term"]
+
+# Simplified static file configuration
+staticDir = ["static"]
+
+# Basic module configuration
+[module]
+  [module.hugoVersion]
+    extended = true
+  [[module.mounts]]
+    source = "static"
+    target = "static"
+
+# Output Formats
+[outputs]
+    home = ["HTML"]
+    section = ["HTML"]
+    page = ["HTML"]
 
 # Site Parameters
 [params]
@@ -26,6 +41,13 @@ disableKinds = ["taxonomy", "term"]
     
     # Copyright text in footer
     copyright = "© 2024 ExampleTheme. All rights reserved."
+    
+    # Asset handling configuration
+    [params.assets]
+        disableHLJS = true
+        # Relative to /static
+        customCSS = ["css/custom.css"]
+        customJS = ["js/custom.js"]
     
     # Social media links
     [params.social]
@@ -95,12 +117,6 @@ disableKinds = ["taxonomy", "term"]
         enableDNT = true
         simple = true
 
-# Output Formats
-[outputs]
-    home = ["HTML", "RSS"]
-    section = ["HTML", "RSS"]
-    page = ["HTML"]
-
 # Markup Configuration
 [markup]
     [markup.highlight]
@@ -113,8 +129,18 @@ disableKinds = ["taxonomy", "term"]
         [markup.goldmark.renderer]
             unsafe = true
 
-# RSS Configuration
-[services]
-    [services.rss]
-        limit = 20
+# Media handling
+[imaging]
+    quality = 85
+    anchor = "smart"
+    resampleFilter = "lanczos"
+
+# Security settings for resource handling
+[security]
+    [security.exec]
+        allow = ['^dart-sass-embedded$', '^go$', '^npx$', '^postcss$']
+    [security.funcs]
+        getenv = ['^HUGO_']
+    [security.http]
+        methods = ['GET', 'POST']
 
