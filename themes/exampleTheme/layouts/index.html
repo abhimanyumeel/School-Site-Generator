@@ -115,22 +115,6 @@
         </section>
         {{ end }}
     {{ end }}
-
-    <!-- Enhanced Debug Info -->
-    {{ if hugo.IsServer }}
-    <div class="debug-info" style="background: #f0f0f0; padding: 20px; margin: 20px;">
-        <h4>Debug Information:</h4>
-        <pre>
-        Base URL: {{ .Site.BaseURL }}
-        Current Page: {{ .Page.RelPermalink }}
-        Data Present: {{ if .Site.Data.data }}Yes{{ else }}No{{ end }}
-        Working Directory: {{ getenv "PWD" }}
-        {{ with .Site.Data.data }}
-        Data Structure:
-        {{ printf "%#v" . }}
-        {{ end }}
-        </pre>
-    </div>
-    {{ end }}
 </div>
 {{ end }}
+
