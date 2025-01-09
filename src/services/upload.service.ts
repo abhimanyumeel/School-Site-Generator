@@ -1,4 +1,4 @@
-import { Injectable, BadRequestException } from '@nestjs/common';
+import { Injectable, BadRequestException, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Document } from '../entities/document.entity';
@@ -10,6 +10,7 @@ import * as sharp from 'sharp';
 
 @Injectable()
 export class UploadService {
+  private readonly logger = new Logger(UploadService.name);
   private readonly uploadDir = 'public/uploads';
   private readonly hugoStaticDir = 'themes';
   private readonly tempDir = 'temp';
@@ -65,21 +66,26 @@ export class UploadService {
     }
   }
 
-  private async cleanTempDirectories() {
+  public async cleanTempDirectories() {
     try {
       const tempUploadPath = path.join(this.uploadDir, this.tempDir);
-      const tempHugoPath = path.join(this.hugoStaticDir, this.tempDir, 'static/uploads');
+      const files = await fs.readdir(tempUploadPath);
 
       // Remove all files in temp directories
-      const [uploadFiles, hugoFiles] = await Promise.all([
-        fs.readdir(tempUploadPath),
-        fs.readdir(tempHugoPath)
-      ]);
+      await Promise.all(
+        files.map(async (file) => {
+          const filePath = path.join(tempUploadPath, file);
+          try {
+            await fs.unlink(filePath);
+            this.logger.log(`Deleted temp file: ${file}`);
+          } catch (error) {
+            this.logger.error(`Failed to delete temp file ${file}:`, error);
+          }
+        })
+      );
 
-      await Promise.all([
-        ...uploadFiles.map(file => fs.unlink(path.join(tempUploadPath, file))),
-        ...hugoFiles.map(file => fs.unlink(path.join(tempHugoPath, file)))
-      ]);
+      this.logger.log('Successfully cleaned up temp directory');
+
     } catch (error) {
       console.error('Error cleaning temp directories:', error);
     }

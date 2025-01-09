@@ -102,6 +102,8 @@ export class ThemeService {
         );
       }
 
+      await this.uploadService.cleanTempDirectories();
+
       // 3. Process data to include image URLs to point to static/uploads
       const processedData = {
         name: themeData.data.home?.hero?.title || 'My Website',
