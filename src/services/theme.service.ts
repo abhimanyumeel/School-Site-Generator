@@ -94,6 +94,7 @@ export class ThemeService {
       // Log found files
       this.logger.log('Found files in temp directory:', files);
 
+      // Copy files to finalBuild
       for (const file of files) {
         await fs.copyFile(
           path.join(tempUploadPath, file),
@@ -101,7 +102,7 @@ export class ThemeService {
         );
       }
 
-      // 3. Process data to include image URLs
+      // 3. Process data to include image URLs to point to static/uploads
       const processedData = {
         name: themeData.data.home?.hero?.title || 'My Website',
         description: themeData.data.home?.hero?.subtitle || 'My Website Description',
@@ -121,14 +122,17 @@ export class ThemeService {
           const currentPath = path ? `${path}.${key}` : key;
 
           if (typeof value === 'string' && value.startsWith('/uploads/temp/')) {
-            const newPath = value.replace('/uploads/temp/', '/uploads/');
+            // Extract filename and update path to point to static/uploads
+            const filename = value.split('/').pop();
+            const newPath = `/static/uploads/${filename}`;
             obj[key] = newPath;
             processedData.images[currentPath] = newPath;
             this.logger.log(`Found image URL at ${currentPath}:`, newPath);
           } else if (Array.isArray(value)) {
             value.forEach((item, index) => {
               if (typeof item === 'string' && item.startsWith('/uploads/temp/')) {
-                const newPath = item.replace('/uploads/temp/', '/uploads/');
+                const filename = item.split('/').pop();
+                const newPath = `/static/uploads/${filename}`;
                 value[index] = newPath;
                 processedData.images[`${currentPath}[${index}]`] = newPath;
                 this.logger.log(`Found image URL in array at ${currentPath}[${index}]:`, newPath);
@@ -461,7 +465,7 @@ This is the ${title} page for ${themeData.data.home?.hero?.title || 'My Website'
     const processValue = (value: any): any => {
       if (typeof value === 'string' && value.startsWith('/uploads/temp/')) {
         // Update URLs to point to the static directory
-        return value.replace('/uploads/temp/', '/uploads/');
+        return value.replace('/uploads/temp/', '/static/uploads/');
       }
       if (Array.isArray(value)) {
         return value.map(item => processValue(item));

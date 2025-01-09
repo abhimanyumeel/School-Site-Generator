@@ -109,23 +109,12 @@ export class UploadService {
         ? path.join(this.uploadDir, schoolWebsiteId)
         : path.join(this.uploadDir, this.tempDir);
 
-      const hugoPath = schoolWebsiteId
-        ? path.join(this.hugoStaticDir, schoolWebsiteId, 'static/uploads')
-        : path.join(this.hugoStaticDir, this.tempDir, 'static/uploads');
-
       // Ensure directories exist
       await fs.mkdir(uploadPath, { recursive: true });
-      await fs.mkdir(hugoPath, { recursive: true });
 
       // Process and save image
       const processedImagePath = path.join(uploadPath, filename);
       await this.processAndSaveImage(file, processedImagePath);
-
-      // Copy to Hugo static directory
-      await fs.copyFile(
-        processedImagePath,
-        path.join(hugoPath, filename)
-      );
 
       if (schoolWebsiteId) {
         let documentGroup = await this.documentGroupRepository.findOne({
@@ -160,8 +149,9 @@ export class UploadService {
       }
 
       // Return simplified response for temporary uploads
+      // Update the URL format to match what we want in data.json
       return {
-        url: `/uploads/${this.tempDir}/${filename}`,
+        url: `/uploads/temp/${filename}`, // This will be transformed to /static/uploads/ by theme.service.ts
         name: file.originalname,
       };
     } catch (error) {
