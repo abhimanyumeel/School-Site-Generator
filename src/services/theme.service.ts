@@ -10,6 +10,16 @@ import { Connection } from 'typeorm';
 import { SchoolWebsite } from '../entities/school-website.entity';
 import { WebsiteVersion } from '../entities/website-version.entity';
 import { UploadService } from './upload.service';
+import { title } from 'process';
+import * as yaml from 'js-yaml';
+
+interface FieldConfig {
+  type: string;
+  required?: boolean;
+  default?: any;
+  items?: any;
+  fields?: any;
+}
 
 @Injectable()
 export class ThemeService {
@@ -38,7 +48,9 @@ export class ThemeService {
           metadata = {
             theme: directory,
             displayName: directory,
-            pages: {}
+            pages: {},
+            config: {},
+            fieldTypes: {}
           };
         }
 
@@ -335,34 +347,171 @@ disableKinds = []
   }
 
   private async createContentStructure(temporaryFolderPath: string, themeData: CreateThemeDataDto) {
-    const contentDir = path.resolve(temporaryFolderPath, 'content');
-    await fs.mkdir(contentDir, { recursive: true });
+    try{
+      //1. Get theme metadata
+      const metadata = await this.getThemeMetadata(themeData.themeName);
+      const contentDir = path.resolve(temporaryFolderPath, 'content');
+      await fs.mkdir(contentDir, { recursive: true });
 
-    // Create pages
-    const pages = {
-      'about': 'About Us',
-      'contact': 'Contact Us',
-      'privacy': 'Privacy Policy',
-      'terms': 'Terms of Service'
-    };
+      //2. Validate data against theme requirements
+      this.validateThemeData(themeData.data, metadata);
 
-    for (const [slug, title] of Object.entries(pages)) {
-      const pageDir = path.resolve(contentDir, slug);
-      await fs.mkdir(pageDir, { recursive: true });
-      await fs.writeFile(
-        path.resolve(pageDir, '_index.md'),
-        `---
-title: "${title}"
-date: ${new Date().toISOString()}
-draft: false
----
+      //3. Generate content for each page defined in metadata
+      for (const [pageName, pageConfig] of Object.entries(metadata.pages)){
+        await this.generatePageContent(
+          contentDir, 
+          pageName,
+          pageConfig,
+          themeData.data[pageName] || {},
+          metadata
+        );
+      }
 
-This is the ${title} page for ${themeData.data.home?.hero?.title || 'My Website'}.
-`
-      );
+      this.logger.log('Content structure generated successfully');
+
+    }catch(error){
+      this.logger.log("Failed to create content structure:", error);
+      throw new Error(`Failed to create content structure: ${error.message}`);
     }
   }
 
+
+  private async generatePageContent(
+    contentDir: string,
+    pageName: string,
+    pageConfig: any, 
+    pageData: any,
+    metadata: ThemeMetadata
+  ) {
+    const pageDir = path.resolve(contentDir, pageName);
+    await fs.mkdir(pageDir, {recursive: true});
+
+    // Determine if this is a list page based on content structure
+    const isListPage = this.determineIfListPage(pageName, pageConfig);
+    const fileName = isListPage ? '_index.md' : 'index.md';
+
+    // Create minimal frontmatter - remove pageSpecificData merge
+    const frontmatter = {
+        title: pageConfig.title,
+        layout: `${pageName}/single`,
+        type: pageName,
+        draft: false,
+        hideDate: true  // Add this to hide the date
+    };
+
+    // Create the markdown file with minimal frontmatter
+    const content = `---\n${yaml.dump(frontmatter)}---\n`;
+    await fs.writeFile(path.resolve(pageDir, fileName), content);
+
+    this.logger.log(`Generated content for ${pageName}:`, {
+        path: path.resolve(pageDir, fileName),
+        isListPage,
+        content: content
+    });
+  }
+
+  private determineIfListPage(pageName: string, pageConfig: any): boolean {
+    // Special cases that are always single pages
+    const singlePageTypes = ['home', 'about', 'contact'];
+    if (singlePageTypes.includes(pageName)) {
+        return false;
+    }
+
+    // Check if the page has array-based content that suggests it's a list
+    const hasListContent = Object.values(pageConfig.sections).some((section: any) => {
+        const fields = section.fields || {};
+        return Object.values(fields).some((field: any) => {
+            return field.type === 'array' && 
+                   (field.label?.toLowerCase().includes('list') ||
+                    field.label?.toLowerCase().includes('items') ||
+                    field.label?.toLowerCase().includes('posts') ||
+                    field.label?.toLowerCase().includes('articles'));
+        });
+    });
+
+    return hasListContent;
+  }
+
+  private processSectionData(sectionData: any, sectionConfig: any, fieldTypes: any): any {
+    const processed: any = {};
+
+    for (const [fieldName, fieldConfigRaw] of Object.entries(sectionConfig.fields)) {
+      const fieldValue = sectionData[fieldName];
+      const fieldConfig = fieldConfigRaw as FieldConfig;
+      const fieldType = fieldTypes[fieldConfig.type];
+
+      if (fieldConfig.required && !fieldValue) {
+        // Use default value if available, otherwise throw error
+        if ('default' in fieldConfig) {
+          processed[fieldName] = fieldConfig.default;
+        } else {
+          throw new Error(`Required field ${fieldName} is missing`);
+        }
+      } else {
+        // Process field based on its type
+        processed[fieldName] = this.processFieldValue(
+          fieldValue,
+          fieldConfig,
+          fieldType
+        );
+      }
+    }
+
+    return processed;
+  }
+
+  private processFieldValue(value: any, fieldConfig: any, fieldType: any): any {
+    if (!value) return fieldConfig.default || null;
+
+    switch (fieldConfig.type) {
+      case 'image':
+      case 'image-set':
+        // Ensure image paths are correct
+        return Array.isArray(value) 
+          ? value.map(img => this.processImagePath(img))
+          : this.processImagePath(value);
+      
+      case 'array':
+        return Array.isArray(value) 
+          ? value.map(item => this.processArrayItem(item, fieldConfig.items))
+          : [];
+
+      case 'object':
+        return this.processObjectFields(value, fieldConfig.fields);
+
+      default:
+        return value;
+    }
+  }
+
+  private validateThemeData(data: any, metadata: ThemeMetadata) {
+    for (const [pageName, pageConfig] of Object.entries(metadata.pages)) {
+      const pageData = data[pageName];
+      
+      if (!pageData) {
+        this.logger.warn(`No data provided for page ${pageName}`);
+        continue;
+      }
+
+      for (const [sectionName, sectionConfig] of Object.entries(pageConfig.sections)) {
+        const sectionData = pageData[sectionName];
+        
+        if (!sectionData && this.isSectionRequired(sectionConfig)) {
+          throw new Error(`Required section ${sectionName} is missing in ${pageName}`);
+        }
+
+        this.validateSectionData(sectionData, sectionConfig, `${pageName}.${sectionName}`);
+      }
+    }
+  }
+
+  private isSectionRequired(sectionConfig: any): boolean {
+    // Check if any required fields exist in the section
+    return Object.values(sectionConfig.fields).some(
+      (field: any) => field.required
+    );
+  }
+  
   private async buildSite(temporaryFolderPath: string, buildFolderPath: string): Promise<any> {
     return new Promise((resolve, reject) => {
       // Remove the --verbose flag
@@ -487,5 +636,38 @@ This is the ${title} page for ${themeData.data.home?.hero?.title || 'My Website'
     };
 
     return processObject(data);
+  }
+
+  private processImagePath(imagePath: string): string {
+    // Convert /uploads/temp/ paths to /static/uploads/
+    return imagePath?.replace('/uploads/temp/', '/static/uploads/') || '';
+  }
+
+  private processArrayItem(item: any, itemConfig: any): any {
+    if (typeof item === 'object') {
+      return this.processObjectFields(item, itemConfig.fields);
+    }
+    return item;
+  }
+
+  private processObjectFields(obj: any, fields: any): any {
+    const processed: any = {};
+    for (const [key, value] of Object.entries(obj)) {
+      if (fields[key]) {
+        processed[key] = this.processFieldValue(value, fields[key], fields[key].type);
+      }
+    }
+    return processed;
+  }
+
+  private validateSectionData(sectionData: any, sectionConfig: any, path: string) {
+    if (!sectionData) return;
+
+    for (const [fieldName, fieldConfig] of Object.entries(sectionConfig.fields)) {
+      const value = sectionData[fieldName];
+      if ((fieldConfig as FieldConfig).required && !value && !(fieldConfig as FieldConfig).default) {
+        throw new Error(`Required field ${path}.${fieldName} is missing`);
+      }
+    }
   }
 }

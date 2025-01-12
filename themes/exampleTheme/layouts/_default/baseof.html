@@ -1,37 +1,12 @@
 <!DOCTYPE html>
 <html lang="{{ .Site.LanguageCode | default "en" }}">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>{{ if .IsHome }}{{ .Site.Title }}{{ else }}{{ .Title }} - {{ .Site.Title }}{{ end }}</title>
-        {{ partial "head.html" . }}
-    </head>
+    {{ partial "head.html" . }}
     <body>
         {{ partial "header.html" . }}
         <main class="container">
-            <!-- Remove data condition to ensure page always renders -->
-            {{ block "main" . }}
-                <!-- Fallback content if main block is not defined -->
-                <div class="default-content">
-                    <h1>{{ .Title }}</h1>
-                    {{ .Content }}
-                </div>
-            {{ end }}
+            {{ block "main" . }}{{ end }}
         </main>
         {{ partial "footer.html" . }}
-        
-        <!-- Enhanced Debug info -->
-        {{ if hugo.IsServer }}
-        <div style="background: #f0f0f0; padding: 20px; margin: 20px;">
-            <h4>Debug Information:</h4>
-            <pre>
-            Base URL: {{ .Site.BaseURL }}
-            Page Kind: {{ .Kind }}
-            Layout: {{ .Layout }}
-            Data Available: {{ if .Site.Data.data }}Yes{{ else }}No{{ end }}
-            Static Dir: {{ "static" }}
-            </pre>
-        </div>
         {{ end }}
     </body>
 </html>

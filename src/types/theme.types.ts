@@ -7,11 +7,20 @@ export interface ThemeMetadata {
       sections: {
         [key: string]: {
           title: string;
-          fields: Record<string, any>;
+          fields: {
+            [key: string]: {
+              type: string;
+              label: string;
+              required?: boolean;
+              default?: string;
+            }
+          }
         };
       };
     };
   };
+  config: any;
+  fieldTypes: any;
 }
 
 export interface Theme {

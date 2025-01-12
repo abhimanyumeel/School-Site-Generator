@@ -5,7 +5,8 @@
   "version": "1.0.0",
   "pages": {
     "home": {
-      "title": "Homepage",
+      "type": "page",
+      "title": "Home Page",
       "sections": {
         "hero": {
           "title": "Hero Section",
@@ -14,16 +15,16 @@
               "type": "short-text",
               "label": "Hero Title",
               "required": true,
-              "minLength": 10,
-              "maxLength": 100,
+              "minLength": 5,
+              "maxLength": 15,
               "default": "Welcome to Our School"
             },
             "subtitle": {
               "type": "short-text",
               "label": "Hero Subtitle",
               "required": true,
-              "minLength": 10,
-              "maxLength": 200,
+              "minLength": 5,
+              "maxLength": 100,
               "default": "Empowering Minds, Shaping Futures"
             },
             "buttons": {
@@ -67,21 +68,34 @@
             "title": {
               "type": "short-text",
               "label": "Section Title",
+              "required": false,
               "default": "Why Choose Us"
             },
             "items": {
               "type": "array",
-              "label": "Feature Items",
+              "label": "Features",
+              "required": false,
               "minCount": 3,
               "maxCount": 6,
               "items": {
-                "icon": {
-                  "type": "image",
-                  "ratio": "1:1",
-                  "showCroppingTool": true
-                },
-                "title": "short-text",
-                "description": "long-text"
+                "type": "object",
+                "fields": {
+                  "title": {
+                    "type": "short-text",
+                    "label": "Feature Title",
+                    "required": true
+                  },
+                  "description": {
+                    "type": "long-text",
+                    "label": "Feature Description",
+                    "required": true
+                  },
+                  "icon": {
+                    "type": "select",
+                    "label": "Feature Icon",
+                    "options": ["academics", "sports", "arts", "library", "labs", "transport"]
+                  }
+                }
               }
             }
           }
@@ -116,37 +130,85 @@
             "title": {
               "type": "short-text",
               "label": "Section Title",
-              "default": "Latest News"
+              "required": true,
+              "default": "Latest News & Events"
+            },
+            "subtitle": {
+              "type": "short-text",
+              "label": "Section Subtitle",
+              "required": false,
+              "default": "Stay updated with the latest news and events from our school",
+              "maxLength": 150
             },
             "articles": {
               "type": "array",
               "label": "News Articles",
+              "required": true,
               "minCount": 1,
-              "maxCount": 3,
+              "maxCount": 6,
               "items": {
-                "image": {
-                  "type": "image",
-                  "ratio": "16:9",
-                  "showCroppingTool": true
-                },
                 "title": "short-text",
-                "summary": "long-text",
-                "date": "date"
+                "label": "Article Title",
+                "required": true
+              },
+              "summary":{
+                "type": "long-text",
+                "label": "Article Summary",
+                "required": true
+              },
+              "date":{
+                "type": "date",
+                "label": "Article Date",
+                "required": true
+              },
+              "image": {
+                "type": "image",
+                "label": "Article Image",
+                "required": true,
+                "ratio": "16:9",
+                "showCroppingTool": true
+              },
+              "category":{
+                "type": "short-text",
+                "label": "Article Category",
+                "required": true,
+                "options": ["News", "Events", "Announcements", "Alerts", "Academic", "Sports", "Culture", "Other"]
+              }
               }
             }
-          }
-        },
+          },
         "stats": {
           "title": "Statistics Section",
           "fields": {
+            "title": {
+              "type": "short-text",
+              "label": "Section Title",
+              "required": true,
+              "default": "School Statistics"
+            },
             "items": {
               "type": "array",
-              "label": "Statistics",
+              "label": "Statistics Items",
+              "required": true,
               "minCount": 3,
               "maxCount": 4,
               "items": {
-                "number": "number",
-                "label": "short-text"
+                "number": {
+                  "type": "number",
+                  "label": "Number",
+                  "required": true
+                },
+                "label": {
+                  "type": "short-text",
+                  "label": "Label",
+                  "required": true
+                },
+                "icon": {
+                  "type": "select",
+                  "label": "Icon",
+                  "required": true,
+                  "options": ["student", "teacher", "classroom", "school", "achievement", "award", "certificate", "degree", "diploma", "education", "graduation", "school-bus", "school-building", "school-library", "school-uniform", "student-achievement", "student-award", "student-certificate", "student-diploma", "student-degree", "student-graduation", "student-school-bus", "student-school-building", "student-school-library", "student-school-uniform"]
+                }
               }
             }
           }
@@ -162,14 +224,28 @@
             "items": {
               "type": "array",
               "label": "Testimonials",
+              "required": true,
               "minCount": 2,
               "maxCount": 6,
               "items": {
-                "quote": "long-text",
-                "name": "short-text",
-                "role": "short-text",
+                "quote": {
+                  "type": "long-text",
+                  "label": "Testimonial Quote",
+                  "required": true
+                },
+                "name": {
+                  "type": "short-text",
+                  "label": "Person Name",
+                  "required": true
+                },
+                "role": {
+                  "type": "short-text",
+                  "label": "Relation",
+                  "required": true
+                },
                 "avatar": {
                   "type": "image",
+                  "label": "Person Avatar",
                   "ratio": "1:1",
                   "showCroppingTool": true
                 }
@@ -180,6 +256,7 @@
       }
     },
     "about": {
+      "type": "page",
       "title": "About Page",
       "sections": {
         "mission": {
@@ -187,8 +264,9 @@
           "fields": {
             "title": {
               "type": "short-text",
-              "label": "Page Title",
-              "default": "About Us"
+              "label": "Section Title",
+              "required": true,
+              "default": "Our Mission"
             },
             "missionStatement": {
               "type": "long-text",
@@ -202,14 +280,33 @@
         "values": {
           "title": "Values Section",
           "fields": {
+            "title": {
+              "type": "short-text",
+              "label": "Section Title",
+              "default": "Our Core Values"
+            },
             "items": {
               "type": "array",
-              "label": "Our Values",
+              "label": "Value Items",
+              "required": true,
               "minCount": 3,
               "maxCount": 6,
               "items": {
-                "title": "short-text",
-                "description": "long-text"
+                "title": {
+                  "type": "short-text",
+                  "label": "Value Title",
+                  "required": true
+                },
+                "description": {
+                  "type": "long-text",
+                  "label": "Value Description",
+                  "required": true
+                },
+                "icon": {
+                  "type": "select",
+                  "label": "Value Icon",
+                  "options": ["excellence", "integrity", "innovation", "leadership", "diversity", "community"]
+                }
               }
             }
           }
@@ -217,27 +314,54 @@
         "team": {
           "title": "Team Section",
           "fields": {
+            "title": {
+              "type": "short-text",
+              "label": "Section Title",
+              "default": "Our Leadership Team"
+            },
             "members": {
               "type": "array",
               "label": "Team Members",
+              "required": true,
               "minCount": 1,
               "maxCount": 12,
               "items": {
+                "name": {
+                  "type": "short-text",
+                  "label": "Member Name",
+                  "required": true
+                },
+                "role": {
+                  "type": "short-text",
+                  "label": "Position/Role",
+                  "required": true
+                },
+                "bio": {
+                  "type": "long-text",
+                  "label": "Biography",
+                  "required": true
+                },
                 "photo": {
                   "type": "image",
+                  "label": "Profile Photo",
+                  "required": true,
                   "ratio": "1:1",
                   "showCroppingTool": true
                 },
-                "name": "short-text",
-                "role": "short-text",
-                "bio": "long-text"
+                "qualifications": {
+                  "type": "short-text",
+                  "label": "Qualifications",
+                  "required": true
+                }
               }
             }
           }
         }
       }
     },
+
     "contact": {
+      "type": "page",
       "title": "Contact Page",
       "sections": {
         "info": {
@@ -253,15 +377,22 @@
               "fields": {
                 "address": {
                   "type": "long-text",
+                  "label": "School Address",
                   "required": true
                 },
                 "phone": {
                   "type": "short-text",
-                  "required": true,
-                  "pattern": "^[+]?[(]?[0-9]{3}[)]?[-\\s.]?[0-9]{3}[-\\s.]?[0-9]{4,6}$"
+                  "label": "Phone Number",
+                  "required": true
                 },
                 "email": {
                   "type": "email",
+                  "label": "Email Address",
+                  "required": true
+                },
+                "officeHours": {
+                  "type": "short-text",
+                  "label": "Office Hours",
                   "required": true
                 }
               }

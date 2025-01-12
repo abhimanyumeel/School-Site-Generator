@@ -1,6 +1,6 @@
 {{ define "main" }}
+
 <div class="about-page">
-    <!-- Mission Section -->
     {{ with .Site.Data.data.about.mission }}
     <section class="mission">
         <h1>{{ .title }}</h1>
@@ -8,7 +8,6 @@
     </section>
     {{ end }}
 
-    <!-- Values Section -->
     {{ with .Site.Data.data.about.values }}
     <section class="values">
         <h2>Our Values</h2>
