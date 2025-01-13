@@ -75,27 +75,12 @@
               "type": "array",
               "label": "Features",
               "required": false,
-              "minCount": 3,
+              "minCount": 2,
               "maxCount": 6,
               "items": {
-                "type": "object",
-                "fields": {
-                  "title": {
-                    "type": "short-text",
-                    "label": "Feature Title",
-                    "required": true
-                  },
-                  "description": {
-                    "type": "long-text",
-                    "label": "Feature Description",
-                    "required": true
-                  },
-                  "icon": {
-                    "type": "select",
-                    "label": "Feature Icon",
-                    "options": ["academics", "sports", "arts", "library", "labs", "transport"]
-                  }
-                }
+                "title": "short-text",
+                "description": "long-text",
+                "icon": "select:academics,sports,arts,library,labs,transport"
               }
             }
           }
@@ -143,40 +128,28 @@
             "articles": {
               "type": "array",
               "label": "News Articles",
-              "required": true,
+              "required": false,
               "minCount": 1,
               "maxCount": 6,
               "items": {
                 "title": "short-text",
-                "label": "Article Title",
-                "required": true
-              },
-              "summary":{
-                "type": "long-text",
-                "label": "Article Summary",
-                "required": true
-              },
-              "date":{
-                "type": "date",
-                "label": "Article Date",
-                "required": true
-              },
-              "image": {
-                "type": "image",
-                "label": "Article Image",
-                "required": true,
-                "ratio": "16:9",
-                "showCroppingTool": true
-              },
-              "category":{
-                "type": "short-text",
-                "label": "Article Category",
-                "required": true,
-                "options": ["News", "Events", "Announcements", "Alerts", "Academic", "Sports", "Culture", "Other"]
-              }
+                "summary": "long-text",
+                "date": "date",
+                "image": {
+                  "type": "image",
+                  "label": "Article Image",
+                  "required": false,
+                  "ratio": "16:9",
+                  "showCroppingTool": true,
+                  "minWidth": 800,
+                  "minHeight": 450,
+                  "description": "Featured image for the article"
+                },
+                "category": "select:News,Events,Announcements,Alerts,Academic,Sports,Culture,Other"
               }
             }
-          },
+          }
+        },
         "stats": {
           "title": "Statistics Section",
           "fields": {

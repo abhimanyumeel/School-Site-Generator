@@ -63,6 +63,12 @@ interface Field {
   required?: boolean;
   minLength?: number;
   maxLength?: number;
+  minCount?: number;
+  maxCount?: number;
+  items?: any;
+  fields?: Record<string, Field>;
+  options?: string[];
+  default?: any;
 }
 
 interface ImageField extends Field {
@@ -84,6 +90,56 @@ interface UploadingImages {
 
 // Update the type definition for onUpload
 type UploadHandler = (file: File | null, fieldId: string, existingUrls?: string[]) => Promise<string | null>;
+
+interface ItemField {
+  type: string;
+  label: string;
+  required?: boolean;
+  options?: string[];
+  ratio?: string;
+  showCroppingTool?: boolean;
+  minWidth?: number;
+  minHeight?: number;
+}
+
+interface ArrayFieldProps {
+  sectionId: string;
+  fieldId: string;
+  field: Field;
+  formData: Record<string, any>;
+  setFormData: (data: Record<string, any>) => void;
+  currentPage: string;
+  renderField: (sectionId: string, fieldId: string, field: Field) => React.ReactNode;
+}
+
+interface ObjectFieldProps {
+  sectionId: string;
+  fieldId: string;
+  field: Field;
+  renderField: (sectionId: string, fieldId: string, field: Field) => React.ReactNode;
+}
+
+interface ItemDefinition {
+  type: string;
+  label?: string;
+  required?: boolean;
+  ratio?: string;
+  showCroppingTool?: boolean;
+  minWidth?: number;
+  minHeight?: number;
+}
+
+const isFieldDefinition = (obj: any): obj is Field => {
+  return obj && 
+    typeof obj === 'object' && 
+    'type' in obj && 
+    'label' in obj &&
+    typeof obj.label === 'string';
+};
+
+const isImageField = (field: any): field is ImageField => {
+  return field.type === 'image' || field.type === 'image-set';
+};
 
 export default function CustomizeTheme() {
   const params = useParams();
@@ -255,9 +311,28 @@ export default function CustomizeTheme() {
             pageData[sectionId][fieldId] = value || (field.type === 'image-set' ? [] : '');
           } 
           else if (field.type === 'array') {
-            // Use form input value
-            const formValue = (e.currentTarget as HTMLFormElement)[`${sectionId}.${fieldId}`]?.value;
-            pageData[sectionId][fieldId] = formValue || [];
+            const arrayData = [];
+            const formElement = e.currentTarget as HTMLFormElement;
+            const arrayField = field as Field;
+            
+            // Get the number of items (using minCount as default)
+            const itemCount = arrayField.minCount || 1;
+            
+            // For each item in the array
+            for (let i = 0; i < itemCount; i++) {
+              const itemData: Record<string, string> = {};
+              // For each field in the item
+              Object.keys(arrayField.items).forEach(itemKey => {
+                const inputName = `${sectionId}.${fieldId}.${i}.${itemKey}`;
+                const input = formElement[inputName];
+                if (input) {
+                  itemData[itemKey] = input.value;
+                }
+              });
+              arrayData.push(itemData);
+            }
+            
+            pageData[sectionId][fieldId] = arrayData;
           }
           else {
             // Use form input value
@@ -350,29 +425,215 @@ export default function CustomizeTheme() {
 
   // Modify the form field rendering to include image upload components
   const renderField = (sectionId: string, fieldId: string, field: Field) => {
-    if (field.type === 'image' || field.type === 'image-set') {
-      // Log the value being passed to help debug
-      console.log('Image field value:', {
-        sectionId,
-        fieldId,
-        value: formData[currentPage]?.[sectionId]?.[fieldId],
-        type: field.type
-      });
-
-      return (
-        <ImageUploadField
-          key={`${sectionId}.${fieldId}`}
-          id={`${sectionId}.${fieldId}`}
-          field={field as ImageField}
-          onUpload={handleImageUpload}
-          value={formData[currentPage]?.[sectionId]?.[fieldId] || (field.type === 'image-set' ? [] : '')}
-          isUploading={uploadingImages[`${sectionId}.${fieldId}`]}
-          schoolWebsiteId={website?.id || ''}
-        />
-      );
+    // Basic field type check
+    if (!field.type) {
+      console.warn(`Field ${fieldId} has no type defined`);
+      return null;
     }
-    
-    // ... existing field rendering logic ...
+
+    // Common props for all fields
+    const commonProps = {
+      id: `${sectionId}.${fieldId}`,
+      name: `${sectionId}.${fieldId}`,
+      required: field.required,
+      'aria-label': field.label,
+      className: "w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+    };
+
+    switch (field.type) {
+      case 'short-text':
+      case 'email':
+      case 'url':
+      case 'number':
+        return (
+          <input
+            type={field.type === 'short-text' ? 'text' : field.type}
+            {...commonProps}
+            minLength={field.minLength}
+            maxLength={field.maxLength}
+            defaultValue={field.default}
+            placeholder={`Enter ${field.label.toLowerCase()}`}
+          />
+        );
+
+      case 'long-text':
+        return (
+          <textarea
+            {...commonProps}
+            rows={4}
+            minLength={field.minLength}
+            maxLength={field.maxLength}
+            defaultValue={field.default}
+            placeholder={`Enter ${field.label.toLowerCase()}`}
+          />
+        );
+
+      case 'select':
+        return (
+          <select {...commonProps} defaultValue={field.default}>
+            <option value="">Select {field.label}</option>
+            {field.options?.map(option => (
+              <option key={option} value={option}>
+                {option}
+              </option>
+            ))}
+          </select>
+        );
+
+      case 'image':
+      case 'image-set':
+        return (
+          <ImageUploadField
+            id={`${sectionId}.${fieldId}`}
+            field={field as unknown as ImageField}
+            onUpload={handleImageUpload}
+            value={formData[currentPage]?.[sectionId]?.[fieldId]}
+            isUploading={uploadingImages[`${sectionId}.${fieldId}`]}
+            schoolWebsiteId={website?.id || ''}
+          />
+        );
+
+      case 'array':
+        return (
+          <ArrayField
+            sectionId={sectionId}
+            fieldId={fieldId}
+            field={field}
+            formData={formData}
+            setFormData={setFormData}
+            currentPage={currentPage}
+            renderField={renderField}
+          />
+        );
+
+      case 'object':
+        return (
+          <ObjectField
+            sectionId={sectionId}
+            fieldId={fieldId}
+            field={field}
+            renderField={renderField}
+          />
+        );
+
+      case 'html':
+        return (
+          <textarea
+            {...commonProps}
+            rows={6}
+            defaultValue={field.default}
+            placeholder="Enter HTML content"
+          />
+        );
+
+      default:
+        console.warn(`Unsupported field type: ${field.type}`);
+        return null;
+    }
+  };
+
+  // Separate component for array fields
+  const ArrayField = ({ sectionId, fieldId, field, formData, setFormData, currentPage, renderField }: ArrayFieldProps) => {
+    const currentValue = formData[currentPage]?.[sectionId]?.[fieldId] || [];
+    const itemCount = Math.max(field.minCount || 1, currentValue.length);
+
+    const handleRemoveItem = (index: number) => {
+      const newValue = [...currentValue];
+      newValue.splice(index, 1);
+      setFormData({
+        ...formData,
+        [currentPage]: {
+          ...formData[currentPage],
+          [sectionId]: {
+            ...formData[currentPage]?.[sectionId],
+            [fieldId]: newValue
+          }
+        }
+      });
+    };
+
+    const isImageField = (field: Field): field is ImageField => {
+      return field.type === 'image' || field.type === 'image-set';
+    };
+
+    return (
+      <div className="space-y-4">
+        {Array.from({ length: itemCount }).map((_, index) => (
+          <div key={index} className="p-6 bg-white border border-gray-200 rounded-lg shadow-sm">
+            <div className="mb-4 flex justify-between items-center">
+              <span className="text-sm font-medium text-gray-500">Item {index + 1}</span>
+              {index >= (field.minCount || 0) && (
+                <button
+                  type="button"
+                  onClick={() => handleRemoveItem(index)}
+                  className="text-red-500 hover:text-red-700"
+                >
+                  Remove
+                </button>
+              )}
+            </div>
+            {Object.entries(field.items).map(([itemKey, itemDef]) => {
+              const inputId = `${sectionId}.${fieldId}.${index}.${itemKey}`;
+              
+              // Handle object-based field definitions
+              if (typeof itemDef === 'object' && itemDef !== null) {
+                if (isFieldDefinition(itemDef) && itemDef.type === 'image') {
+                  if (!isImageField(itemDef)) return null;
+                  return (
+                    <div key={itemKey} className="mb-4">
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        {itemDef.label}
+                      </label>
+                      <ImageUploadField
+                        id={inputId}
+                        field={itemDef as unknown as ImageField}
+                        onUpload={handleImageUpload}
+                        value={currentValue[index]?.[itemKey]}
+                        isUploading={uploadingImages[inputId]}
+                        schoolWebsiteId={website?.id || ''}
+                      />
+                    </div>
+                  );
+                }
+                // Handle other object-based fields...
+              }
+              
+              // Handle string-based field definitions
+              if (typeof itemDef === 'string') {
+                // Existing string-based field handling...
+              }
+              
+              return null;
+            })}
+          </div>
+        ))}
+        {itemCount < (field.maxCount || Infinity) && (
+          <button
+            type="button"
+            onClick={() => {/* Add new item logic */}}
+            className="mt-2 px-4 py-2 text-sm font-medium text-blue-600 hover:text-blue-700 border border-blue-300 rounded-lg hover:bg-blue-50"
+          >
+            Add Item
+          </button>
+        )}
+      </div>
+    );
+  };
+
+  // Separate component for object fields
+  const ObjectField = ({ sectionId, fieldId, field, renderField }: ObjectFieldProps) => {
+    return (
+      <div className="space-y-4 p-6 bg-white border border-gray-200 rounded-lg">
+        {field.fields && Object.entries(field.fields).map(([key, subField]) => (
+          <div key={key}>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              {(subField as Field).label}
+            </label>
+            {renderField(`${sectionId}.${fieldId}`, key, subField as Field)}
+          </div>
+        ))}
+      </div>
+    );
   };
 
   if (isLoading) {
@@ -551,7 +812,7 @@ export default function CustomizeTheme() {
                       {(field.type === 'image' || field.type === 'image-set') && (
                         <ImageUploadField
                           id={`${sectionId}.${fieldId}`}
-                          field={field as ImageField}
+                          field={field as unknown as ImageField}
                           onUpload={handleImageUpload}
                           value={formData[currentPage]?.[sectionId]?.[fieldId]}
                           isUploading={uploadingImages[`${sectionId}.${fieldId}`]}
@@ -597,6 +858,56 @@ export default function CustomizeTheme() {
                       {field.maxLength && (
                         <div className="mt-1 text-sm text-gray-500">
                           Maximum {field.maxLength} characters
+                        </div>
+                      )}
+                      {field.type === 'array' && (
+                        <div className="space-y-4">
+                          {Array.from({ length: (field as Field).minCount || 1 }).map((_, index) => (
+                            <div key={index} className="p-4 border rounded-lg">
+                              {Object.entries((field as Field).items).map(([itemKey, itemType]) => {
+                                const inputId = `${sectionId}.${fieldId}.${index}.${itemKey}`;
+                                
+                                if (typeof itemType === 'string') {
+                                  if (itemType.startsWith('select:')) {
+                                    const options = itemType.split(':')[1].split(',');
+                                    return (
+                                      <div key={itemKey} className="mb-4">
+                                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                                          {itemKey.charAt(0).toUpperCase() + itemKey.slice(1)}
+                                        </label>
+                                        <select
+                                          id={inputId}
+                                          name={inputId}
+                                          className="w-full px-4 py-2.5 rounded-lg border border-gray-300"
+                                        >
+                                          {options.map(option => (
+                                            <option key={option} value={option}>
+                                              {option.charAt(0).toUpperCase() + option.slice(1)}
+                                            </option>
+                                          ))}
+                                        </select>
+                                      </div>
+                                    );
+                                  }
+                                  
+                                  return (
+                                    <div key={itemKey} className="mb-4">
+                                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                                        {itemKey.charAt(0).toUpperCase() + itemKey.slice(1)}
+                                      </label>
+                                      <input
+                                        type="text"
+                                        id={inputId}
+                                        name={inputId}
+                                        className="w-full px-4 py-2.5 rounded-lg border border-gray-300"
+                                      />
+                                    </div>
+                                  );
+                                }
+                                return null;
+                              })}
+                            </div>
+                          ))}
                         </div>
                       )}
                     </div>
