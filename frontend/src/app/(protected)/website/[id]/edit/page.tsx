@@ -117,6 +117,12 @@ export default function EditWebsitePage() {
     }
   };
 
+  // Filter out metadata fields from website data
+  const filterWebsiteData = (data: Record<string, any>) => {
+    const { name, author, images, createdAt, description, ...contentData } = data;
+    return contentData;
+  };
+
   if (isLoading) {
     return (
       <div className="min-h-screen bg-gray-50">
@@ -144,14 +150,14 @@ export default function EditWebsitePage() {
           <div className="lg:col-span-3">
             <div className="flex items-center text-center justify-between mb-6">
               <h1 className="text-3xl font-bold bg-clip-text text-gray-900">
-                Edit Website
+                Edit Website Content
               </h1>
             </div>
             
             {website && (
               <div className="bg-transparent">
                 <WebsiteForm
-                  initialData={website.data}
+                  initialData={filterWebsiteData(website.data)}
                   onSave={handleSaveChanges}
                   isEdit={true}
                 />
@@ -165,7 +171,7 @@ export default function EditWebsitePage() {
               <VersionHistory
                 versions={versions}
                 onActivate={handleActivateVersion}
-                currentData={website?.data || {}}
+                currentData={website?.data ? filterWebsiteData(website.data) : {}}
               />
             </div>
           </div>

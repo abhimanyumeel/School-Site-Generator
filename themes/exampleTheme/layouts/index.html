@@ -34,7 +34,7 @@
                 {{ range .items }}
                 <div class="feature-card">
                     {{ with .icon }}
-                    <img src="{{ . | replaceRE "^/uploads/temp/" "/uploads/" | relURL }}" alt="{{ $.title }}" class="feature-icon">
+                    <img src="{{ . | replaceRE "^/uploads/temp/" "/uploads/" | relURL }}" alt="Feature Icon" class="feature-icon">
                     {{ end }}
                     <h3>{{ .title }}</h3>
                     <p>{{ .description }}</p>
@@ -67,7 +67,7 @@
                 {{ range .articles }}
                 <article class="news-card">
                     {{ with .image }}
-                    <img src="{{ . | relURL }}" alt="{{ $.title }}">
+                    <img src="{{ . | relURL }}" alt="{{ .title }}" class="news-image">
                     {{ end }}
                     <div class="news-content">
                         <h3>{{ .title }}</h3>
@@ -104,7 +104,7 @@
                     <blockquote>{{ .quote }}</blockquote>
                     <cite>
                         {{ with .avatar }}
-                        <img src="{{ . | relURL }}" alt="{{ $.name }}">
+                        <img src="{{ . | relURL }}" alt="{{ .name }}" class="avatar">
                         {{ end }}
                         <span class="name">{{ .name }}</span>
                         <span class="role">{{ .role }}</span>

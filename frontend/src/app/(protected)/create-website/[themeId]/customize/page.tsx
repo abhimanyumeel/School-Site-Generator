@@ -541,7 +541,7 @@ export default function CustomizeTheme() {
   };
 
   // Separate component for array fields
-  const ArrayField = ({ sectionId, fieldId, field, formData, setFormData, currentPage, renderField }: ArrayFieldProps) => {
+  const ArrayField = ({ sectionId, fieldId, field, formData, setFormData, currentPage }: ArrayFieldProps) => {
     const currentValue = formData[currentPage]?.[sectionId]?.[fieldId] || [];
     const itemCount = Math.max(field.minCount || 1, currentValue.length);
 
@@ -552,23 +552,17 @@ export default function CustomizeTheme() {
             {Object.entries(field.items).map(([itemKey, itemDef]) => {
               const inputId = `${sectionId}.${fieldId}.${index}.${itemKey}`;
               
-              // Handle string-based image field
-              if (itemDef === 'image') {
-                const imageField: ImageField = {
-                  type: 'image',
-                  label: itemKey.charAt(0).toUpperCase() + itemKey.slice(1),
-                  ratio: '16:9',
-                  showCroppingTool: true,
-                  ...(theme?.fieldTypes?.image || {})
-                };
+              // Handle object-type fields (like image)
+              if (itemDef && typeof itemDef === 'object' && 'type' in itemDef && itemDef.type === 'image') {
+                const typedItemDef = itemDef as ImageField;
                 return (
                   <div key={itemKey} className="mb-4">
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      {imageField.label}
+                      {typedItemDef.label}
                     </label>
                     <ImageUploadField
                       id={inputId}
-                      field={imageField}
+                      field={typedItemDef}
                       onUpload={handleImageUpload}
                       value={currentValue[index]?.[itemKey]}
                       isUploading={uploadingImages[inputId]}
@@ -578,7 +572,7 @@ export default function CustomizeTheme() {
                 );
               }
 
-              // Handle other string-based fields
+              // Existing code for other field types...
               if (typeof itemDef === 'string') {
                 if (itemDef.startsWith('select:')) {
                   const options = itemDef.split(':')[1].split(',');
