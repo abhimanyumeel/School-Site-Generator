@@ -295,33 +295,16 @@
               "minCount": 1,
               "maxCount": 12,
               "items": {
-                "name": {
-                  "type": "short-text",
-                  "label": "Member Name",
-                  "required": true
-                },
-                "role": {
-                  "type": "short-text",
-                  "label": "Position/Role",
-                  "required": true
-                },
-                "bio": {
-                  "type": "long-text",
-                  "label": "Biography",
-                  "required": true
-                },
+                "name": "short-text",
+                "role": "short-text",
+                "bio": "long-text",
                 "photo": {
                   "type": "image",
                   "label": "Profile Photo",
-                  "required": true,
                   "ratio": "1:1",
                   "showCroppingTool": true
                 },
-                "qualifications": {
-                  "type": "short-text",
-                  "label": "Qualifications",
-                  "required": true
-                }
+                "qualifications": "short-text"
               }
             }
           }

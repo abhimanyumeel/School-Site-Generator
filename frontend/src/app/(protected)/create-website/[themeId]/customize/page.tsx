@@ -37,6 +37,14 @@ interface Theme {
   name: string;
   previewPath: string;
   metadata: ThemeMetadata;
+  fieldTypes?: {
+    image?: {
+      ratio?: string;
+      showCroppingTool?: boolean;
+      minWidth?: number;
+      minHeight?: number;
+    };
+  };
 }
 
 interface User {
@@ -537,46 +545,21 @@ export default function CustomizeTheme() {
     const currentValue = formData[currentPage]?.[sectionId]?.[fieldId] || [];
     const itemCount = Math.max(field.minCount || 1, currentValue.length);
 
-    const handleRemoveItem = (index: number) => {
-      const newValue = [...currentValue];
-      newValue.splice(index, 1);
-      setFormData({
-        ...formData,
-        [currentPage]: {
-          ...formData[currentPage],
-          [sectionId]: {
-            ...formData[currentPage]?.[sectionId],
-            [fieldId]: newValue
-          }
-        }
-      });
-    };
-
     return (
       <div className="space-y-4">
         {Array.from({ length: itemCount }).map((_, index) => (
-          <div key={index} className="p-6 bg-white border border-gray-200 rounded-lg shadow-sm">
-            <div className="mb-4 flex justify-between items-center">
-              <span className="text-sm font-medium text-gray-500">Item {index + 1}</span>
-              {index >= (field.minCount || 0) && (
-                <button
-                  type="button"
-                  onClick={() => handleRemoveItem(index)}
-                  className="text-red-500 hover:text-red-700"
-                >
-                  Remove
-                </button>
-              )}
-            </div>
+          <div key={index} className="p-4 border rounded-lg">
             {Object.entries(field.items).map(([itemKey, itemDef]) => {
               const inputId = `${sectionId}.${fieldId}.${index}.${itemKey}`;
               
-              // Handle image field
-              if (itemDef && typeof itemDef === 'object' && (itemDef as { type?: string }).type === 'image') {
+              // Handle string-based image field
+              if (itemDef === 'image') {
                 const imageField: ImageField = {
                   type: 'image',
-                  label: (itemDef as { label?: string }).label || '',
-                  ...itemDef as Partial<ImageField>
+                  label: itemKey.charAt(0).toUpperCase() + itemKey.slice(1),
+                  ratio: '16:9',
+                  showCroppingTool: true,
+                  ...(theme?.fieldTypes?.image || {})
                 };
                 return (
                   <div key={itemKey} className="mb-4">
@@ -595,22 +578,48 @@ export default function CustomizeTheme() {
                 );
               }
 
-              // Handle other field types (string-based)
+              // Handle other string-based fields
               if (typeof itemDef === 'string') {
-                // ... existing string field handling code ...
+                if (itemDef.startsWith('select:')) {
+                  const options = itemDef.split(':')[1].split(',');
+                  return (
+                    <div key={itemKey} className="mb-4">
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        {itemKey.charAt(0).toUpperCase() + itemKey.slice(1)}
+                      </label>
+                      <select
+                        id={inputId}
+                        name={inputId}
+                        className="w-full px-4 py-2.5 rounded-lg border border-gray-300"
+                      >
+                        {options.map(option => (
+                          <option key={option} value={option}>
+                            {option.charAt(0).toUpperCase() + option.slice(1)}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  );
+                }
+                
+                return (
+                  <div key={itemKey} className="mb-4">
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      {itemKey.charAt(0).toUpperCase() + itemKey.slice(1)}
+                    </label>
+                    <input
+                      type="text"
+                      id={inputId}
+                      name={inputId}
+                      className="w-full px-4 py-2.5 rounded-lg border border-gray-300"
+                    />
+                  </div>
+                );
               }
+              return null;
             })}
           </div>
         ))}
-        {itemCount < (field.maxCount || Infinity) && (
-          <button
-            type="button"
-            onClick={() => {/* Add new item logic */}}
-            className="mt-2 px-4 py-2 text-sm font-medium text-blue-600 hover:text-blue-700 border border-blue-300 rounded-lg hover:bg-blue-50"
-          >
-            Add Item
-          </button>
-        )}
       </div>
     );
   };
