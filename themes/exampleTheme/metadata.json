@@ -138,12 +138,8 @@
                 "image": {
                   "type": "image",
                   "label": "Article Image",
-                  "required": false,
                   "ratio": "16:9",
-                  "showCroppingTool": true,
-                  "minWidth": 800,
-                  "minHeight": 450,
-                  "description": "Featured image for the article"
+                  "showCroppingTool": true
                 },
                 "category": "select:News,Events,Announcements,Alerts,Academic,Sports,Culture,Other"
               }

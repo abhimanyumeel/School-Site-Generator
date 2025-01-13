@@ -552,10 +552,6 @@ export default function CustomizeTheme() {
       });
     };
 
-    const isImageField = (field: Field): field is ImageField => {
-      return field.type === 'image' || field.type === 'image-set';
-    };
-
     return (
       <div className="space-y-4">
         {Array.from({ length: itemCount }).map((_, index) => (
@@ -575,35 +571,34 @@ export default function CustomizeTheme() {
             {Object.entries(field.items).map(([itemKey, itemDef]) => {
               const inputId = `${sectionId}.${fieldId}.${index}.${itemKey}`;
               
-              // Handle object-based field definitions
-              if (typeof itemDef === 'object' && itemDef !== null) {
-                if (isFieldDefinition(itemDef) && itemDef.type === 'image') {
-                  if (!isImageField(itemDef)) return null;
-                  return (
-                    <div key={itemKey} className="mb-4">
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        {itemDef.label}
-                      </label>
-                      <ImageUploadField
-                        id={inputId}
-                        field={itemDef as unknown as ImageField}
-                        onUpload={handleImageUpload}
-                        value={currentValue[index]?.[itemKey]}
-                        isUploading={uploadingImages[inputId]}
-                        schoolWebsiteId={website?.id || ''}
-                      />
-                    </div>
-                  );
-                }
-                // Handle other object-based fields...
+              // Handle image field
+              if (itemDef && typeof itemDef === 'object' && (itemDef as { type?: string }).type === 'image') {
+                const imageField: ImageField = {
+                  type: 'image',
+                  label: (itemDef as { label?: string }).label || '',
+                  ...itemDef as Partial<ImageField>
+                };
+                return (
+                  <div key={itemKey} className="mb-4">
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      {imageField.label}
+                    </label>
+                    <ImageUploadField
+                      id={inputId}
+                      field={imageField}
+                      onUpload={handleImageUpload}
+                      value={currentValue[index]?.[itemKey]}
+                      isUploading={uploadingImages[inputId]}
+                      schoolWebsiteId={website?.id || ''}
+                    />
+                  </div>
+                );
               }
-              
-              // Handle string-based field definitions
+
+              // Handle other field types (string-based)
               if (typeof itemDef === 'string') {
-                // Existing string-based field handling...
+                // ... existing string field handling code ...
               }
-              
-              return null;
             })}
           </div>
         ))}
