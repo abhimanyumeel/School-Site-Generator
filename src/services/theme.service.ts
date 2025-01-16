@@ -12,6 +12,10 @@ import { WebsiteVersion } from '../entities/website-version.entity';
 import { UploadService } from './upload.service';
 import { title } from 'process';
 import * as yaml from 'js-yaml';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Document } from '../entities/document.entity';
+import { DocumentGroup } from '../entities/document-group.entity';
+import { Repository } from 'typeorm';
 
 interface FieldConfig {
   type: string;
@@ -29,7 +33,11 @@ export class ThemeService {
   constructor(
     @InjectConnection()
     private connection: Connection,
-    private readonly uploadService: UploadService
+    private readonly uploadService: UploadService,
+    @InjectRepository(Document)
+    private documentRepository: Repository<Document>,
+    @InjectRepository(DocumentGroup)
+    private documentGroupRepository: Repository<DocumentGroup>
   ) {}
 
   async getAllThemes() {
@@ -71,14 +79,16 @@ export class ThemeService {
 
   async generateTheme(themeData: CreateThemeDataDto, userId: string) {
     try {
-      const { themeFolderPath, temporaryFolderPath, buildFolderPath, tempThemesPath } = 
-        await this.createPaths(themeData);
+      const paths = await this.createPaths(themeData);
+      
+      await this.verifyAndPrepareDirectories(
+        paths.themeFolderPath,
+        paths.temporaryFolderPath,
+        paths.tempThemesPath
+      );
 
       // Log the incoming data to verify image URLs
       this.logger.log('Incoming theme data:', JSON.stringify(themeData.data, null, 2));
-
-      // Verify and prepare directories
-      await this.verifyAndPrepareDirectories(themeFolderPath, temporaryFolderPath, tempThemesPath);
 
       // Create website record first to get the ID
       const websiteRepository = this.connection.getRepository(SchoolWebsite);
@@ -88,7 +98,7 @@ export class ThemeService {
         userId: userId,
         data: themeData.data,
         currentVersion: 1,
-        currentBuildPath: buildFolderPath,
+        currentBuildPath: paths.buildFolderPath,
         status: 'active',
         schoolId: null
       });
@@ -96,7 +106,7 @@ export class ThemeService {
       await websiteRepository.save(website);
 
       // 1. Create finalBuild/static/uploads directory
-      const uploadsPath = path.join(buildFolderPath, 'static', 'uploads');
+      const uploadsPath = path.join(paths.buildFolderPath, 'static', 'uploads');
       await fs.mkdir(uploadsPath, { recursive: true });
       
       // 2. Copy images from temp to website's finalBuild/static/uploads directory
@@ -130,20 +140,36 @@ export class ThemeService {
       this.logger.log('Data structure before processing:', JSON.stringify(processedData, null, 2));
       
       // Add image URLs to data - recursive function to handle nested objects
-      const processImageFields = (obj: any, path = '') => {
+      const processImageFields = async (obj: any, path = '', websiteId: string) => {
         for (const key in obj) {
           const value = obj[key];
           const currentPath = path ? `${path}.${key}` : key;
 
           if (typeof value === 'string' && value.startsWith('/uploads/temp/')) {
-            // Extract filename and update path to point to static/uploads
             const filename = value.split('/').pop();
             const newPath = `/static/uploads/${filename}`;
             obj[key] = newPath;
             processedData.images[currentPath] = newPath;
-            this.logger.log(`Found image URL at ${currentPath}:`, newPath);
+
+            // Add this block to persist image data
+            const documentGroup = await this.documentGroupRepository.save({
+              schoolWebsiteId: websiteId,
+              accessor: currentPath,
+            });
+
+            await this.documentRepository.save({
+              type: 'image',
+              name: filename,
+              mimeType: 'image/webp',
+              path: newPath,
+              url: newPath,
+              documentGroupId: documentGroup.id,
+              order: 0,
+            });
+
+            this.logger.log(`Persisted image for ${currentPath}:`, newPath);
           } else if (Array.isArray(value)) {
-            value.forEach((item, index) => {
+            await Promise.all(value.map(async (item, index) => {
               if (typeof item === 'string' && item.startsWith('/uploads/temp/')) {
                 const filename = item.split('/').pop();
                 const newPath = `/static/uploads/${filename}`;
@@ -151,29 +177,34 @@ export class ThemeService {
                 processedData.images[`${currentPath}[${index}]`] = newPath;
                 this.logger.log(`Found image URL in array at ${currentPath}[${index}]:`, newPath);
               } else if (typeof item === 'object' && item !== null) {
-                processImageFields(item, `${currentPath}[${index}]`);
+                await processImageFields(item, `${currentPath}[${index}]`, websiteId);
               }
-            });
+            }));
           } else if (typeof value === 'object' && value !== null) {
-            processImageFields(value, currentPath);
+            await processImageFields(value, currentPath, websiteId);
           }
         }
       };
 
       // Process all image URLs in the data
-      processImageFields(processedData);
+      await processImageFields(processedData, '', website.id);
 
       // Log the processed data
       this.logger.log('Processed data:', JSON.stringify(processedData, null, 2));
 
       // Generate site with processed data
-      await this.generateSiteStructure(temporaryFolderPath, {
-        ...themeData,
-        data: processedData
-      });
+      await this.generateSiteStructure(
+        paths.temporaryFolderPath, 
+        {
+          ...themeData,
+          data: processedData,
+          websiteId: website.id
+        },
+        website.id
+      );
 
       // Build the site
-      const buildResult = await this.buildSite(temporaryFolderPath, buildFolderPath);
+      const buildResult = await this.buildSite(paths.temporaryFolderPath, paths.buildFolderPath);
 
       // Create initial version with processed data
       const versionRepository = this.connection.getRepository(WebsiteVersion);
@@ -181,7 +212,7 @@ export class ThemeService {
         websiteId: website.id,
         versionNumber: 1,
         data: processedData,
-        buildPath: buildFolderPath,
+        buildPath: paths.buildFolderPath,
         isActive: true,
         changeDescription: 'Initial version',
         createdById: userId
@@ -192,7 +223,7 @@ export class ThemeService {
       return {
         status: 'success',
         message: 'Theme generated successfully',
-        buildPath: buildFolderPath,
+        buildPath: paths.buildFolderPath,
         timestamp: new Date().toISOString()
       };
     } catch (error) {
@@ -250,7 +281,11 @@ export class ThemeService {
     }
   }
 
-  private async generateSiteStructure(temporaryFolderPath: string, themeData: CreateThemeDataDto) {
+  private async generateSiteStructure(
+    temporaryFolderPath: string, 
+    themeData: CreateThemeDataDto,
+    websiteId: string
+  ) {
     try {
       // Create data directory and write site data
       await this.createDataDirectory(temporaryFolderPath, themeData);
@@ -669,5 +704,58 @@ disableKinds = []
         throw new Error(`Required field ${path}.${fieldName} is missing`);
       }
     }
+  }
+
+  private async persistImages(data: any, websiteId: string): Promise<any> {
+    const processValue = async (value: any, path: string) => {
+      if (typeof value === 'string' && value.startsWith('/uploads/temp/')) {
+        const filename = value.split('/').pop();
+        const newPath = `/static/uploads/${filename}`;
+
+        // Create document group and document
+        let documentGroup = await this.documentGroupRepository.findOne({
+          where: {
+            schoolWebsiteId: websiteId,
+            accessor: path,
+          },
+        });
+
+        if (!documentGroup) {
+          documentGroup = await this.documentGroupRepository.save({
+            schoolWebsiteId: websiteId,
+            accessor: path,
+          });
+        }
+
+        await this.documentRepository.save({
+          type: 'image',
+          name: filename,
+          mimeType: 'image/webp',
+          path: newPath,
+          url: newPath,
+          documentGroupId: documentGroup.id,
+          order: 0,
+        });
+
+        return newPath;
+      }
+      return value;
+    };
+
+    const processObject = async (obj: any, parentPath = ''): Promise<any> => {
+      const result = { ...obj };
+      for (const [key, value] of Object.entries(obj)) {
+        const currentPath = parentPath ? `${parentPath}.${key}` : key;
+        
+        if (typeof value === 'object' && value !== null) {
+          result[key] = await processObject(value, currentPath);
+        } else {
+          result[key] = await processValue(value, currentPath);
+        }
+      }
+      return result;
+    };
+
+    return processObject(data);
   }
 }

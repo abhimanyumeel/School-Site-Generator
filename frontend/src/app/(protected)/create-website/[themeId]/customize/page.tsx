@@ -364,33 +364,36 @@ export default function CustomizeTheme() {
 
       if (isLastPage) {
         try {
-          // Prepare final payload with all required data
-          const payload = {
-            themeName: theme?.id,
-            data: {
-              name: updatedFormData.home?.hero?.title || 'My Website',
-              description: updatedFormData.home?.hero?.subtitle || 'My Website Description',
-              author: 'Anonymous',
-              createdAt: new Date().toISOString(),
-              ...updatedFormData,
+          // First, create or get the website
+          let websiteId = website?.id;
+          
+          if (!websiteId) {
+            // Create a new website record
+            const websiteResponse = await axios.post('/themes/generate', {
+              themeName: theme?.id, // Use theme.id as themeName
+              websiteId: 'new', // Special value to indicate new website
+              data: {
+                name: updatedFormData.home?.hero?.title || 'My Website',
+                description: updatedFormData.home?.hero?.subtitle || 'My Website Description',
+                author: 'Anonymous',
+                createdAt: new Date().toISOString(),
+                ...updatedFormData,
+              }
+            });
+
+            console.log('Response received:', websiteResponse.data);
+
+            const buildData = websiteResponse.data.data;
+
+            if (buildData?.buildPath) {
+              router.push(`/create-website/${params.themeId}/success?buildPath=${encodeURIComponent(buildData.buildPath)}`);
+            } else {
+              console.error('Invalid response structure:', websiteResponse.data);
+              setError('Invalid response from server. Missing build path.');
             }
-          };
 
-          console.log('Submitting complete payload:', payload);
-
-          const response = await axios.post<GenerateResponse>('/themes/generate', payload);
-          console.log('Response received:', response.data);
-
-          const buildData = response.data.data;
-
-          if (buildData?.buildPath) {
-            router.push(`/create-website/${params.themeId}/success?buildPath=${encodeURIComponent(buildData.buildPath)}`);
-          } else {
-            console.error('Invalid response structure:', response.data);
-            setError('Invalid response from server. Missing build path.');
+            localStorage.removeItem(`formData-${params.themeId}`);
           }
-
-          localStorage.removeItem(`formData-${params.themeId}`);
         } catch (error) {
           if (isAxiosError(error)) {
             const errorMessage = error.response?.data?.message || error.message;

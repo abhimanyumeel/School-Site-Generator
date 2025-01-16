@@ -4,17 +4,21 @@ import { useState, useEffect } from 'react';
 import { HiOutlineInformationCircle } from 'react-icons/hi';
 import { IoCheckmarkCircle } from 'react-icons/io5';
 import { Tooltip } from '@/components/ui/Tooltip';
+import Image from 'next/image';
+import axios from '@/lib/axios';
 
 interface WebsiteFormProps {
   initialData: any;
   onSave: (formData: any, changeDescription: string) => Promise<void>;
   isEdit?: boolean;
+  schoolWebsiteId?: string;
 }
 
 export default function WebsiteForm({ 
   initialData, 
   onSave, 
-  isEdit = false 
+  isEdit = false,
+  schoolWebsiteId 
 }: WebsiteFormProps) {
   const [formData, setFormData] = useState<any>(initialData || {});
   const [changeDescription, setChangeDescription] = useState('');
@@ -59,6 +63,13 @@ export default function WebsiteForm({
       current[keys[keys.length - 1]] = value;
       return newData;
     });
+  };
+
+  const isImageField = (fieldName: string) => {
+    const imageKeywords = ['image', 'logo', 'photo', 'picture', 'banner', 'background'];
+    return imageKeywords.some(keyword => 
+      fieldName.toLowerCase().includes(keyword)
+    );
   };
 
   return (
@@ -109,6 +120,8 @@ export default function WebsiteForm({
                             value={value}
                             path={`${section}.${field}.${subField}`}
                             onChange={handleInputChange}
+                            fieldType={isImageField(field) ? 'image' : 'text'}
+                            schoolWebsiteId={schoolWebsiteId}
                           />
                         ))}
                       </div>
@@ -124,6 +137,8 @@ export default function WebsiteForm({
                   value={fieldData}
                   path={`${section}.${field}`}
                   onChange={handleInputChange}
+                  fieldType={isImageField(field) ? 'image' : 'text'}
+                  schoolWebsiteId={schoolWebsiteId}
                 />
               );
             })}
@@ -172,17 +187,102 @@ export default function WebsiteForm({
 }
 
 // FormField Component
-function FormField({ 
-  label, 
-  value, 
-  path, 
-  onChange 
-}: { 
+interface FormFieldProps {
   label: string;
   value: string;
   path: string;
   onChange: (path: string, value: string) => void;
-}) {
+  fieldType?: 'text' | 'image';
+  schoolWebsiteId?: string;
+}
+
+function FormField({ 
+  label, 
+  value, 
+  path, 
+  onChange,
+  fieldType = 'text',
+  schoolWebsiteId
+}: FormFieldProps) {
+  const [isUploading, setIsUploading] = useState(false);
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    try {
+      setIsUploading(true);
+      const formData = new FormData();
+      formData.append('file', file);
+
+      // Extract section and fieldId from path (e.g., "hero.backgroundImage")
+      const [section, fieldId] = path.split('.');
+      
+      formData.append('section', section);
+      formData.append('fieldId', fieldId);
+      if (schoolWebsiteId) {
+        formData.append('schoolWebsiteId', schoolWebsiteId);
+      }
+
+      const response = await axios.post('/upload', formData);
+      onChange(path, response.data.url);
+    } catch (error) {
+      console.error('Failed to upload image:', error);
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
+  if (fieldType === 'image') {
+    return (
+      <div className="relative group">
+        <label className="block text-sm font-medium mb-2 text-gray-500 capitalize">
+          {label.replace(/([A-Z])/g, ' $1').trim()}
+        </label>
+        <div className="space-y-4">
+          {value && (
+            <div className="relative w-full h-48 bg-gray-100 rounded-lg overflow-hidden">
+              <Image
+                src={value}
+                alt={label}
+                fill
+                className="object-contain"
+              />
+              <button
+                type="button"
+                onClick={() => onChange(path, '')}
+                className="absolute top-2 right-2 p-1 bg-red-500 text-white rounded-full 
+                           hover:bg-red-600 transition-colors"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+          )}
+          <div className="relative">
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleImageUpload}
+              className="w-full px-5 py-4 rounded-lg border border-gray-300
+                       file:mr-4 file:py-2 file:px-4
+                       file:rounded-full file:border-0
+                       file:text-sm file:font-semibold
+                       file:bg-indigo-50 file:text-indigo-700
+                       hover:file:bg-indigo-100"
+            />
+            {isUploading && (
+              <div className="absolute inset-0 bg-white/50 flex items-center justify-center">
+                <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-indigo-500"></div>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="relative group">
       <label className="block text-sm font-medium mb-2 text-gray-500 

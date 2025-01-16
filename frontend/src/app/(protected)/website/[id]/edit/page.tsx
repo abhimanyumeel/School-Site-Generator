@@ -160,6 +160,7 @@ export default function EditWebsitePage() {
                   initialData={filterWebsiteData(website.data)}
                   onSave={handleSaveChanges}
                   isEdit={true}
+                  schoolWebsiteId={params.id as string}
                 />
               </div>
             )}

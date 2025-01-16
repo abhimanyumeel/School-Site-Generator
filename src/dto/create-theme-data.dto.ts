@@ -7,4 +7,8 @@ export class CreateThemeDataDto {
 
   @IsObject()
   data: Record<string, any>;
+
+  @IsNotEmpty()
+  @IsString()
+  websiteId: string;
 } 
