@@ -1,15 +1,62 @@
 {{ define "main" }}
-
-<div class="contact-page">
+<div class="contact-page bg-gray-50 py-16">
     {{ with .Site.Data.data.contact.info }}
-    <section class="contact-info">
-        <h1>{{ .title }}</h1>
-        {{ if .contactInfo }}
-        <div class="contact-details">
-            {{ .contactInfo }}
-        </div>
-        {{ end }}
-    </section>
+    <div class="container mx-auto px-4">
+        <section class="contact-info bg-white rounded-lg shadow-lg p-8 max-w-3xl mx-auto">
+            <h1 class="text-3xl font-bold text-gray-900 mb-8">{{ .title }}</h1>
+            
+            <div class="contact-details space-y-6 max-w-xl">
+                <!-- Address -->
+                {{ if .address }}
+                <div class="flex items-start">
+                    <div class="ml-3 flex-1">
+                        <h3 class="text-lg font-medium text-gray-900">Address</h3>
+                        <p class="mt-1 text-gray-600">{{ .address }}</p>
+                    </div>
+                </div>
+                {{ end }}
+
+                <!-- Phone -->
+                {{ if .phone }}
+                <div class="flex items-start">
+                    <div class="ml-3 flex-1">
+                        <h3 class="text-lg font-medium text-gray-900">Phone</h3>
+                        <p class="mt-1 text-gray-600">{{ .phone }}</p>
+                    </div>
+                </div>
+                {{ end }}
+
+                <!-- Email -->
+                {{ if .email }}
+                <div class="flex items-start">
+                    <div class="ml-3 flex-1">
+                        <h3 class="text-lg font-medium text-gray-900">Email</h3>
+                        <p class="mt-1 text-gray-600">{{ .email }}</p>
+                    </div>
+                </div>
+                {{ end }}
+
+                <!-- Office Hours -->
+                {{ if .officeHours }}
+                <div class="flex items-start">
+                    <div class="ml-3 flex-1">
+                        <h3 class="text-lg font-medium text-gray-900">Office Hours</h3>
+                        <p class="mt-1 text-gray-600">{{ .officeHours }}</p>
+                    </div>
+                </div>
+                {{ end }}
+            </div>
+
+            <!-- Google Maps Embed -->
+            {{ if .mapEmbed }}
+            <div class="mt-8">
+                <div class="map-container rounded-lg overflow-hidden shadow-md">
+                    {{ .mapEmbed | safeHTML }}
+                </div>
+            </div>
+            {{ end }}
+        </section>
+    </div>
     {{ end }}
 </div>
 {{ end }}

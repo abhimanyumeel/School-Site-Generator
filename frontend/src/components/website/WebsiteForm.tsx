@@ -65,14 +65,16 @@ export default function WebsiteForm({
     });
   };
 
-  const isImageField = (fieldName: string) => {
+  const isImageField = (fieldName: string, value: any) => {
     const imageKeywords = ['image', 'logo', 'photo', 'picture', 'banner', 'background'];
-    return imageKeywords.some(keyword => 
-      fieldName.toLowerCase().includes(keyword)
+    return (
+      imageKeywords.some(keyword => fieldName.toLowerCase().includes(keyword)) ||
+      (typeof value === 'string' && value.startsWith('/static/uploads/'))
     );
   };
 
   return (
+    
     <form onSubmit={handleSubmit} className="max-w-5xl mx-auto space-y-8">
       {isEdit && (
         <div className="bg-indigo-200 rounded-xl p-8 shadow-sm border border-gray-400 hover:shadow-xl">
@@ -105,6 +107,8 @@ export default function WebsiteForm({
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {Object.entries(fields).map(([field, fieldData]: [string, any]) => {
+              const fieldType = isImageField(field, fieldData) ? 'image' : 'text';
+              
               if (typeof fieldData === 'object' && fieldData !== null) {
                 return (
                   <div key={field} className="col-span-full">
@@ -120,7 +124,7 @@ export default function WebsiteForm({
                             value={value}
                             path={`${section}.${field}.${subField}`}
                             onChange={handleInputChange}
-                            fieldType={isImageField(field) ? 'image' : 'text'}
+                            fieldType={isImageField(subField, value) ? 'image' : 'text'}
                             schoolWebsiteId={schoolWebsiteId}
                           />
                         ))}
@@ -137,7 +141,7 @@ export default function WebsiteForm({
                   value={fieldData}
                   path={`${section}.${field}`}
                   onChange={handleInputChange}
-                  fieldType={isImageField(field) ? 'image' : 'text'}
+                  fieldType={fieldType}
                   schoolWebsiteId={schoolWebsiteId}
                 />
               );
@@ -205,6 +209,7 @@ function FormField({
   schoolWebsiteId
 }: FormFieldProps) {
   const [isUploading, setIsUploading] = useState(false);
+  const [uploadError, setUploadError] = useState<string | null>(null);
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -212,11 +217,12 @@ function FormField({
 
     try {
       setIsUploading(true);
+      setUploadError(null);
       const formData = new FormData();
       formData.append('file', file);
 
-      // Extract section and fieldId from path (e.g., "hero.backgroundImage")
-      const [section, fieldId] = path.split('.');
+      const [section, ...fieldParts] = path.split('.');
+      const fieldId = fieldParts.join('.');
       
       formData.append('section', section);
       formData.append('fieldId', fieldId);
@@ -228,31 +234,46 @@ function FormField({
       onChange(path, response.data.url);
     } catch (error) {
       console.error('Failed to upload image:', error);
+      setUploadError('Failed to upload image. Please try again.');
     } finally {
       setIsUploading(false);
     }
   };
 
+  // Add validation for image src
+  const isValidImageSrc = (src: string | null | undefined): boolean => {
+    return Boolean(src && typeof src === 'string' && src.length > 0);
+  };
+  console.log('value foroundv',value)
+
+
   if (fieldType === 'image') {
+    
     return (
       <div className="relative group">
         <label className="block text-sm font-medium mb-2 text-gray-500 capitalize">
           {label.replace(/([A-Z])/g, ' $1').trim()}
         </label>
         <div className="space-y-4">
-          {value && (
+          {/* Only render Image component if value is valid */}
+          {isValidImageSrc(value) && (
             <div className="relative w-full h-48 bg-gray-100 rounded-lg overflow-hidden">
               <Image
                 src={value}
-                alt={label}
+                alt={label || 'Image preview'}
                 fill
                 className="object-contain"
+                onError={(e) => {
+                  console.error('Image failed to load:', value);
+                  // Optionally set a fallback image
+                  // e.currentTarget.src = '/path/to/fallback-image.jpg';
+                }}
               />
               <button
                 type="button"
                 onClick={() => onChange(path, '')}
                 className="absolute top-2 right-2 p-1 bg-red-500 text-white rounded-full 
-                           hover:bg-red-600 transition-colors"
+                         hover:bg-red-600 transition-colors"
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -266,11 +287,11 @@ function FormField({
               accept="image/*"
               onChange={handleImageUpload}
               className="w-full px-5 py-4 rounded-lg border border-gray-300
-                       file:mr-4 file:py-2 file:px-4
-                       file:rounded-full file:border-0
-                       file:text-sm file:font-semibold
-                       file:bg-indigo-50 file:text-indigo-700
-                       hover:file:bg-indigo-100"
+                     file:mr-4 file:py-2 file:px-4
+                     file:rounded-full file:border-0
+                     file:text-sm file:font-semibold
+                     file:bg-indigo-50 file:text-indigo-700
+                     hover:file:bg-indigo-100"
             />
             {isUploading && (
               <div className="absolute inset-0 bg-white/50 flex items-center justify-center">
@@ -278,6 +299,9 @@ function FormField({
               </div>
             )}
           </div>
+          {uploadError && (
+            <p className="text-sm text-red-600">{uploadError}</p>
+          )}
         </div>
       </div>
     );

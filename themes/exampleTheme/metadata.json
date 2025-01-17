@@ -16,7 +16,7 @@
               "label": "Hero Title",
               "required": true,
               "minLength": 5,
-              "maxLength": 15,
+              "maxLength": 150,
               "default": "Welcome to Our School"
             },
             "subtitle": {
@@ -30,7 +30,7 @@
             "buttons": {
               "type": "array",
               "label": "Call to Action Buttons",
-              "minCount": 1,
+              "minCount": 2,
               "maxCount": 2,
               "items": {
                 "text": "short-text",
@@ -129,7 +129,7 @@
               "type": "array",
               "label": "News Articles",
               "required": false,
-              "minCount": 1,
+              "minCount": 3,
               "maxCount": 6,
               "items": {
                 "title": "short-text",
@@ -162,22 +162,9 @@
               "minCount": 3,
               "maxCount": 4,
               "items": {
-                "number": {
-                  "type": "number",
-                  "label": "Number",
-                  "required": true
-                },
-                "label": {
-                  "type": "short-text",
-                  "label": "Label",
-                  "required": true
-                },
-                "icon": {
-                  "type": "select",
-                  "label": "Icon",
-                  "required": true,
-                  "options": ["student", "teacher", "classroom", "school", "achievement", "award", "certificate", "degree", "diploma", "education", "graduation", "school-bus", "school-building", "school-library", "school-uniform", "student-achievement", "student-award", "student-certificate", "student-diploma", "student-degree", "student-graduation", "student-school-bus", "student-school-building", "student-school-library", "student-school-uniform"]
-                }
+                "number": "number",
+                "label": "short-text",
+                "icon": "select:student,teacher,classroom,school,achievement,award,certificate,degree,diploma,education,graduation,school-bus,school-building,school-library,school-uniform,student-achievement,student-award,student-certificate,student-diploma,student-degree,student-graduation,student-school-bus,student-school-building,student-school-library,student-school-uniform"
               }
             }
           }
@@ -197,24 +184,11 @@
               "minCount": 2,
               "maxCount": 6,
               "items": {
-                "quote": {
-                  "type": "long-text",
-                  "label": "Testimonial Quote",
-                  "required": true
-                },
-                "name": {
-                  "type": "short-text",
-                  "label": "Person Name",
-                  "required": true
-                },
-                "role": {
-                  "type": "short-text",
-                  "label": "Relation",
-                  "required": true
-                },
+                "quote": "long-text",
+                "name": "short-text",
+                "role": "short-text",
                 "avatar": {
                   "type": "image",
-                  "label": "Person Avatar",
                   "ratio": "1:1",
                   "showCroppingTool": true
                 }
@@ -261,21 +235,9 @@
               "minCount": 3,
               "maxCount": 6,
               "items": {
-                "title": {
-                  "type": "short-text",
-                  "label": "Value Title",
-                  "required": true
-                },
-                "description": {
-                  "type": "long-text",
-                  "label": "Value Description",
-                  "required": true
-                },
-                "icon": {
-                  "type": "select",
-                  "label": "Value Icon",
-                  "options": ["excellence", "integrity", "innovation", "leadership", "diversity", "community"]
-                }
+                "title": "short-text",
+                "description": "long-text",
+                "icon": "select:excellence,integrity,innovation,leadership,diversity,community"
               }
             }
           }
@@ -324,30 +286,25 @@
               "label": "Page Title",
               "default": "Contact Us"
             },
-            "contactInfo": {
-              "type": "object",
-              "fields": {
-                "address": {
-                  "type": "long-text",
-                  "label": "School Address",
-                  "required": true
-                },
-                "phone": {
-                  "type": "short-text",
-                  "label": "Phone Number",
-                  "required": true
-                },
-                "email": {
-                  "type": "email",
-                  "label": "Email Address",
-                  "required": true
-                },
-                "officeHours": {
-                  "type": "short-text",
-                  "label": "Office Hours",
-                  "required": true
-                }
-              }
+            "address": {
+              "type": "long-text",
+              "label": "School Address",
+              "required": true
+            },
+            "phone": {
+              "type": "short-text",
+              "label": "Phone Number",
+              "required": true
+            },
+            "email": {
+              "type": "short-text",
+              "label": "Email Address",
+              "required": true
+            },
+            "officeHours": {
+              "type": "short-text",
+              "label": "Office Hours",
+              "required": true
             },
             "mapEmbed": {
               "type": "html",

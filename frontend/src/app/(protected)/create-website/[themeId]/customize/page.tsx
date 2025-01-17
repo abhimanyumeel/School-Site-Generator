@@ -448,7 +448,7 @@ export default function CustomizeTheme() {
       name: `${sectionId}.${fieldId}`,
       required: field.required,
       'aria-label': field.label,
-      className: "w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+      className: "w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900"
     };
 
     switch (field.type) {
@@ -587,7 +587,7 @@ export default function CustomizeTheme() {
                       <select
                         id={inputId}
                         name={inputId}
-                        className="w-full px-4 py-2.5 rounded-lg border border-gray-300"
+                        className="w-full px-4 py-2.5 rounded-lg border border-gray-300 text-gray-900"
                       >
                         {options.map(option => (
                           <option key={option} value={option}>
@@ -608,7 +608,7 @@ export default function CustomizeTheme() {
                       type="text"
                       id={inputId}
                       name={inputId}
-                      className="w-full px-4 py-2.5 rounded-lg border border-gray-300"
+                      className="w-full px-4 py-2.5 rounded-lg border border-gray-300 text-gray-900"
                     />
                   </div>
                 );
@@ -879,7 +879,7 @@ export default function CustomizeTheme() {
                                         <select
                                           id={inputId}
                                           name={inputId}
-                                          className="w-full px-4 py-2.5 rounded-lg border border-gray-300"
+                                          className="w-full px-4 py-2.5 rounded-lg border border-gray-300 text-gray-900"
                                         >
                                           {options.map(option => (
                                             <option key={option} value={option}>
@@ -900,7 +900,7 @@ export default function CustomizeTheme() {
                                         type="text"
                                         id={inputId}
                                         name={inputId}
-                                        className="w-full px-4 py-2.5 rounded-lg border border-gray-300"
+                                        className="w-full px-4 py-2.5 rounded-lg border border-gray-300 text-gray-900"
                                       />
                                     </div>
                                   );

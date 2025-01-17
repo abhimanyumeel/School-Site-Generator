@@ -169,17 +169,34 @@ export class ThemeService {
 
             this.logger.log(`Persisted image for ${currentPath}:`, newPath);
           } else if (Array.isArray(value)) {
-            await Promise.all(value.map(async (item, index) => {
+            for (const [index, item] of value.entries()) {
               if (typeof item === 'string' && item.startsWith('/uploads/temp/')) {
                 const filename = item.split('/').pop();
                 const newPath = `/static/uploads/${filename}`;
                 value[index] = newPath;
                 processedData.images[`${currentPath}[${index}]`] = newPath;
-                this.logger.log(`Found image URL in array at ${currentPath}[${index}]:`, newPath);
+
+                // Add this block to persist array image data
+                const documentGroup = await this.documentGroupRepository.save({
+                  schoolWebsiteId: websiteId,
+                  accessor: `${currentPath}[${index}]`,
+                });
+
+                await this.documentRepository.save({
+                  type: 'image',
+                  name: filename,
+                  mimeType: 'image/webp',
+                  path: newPath,
+                  url: newPath,
+                  documentGroupId: documentGroup.id,
+                  order: index,
+                });
+
+                this.logger.log(`Persisted array image for ${currentPath}[${index}]:`, newPath);
               } else if (typeof item === 'object' && item !== null) {
                 await processImageFields(item, `${currentPath}[${index}]`, websiteId);
               }
-            }));
+            }
           } else if (typeof value === 'object' && value !== null) {
             await processImageFields(value, currentPath, websiteId);
           }
@@ -219,6 +236,12 @@ export class ThemeService {
       });
 
       await versionRepository.save(initialVersion);
+
+      const savedDocuments = await this.documentRepository.find({
+        where: { documentGroup: { schoolWebsiteId: website.id } },
+        relations: ['documentGroup']
+      });
+      this.logger.log('All saved documents:', savedDocuments);
 
       return {
         status: 'success',
