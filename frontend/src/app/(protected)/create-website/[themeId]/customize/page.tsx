@@ -24,6 +24,7 @@ interface ThemeMetadata {
               required?: boolean;
               minLength?: number;
               maxLength?: number;
+              items?: Record<string, Field>;
             };
           };
         };
@@ -73,7 +74,7 @@ interface Field {
   maxLength?: number;
   minCount?: number;
   maxCount?: number;
-  items?: any;
+  items?: Record<string, Field>;
   fields?: Record<string, Field>;
   options?: string[];
   default?: any;
@@ -135,6 +136,8 @@ interface ItemDefinition {
   showCroppingTool?: boolean;
   minWidth?: number;
   minHeight?: number;
+  options?: string[];
+  items?: Record<string, any>;
 }
 
 const isFieldDefinition = (obj: any): obj is Field => {
@@ -330,7 +333,7 @@ export default function CustomizeTheme() {
             for (let i = 0; i < itemCount; i++) {
               const itemData: Record<string, string> = {};
               // For each field in the item
-              Object.keys(arrayField.items).forEach(itemKey => {
+              Object.keys(arrayField.items || {}).forEach(itemKey => {
                 const inputName = `${sectionId}.${fieldId}.${i}.${itemKey}`;
                 const input = formElement[inputName];
                 if (input) {
@@ -506,15 +509,252 @@ export default function CustomizeTheme() {
 
       case 'array':
         return (
-          <ArrayField
-            sectionId={sectionId}
-            fieldId={fieldId}
-            field={field}
-            formData={formData}
-            setFormData={setFormData}
-            currentPage={currentPage}
-            renderField={renderField}
-          />
+          <div className="space-y-4">
+            {/* Array items container */}
+            <div className="space-y-4">
+              {(formData[currentPage]?.[sectionId]?.[fieldId] || [{}]).map((item: any, index: number) => (
+                <div key={index} className="p-4 border rounded-lg bg-gray-50">
+                  <div className="flex justify-between items-center mb-4">
+                    <span className="text-sm font-medium text-gray-700">
+                      {field.label || 'Item'} {index + 1}
+                    </span>
+                    {(formData[currentPage]?.[sectionId]?.[fieldId] || []).length > 1 && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const newItems = [...(formData[currentPage]?.[sectionId]?.[fieldId] || [])];
+                          newItems.splice(index, 1);
+                          setFormData({
+                            ...formData,
+                            [currentPage]: {
+                              ...formData[currentPage],
+                              [sectionId]: {
+                                ...formData[currentPage]?.[sectionId],
+                                [fieldId]: newItems
+                              }
+                            }
+                          });
+                        }}
+                        className="text-red-500 hover:text-red-700 text-sm"
+                      >
+                        Remove
+                      </button>
+                    )}
+                  </div>
+
+                  {/* Render item fields */}
+                  <div className="space-y-4">
+                    {Object.entries(field.items || {}).map(([itemKey, itemDef]) => {
+                      const inputId = `${sectionId}.${fieldId}.${index}.${itemKey}`;
+                      
+                      // Handle nested object fields
+                      if (!itemDef) return null;
+                      if (typeof itemDef === 'object' && 'type' in itemDef) {
+                        const typedItemDef = itemDef as ItemDefinition;
+                        // Handle nested array (like dropdown items)
+                        if (typedItemDef.type === 'array') {
+                          return (
+                            <div key={itemKey} className="mt-4">
+                              <label className="block text-sm font-medium text-gray-700 mb-2">
+                                {typedItemDef.label || itemKey.charAt(0).toUpperCase() + itemKey.slice(1)}
+                              </label>
+                              <div className="space-y-2 pl-4 border-l-2 border-gray-200">
+                                {/* Show nested items only if parent type is dropdown */}
+                                {item.type === 'dropdown' && (
+                                  <>
+                                    {(item[itemKey] || []).map((subItem: any, subIndex: number) => (
+                                      <div key={subIndex} className="flex gap-4 items-start">
+                                        {Object.entries(typedItemDef.items || {}).map(([subItemKey, subItemDef]: [string, any]) => (
+                                          <div key={subItemKey} className="flex-1">
+                                            <label className="block text-sm font-medium text-gray-700 mb-1">
+                                              {subItemDef.label || subItemKey.charAt(0).toUpperCase() + subItemKey.slice(1)}
+                                            </label>
+                                            <input
+                                              type="text"
+                                              value={subItem[subItemKey] || ''}
+                                              onChange={(e) => {
+                                                const newItems = [...(formData[currentPage]?.[sectionId]?.[fieldId] || [])];
+                                                if (!newItems[index][itemKey]) newItems[index][itemKey] = [];
+                                                newItems[index][itemKey][subIndex] = {
+                                                  ...newItems[index][itemKey][subIndex],
+                                                  [subItemKey]: e.target.value
+                                                };
+                                                setFormData({
+                                                  ...formData,
+                                                  [currentPage]: {
+                                                    ...formData[currentPage],
+                                                    [sectionId]: {
+                                                      ...formData[currentPage]?.[sectionId],
+                                                      [fieldId]: newItems
+                                                    }
+                                                  }
+                                                });
+                                              }}
+                                              className="w-full px-3 py-2 border rounded-md text-sm"
+                                            />
+                                          </div>
+                                        ))}
+                                        <button
+                                          type="button"
+                                          onClick={() => {
+                                            const newItems = [...(formData[currentPage]?.[sectionId]?.[fieldId] || [])];
+                                            newItems[index][itemKey].splice(subIndex, 1);
+                                            setFormData({
+                                              ...formData,
+                                              [currentPage]: {
+                                                ...formData[currentPage],
+                                                [sectionId]: {
+                                                  ...formData[currentPage]?.[sectionId],
+                                                  [fieldId]: newItems
+                                                }
+                                              }
+                                            });
+                                          }}
+                                          className="text-red-500 hover:text-red-700 text-sm mt-6"
+                                        >
+                                          Remove
+                                        </button>
+                                      </div>
+                                    ))}
+                                    <button
+                                      type="button"
+                                      onClick={() => {
+                                        const newItems = [...(formData[currentPage]?.[sectionId]?.[fieldId] || [])];
+                                        if (!newItems[index][itemKey]) newItems[index][itemKey] = [];
+                                        newItems[index][itemKey].push({});
+                                        setFormData({
+                                          ...formData,
+                                          [currentPage]: {
+                                            ...formData[currentPage],
+                                            [sectionId]: {
+                                              ...formData[currentPage]?.[sectionId],
+                                              [fieldId]: newItems
+                                            }
+                                          }
+                                        });
+                                      }}
+                                      className="mt-2 text-sm text-blue-600 hover:text-blue-700"
+                                    >
+                                      Add Item
+                                    </button>
+                                  </>
+                                )}
+                              </div>
+                            </div>
+                          );
+                        }
+
+                        // Handle select fields
+                        if (typedItemDef.type === 'select') {
+                          return (
+                            <div key={itemKey} className="mb-4">
+                              <label className="block text-sm font-medium text-gray-700 mb-2">
+                                {typedItemDef.label || itemKey.charAt(0).toUpperCase() + itemKey.slice(1)}
+                              </label>
+                              <select
+                                value={item[itemKey] || ''}
+                                onChange={(e) => {
+                                  const newItems = [...(formData[currentPage]?.[sectionId]?.[fieldId] || [])];
+                                  newItems[index] = {
+                                    ...newItems[index],
+                                    [itemKey]: e.target.value,
+                                    ...(itemKey === 'type' && e.target.value === 'dropdown' ? { items: [] } : {})
+                                  };
+                                  setFormData({
+                                    ...formData,
+                                    [currentPage]: {
+                                      ...formData[currentPage],
+                                      [sectionId]: {
+                                        ...formData[currentPage]?.[sectionId],
+                                        [fieldId]: newItems
+                                      }
+                                    }
+                                  });
+                                }}
+                                className="w-full px-3 py-2 border rounded-md"
+                              >
+                                <option value="">Select {typedItemDef.label || itemKey}</option>
+                                {typedItemDef.options?.map((option: string) => (
+                                  <option key={option} value={option}>
+                                    {option.charAt(0).toUpperCase() + option.slice(1)}
+                                  </option>
+                                ))}
+                              </select>
+                            </div>
+                          );
+                        }
+                      }
+
+                      // Handle simple fields (text, number, etc.)
+                      return (
+                        <div key={itemKey} className="mb-4">
+                          <label className="block text-sm font-medium text-gray-700 mb-2">
+                            {(itemDef as Field).label || itemKey.charAt(0).toUpperCase() + itemKey.slice(1)}
+                          </label>
+                          <input
+                            type="text"
+                            value={item[itemKey] || ''}
+                            onChange={(e) => {
+                              const newItems = [...(formData[currentPage]?.[sectionId]?.[fieldId] || [])];
+                              newItems[index] = { ...newItems[index], [itemKey]: e.target.value };
+                              setFormData({
+                                ...formData,
+                                [currentPage]: {
+                                  ...formData[currentPage],
+                                  [sectionId]: {
+                                    ...formData[currentPage]?.[sectionId],
+                                    [fieldId]: newItems
+                                  }
+                                }
+                              });
+                            }}
+                            className="w-full px-3 py-2 border rounded-md"
+                          />
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Add Item button for array fields */}
+            <button
+              type="button"
+              onClick={() => {
+                const currentItems = formData[currentPage]?.[sectionId]?.[fieldId] || [];
+                const newItems = [...currentItems, {}];
+                setFormData({
+                  ...formData,
+                  [currentPage]: {
+                    ...formData[currentPage],
+                    [sectionId]: {
+                      ...formData[currentPage]?.[sectionId],
+                      [fieldId]: newItems
+                    }
+                  }
+                });
+              }}
+              className="w-full px-4 py-2.5 bg-blue-50 hover:bg-blue-100 
+                text-blue-600 font-medium rounded-lg text-sm
+                border border-blue-100 transition-colors duration-200
+                flex items-center justify-center gap-2"
+            >
+              <svg 
+                xmlns="http://www.w3.org/2000/svg" 
+                className="h-5 w-5" 
+                viewBox="0 0 20 20" 
+                fill="currentColor"
+              >
+                <path 
+                  fillRule="evenodd" 
+                  d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" 
+                  clipRule="evenodd" 
+                />
+              </svg>
+              Add {field.label || 'Item'}
+            </button>
+          </div>
         );
 
       case 'object':
@@ -541,84 +781,6 @@ export default function CustomizeTheme() {
         console.warn(`Unsupported field type: ${field.type}`);
         return null;
     }
-  };
-
-  // Separate component for array fields
-  const ArrayField = ({ sectionId, fieldId, field, formData, setFormData, currentPage }: ArrayFieldProps) => {
-    const currentValue = formData[currentPage]?.[sectionId]?.[fieldId] || [];
-    const itemCount = Math.max(field.minCount || 1, currentValue.length);
-
-    return (
-      <div className="space-y-4">
-        {Array.from({ length: itemCount }).map((_, index) => (
-          <div key={index} className="p-4 border rounded-lg">
-            {Object.entries(field.items).map(([itemKey, itemDef]) => {
-              const inputId = `${sectionId}.${fieldId}.${index}.${itemKey}`;
-              
-              // Handle object-type fields (like image)
-              if (itemDef && typeof itemDef === 'object' && 'type' in itemDef && itemDef.type === 'image') {
-                const typedItemDef = itemDef as ImageField;
-                return (
-                  <div key={itemKey} className="mb-4">
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      {typedItemDef.label}
-                    </label>
-                    <ImageUploadField
-                      id={inputId}
-                      field={typedItemDef}
-                      onUpload={handleImageUpload}
-                      value={currentValue[index]?.[itemKey]}
-                      isUploading={uploadingImages[inputId]}
-                      schoolWebsiteId={website?.id || ''}
-                    />
-                  </div>
-                );
-              }
-
-              // Existing code for other field types...
-              if (typeof itemDef === 'string') {
-                if (itemDef.startsWith('select:')) {
-                  const options = itemDef.split(':')[1].split(',');
-                  return (
-                    <div key={itemKey} className="mb-4">
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        {itemKey.charAt(0).toUpperCase() + itemKey.slice(1)}
-                      </label>
-                      <select
-                        id={inputId}
-                        name={inputId}
-                        className="w-full px-4 py-2.5 rounded-lg border border-gray-300 text-gray-900"
-                      >
-                        {options.map(option => (
-                          <option key={option} value={option}>
-                            {option.charAt(0).toUpperCase() + option.slice(1)}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-                  );
-                }
-                
-                return (
-                  <div key={itemKey} className="mb-4">
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      {itemKey.charAt(0).toUpperCase() + itemKey.slice(1)}
-                    </label>
-                    <input
-                      type="text"
-                      id={inputId}
-                      name={inputId}
-                      className="w-full px-4 py-2.5 rounded-lg border border-gray-300 text-gray-900"
-                    />
-                  </div>
-                );
-              }
-              return null;
-            })}
-          </div>
-        ))}
-      </div>
-    );
   };
 
   // Separate component for object fields
@@ -863,52 +1025,250 @@ export default function CustomizeTheme() {
                       )}
                       {field.type === 'array' && (
                         <div className="space-y-4">
-                          {Array.from({ length: (field as Field).minCount || 1 }).map((_, index) => (
-                            <div key={index} className="p-4 border rounded-lg">
-                              {Object.entries((field as Field).items).map(([itemKey, itemType]) => {
-                                const inputId = `${sectionId}.${fieldId}.${index}.${itemKey}`;
-                                
-                                if (typeof itemType === 'string') {
-                                  if (itemType.startsWith('select:')) {
-                                    const options = itemType.split(':')[1].split(',');
+                          {/* Array items container */}
+                          <div className="space-y-4">
+                            {(formData[currentPage]?.[sectionId]?.[fieldId] || [{}]).map((item: any, index: number) => (
+                              <div key={index} className="p-4 border rounded-lg bg-gray-50">
+                                <div className="flex justify-between items-center mb-4">
+                                  <span className="text-sm font-medium text-gray-700">
+                                    {field.label || 'Item'} {index + 1}
+                                  </span>
+                                  {(formData[currentPage]?.[sectionId]?.[fieldId] || []).length > 1 && (
+                                    <button
+                                      type="button"
+                                      onClick={() => {
+                                        const newItems = [...(formData[currentPage]?.[sectionId]?.[fieldId] || [])];
+                                        newItems.splice(index, 1);
+                                        setFormData({
+                                          ...formData,
+                                          [currentPage]: {
+                                            ...formData[currentPage],
+                                            [sectionId]: {
+                                              ...formData[currentPage]?.[sectionId],
+                                              [fieldId]: newItems
+                                            }
+                                          }
+                                        });
+                                      }}
+                                      className="text-red-500 hover:text-red-700 text-sm"
+                                    >
+                                      Remove
+                                    </button>
+                                  )}
+                                </div>
+
+                                {/* Render item fields */}
+                                <div className="space-y-4">
+                                  {Object.entries(field.items || {}).map(([itemKey, itemDef]) => {
+                                    const inputId = `${sectionId}.${fieldId}.${index}.${itemKey}`;
+                                    
+                                    // Handle nested object fields
+                                    if (!itemDef) return null;
+                                    if (typeof itemDef === 'object' && 'type' in itemDef) {
+                                      const typedItemDef = itemDef as ItemDefinition;
+                                      // Handle nested array (like dropdown items)
+                                      if (typedItemDef.type === 'array') {
+                                        return (
+                                          <div key={itemKey} className="mt-4">
+                                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                                              {typedItemDef.label || itemKey.charAt(0).toUpperCase() + itemKey.slice(1)}
+                                            </label>
+                                            <div className="space-y-2 pl-4 border-l-2 border-gray-200">
+                                              {/* Show nested items only if parent type is dropdown */}
+                                              {item.type === 'dropdown' && (
+                                                <>
+                                                  {(item[itemKey] || []).map((subItem: any, subIndex: number) => (
+                                                    <div key={subIndex} className="flex gap-4 items-start">
+                                                      {Object.entries(typedItemDef.items || {}).map(([subItemKey, subItemDef]: [string, any]) => (
+                                                        <div key={subItemKey} className="flex-1">
+                                                          <label className="block text-sm font-medium text-gray-700 mb-1">
+                                                            {subItemDef.label || subItemKey.charAt(0).toUpperCase() + subItemKey.slice(1)}
+                                                          </label>
+                                                          <input
+                                                            type="text"
+                                                            value={subItem[subItemKey] || ''}
+                                                            onChange={(e) => {
+                                                              const newItems = [...(formData[currentPage]?.[sectionId]?.[fieldId] || [])];
+                                                              if (!newItems[index][itemKey]) newItems[index][itemKey] = [];
+                                                              newItems[index][itemKey][subIndex] = {
+                                                                ...newItems[index][itemKey][subIndex],
+                                                                [subItemKey]: e.target.value
+                                                              };
+                                                              setFormData({
+                                                                ...formData,
+                                                                [currentPage]: {
+                                                                  ...formData[currentPage],
+                                                                  [sectionId]: {
+                                                                    ...formData[currentPage]?.[sectionId],
+                                                                    [fieldId]: newItems
+                                                                  }
+                                                                }
+                                                              });
+                                                            }}
+                                                            className="w-full px-3 py-2 border rounded-md text-sm"
+                                                          />
+                                                        </div>
+                                                      ))}
+                                                      <button
+                                                        type="button"
+                                                        onClick={() => {
+                                                          const newItems = [...(formData[currentPage]?.[sectionId]?.[fieldId] || [])];
+                                                          newItems[index][itemKey].splice(subIndex, 1);
+                                                          setFormData({
+                                                            ...formData,
+                                                            [currentPage]: {
+                                                              ...formData[currentPage],
+                                                              [sectionId]: {
+                                                                ...formData[currentPage]?.[sectionId],
+                                                                [fieldId]: newItems
+                                                              }
+                                                            }
+                                                          });
+                                                        }}
+                                                        className="text-red-500 hover:text-red-700 text-sm mt-6"
+                                                      >
+                                                        Remove
+                                                      </button>
+                                                    </div>
+                                                  ))}
+                                                  <button
+                                                    type="button"
+                                                    onClick={() => {
+                                                      const newItems = [...(formData[currentPage]?.[sectionId]?.[fieldId] || [])];
+                                                      if (!newItems[index][itemKey]) newItems[index][itemKey] = [];
+                                                      newItems[index][itemKey].push({});
+                                                      setFormData({
+                                                        ...formData,
+                                                        [currentPage]: {
+                                                          ...formData[currentPage],
+                                                          [sectionId]: {
+                                                            ...formData[currentPage]?.[sectionId],
+                                                            [fieldId]: newItems
+                                                          }
+                                                        }
+                                                      });
+                                                    }}
+                                                    className="mt-2 text-sm text-blue-600 hover:text-blue-700"
+                                                  >
+                                                    Add Item
+                                                  </button>
+                                                </>
+                                              )}
+                                            </div>
+                                          </div>
+                                        );
+                                      }
+
+                                      // Handle select fields
+                                      if (typedItemDef.type === 'select') {
+                                        return (
+                                          <div key={itemKey} className="mb-4">
+                                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                                              {typedItemDef.label || itemKey.charAt(0).toUpperCase() + itemKey.slice(1)}
+                                            </label>
+                                            <select
+                                              value={item[itemKey] || ''}
+                                              onChange={(e) => {
+                                                const newItems = [...(formData[currentPage]?.[sectionId]?.[fieldId] || [])];
+                                                newItems[index] = {
+                                                  ...newItems[index],
+                                                  [itemKey]: e.target.value,
+                                                  ...(itemKey === 'type' && e.target.value === 'dropdown' ? { items: [] } : {})
+                                                };
+                                                setFormData({
+                                                  ...formData,
+                                                  [currentPage]: {
+                                                    ...formData[currentPage],
+                                                    [sectionId]: {
+                                                      ...formData[currentPage]?.[sectionId],
+                                                      [fieldId]: newItems
+                                                    }
+                                                  }
+                                                });
+                                              }}
+                                              className="w-full px-3 py-2 border rounded-md"
+                                            >
+                                              <option value="">Select {typedItemDef.label || itemKey}</option>
+                                              {typedItemDef.options?.map((option: string) => (
+                                                <option key={option} value={option}>
+                                                  {option.charAt(0).toUpperCase() + option.slice(1)}
+                                                </option>
+                                              ))}
+                                            </select>
+                                          </div>
+                                        );
+                                      }
+                                    }
+
+                                    // Handle simple fields (text, number, etc.)
                                     return (
                                       <div key={itemKey} className="mb-4">
                                         <label className="block text-sm font-medium text-gray-700 mb-2">
-                                          {itemKey.charAt(0).toUpperCase() + itemKey.slice(1)}
+                                          {(itemDef as Field).label || itemKey.charAt(0).toUpperCase() + itemKey.slice(1)}
                                         </label>
-                                        <select
-                                          id={inputId}
-                                          name={inputId}
-                                          className="w-full px-4 py-2.5 rounded-lg border border-gray-300 text-gray-900"
-                                        >
-                                          {options.map(option => (
-                                            <option key={option} value={option}>
-                                              {option.charAt(0).toUpperCase() + option.slice(1)}
-                                            </option>
-                                          ))}
-                                        </select>
+                                        <input
+                                          type="text"
+                                          value={item[itemKey] || ''}
+                                          onChange={(e) => {
+                                            const newItems = [...(formData[currentPage]?.[sectionId]?.[fieldId] || [])];
+                                            newItems[index] = { ...newItems[index], [itemKey]: e.target.value };
+                                            setFormData({
+                                              ...formData,
+                                              [currentPage]: {
+                                                ...formData[currentPage],
+                                                [sectionId]: {
+                                                  ...formData[currentPage]?.[sectionId],
+                                                  [fieldId]: newItems
+                                                }
+                                              }
+                                            });
+                                          }}
+                                          className="w-full px-3 py-2 border rounded-md"
+                                        />
                                       </div>
                                     );
+                                  })}
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+
+                          {/* Add Item button for array fields */}
+                          <button
+                            type="button"
+                            onClick={() => {
+                              const currentItems = formData[currentPage]?.[sectionId]?.[fieldId] || [];
+                              const newItems = [...currentItems, {}];
+                              setFormData({
+                                ...formData,
+                                [currentPage]: {
+                                  ...formData[currentPage],
+                                  [sectionId]: {
+                                    ...formData[currentPage]?.[sectionId],
+                                    [fieldId]: newItems
                                   }
-                                  
-                                  return (
-                                    <div key={itemKey} className="mb-4">
-                                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                                        {itemKey.charAt(0).toUpperCase() + itemKey.slice(1)}
-                                      </label>
-                                      <input
-                                        type="text"
-                                        id={inputId}
-                                        name={inputId}
-                                        className="w-full px-4 py-2.5 rounded-lg border border-gray-300 text-gray-900"
-                                      />
-                                    </div>
-                                  );
                                 }
-                                return null;
-                              })}
-                            </div>
-                          ))}
+                              });
+                            }}
+                            className="w-full px-4 py-2.5 bg-blue-50 hover:bg-blue-100 
+                              text-blue-600 font-medium rounded-lg text-sm
+                              border border-blue-100 transition-colors duration-200
+                              flex items-center justify-center gap-2"
+                          >
+                            <svg 
+                              xmlns="http://www.w3.org/2000/svg" 
+                              className="h-5 w-5" 
+                              viewBox="0 0 20 20" 
+                              fill="currentColor"
+                            >
+                              <path 
+                                fillRule="evenodd" 
+                                d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" 
+                                clipRule="evenodd" 
+                              />
+                            </svg>
+                            Add {field.label || 'Item'}
+                          </button>
                         </div>
                       )}
                     </div>
