@@ -65,8 +65,7 @@ interface GenerateResponse {
   };
 }
 
-// Add this interface before ImageField
-interface Field {
+export interface Field {
   type: string;
   label: string;
   required?: boolean;
@@ -318,37 +317,55 @@ export default function CustomizeTheme() {
         
         // Process each field in the section
         Object.entries(section.fields).forEach(([fieldId, field]) => {
-          const value = formData[currentPage]?.[sectionId]?.[fieldId];
           if (field.type === 'image' || field.type === 'image-set') {
-            // Use existing image value from state
-            pageData[sectionId][fieldId] = value || (field.type === 'image-set' ? [] : '');
+            // Keep existing image handling
+            pageData[sectionId][fieldId] = formData[currentPage]?.[sectionId]?.[fieldId] || (field.type === 'image-set' ? [] : '');
           } 
           else if (field.type === 'array') {
-            const arrayData = [];
-            const formElement = e.currentTarget as HTMLFormElement;
-            const arrayField = field as Field;
-            
-            // Get the number of items (using minCount as default)
-            const itemCount = arrayField.minCount || 1;
-            
-            // For each item in the array
-            for (let i = 0; i < itemCount; i++) {
-              const itemData: Record<string, string> = {};
-              // For each field in the item
-              Object.keys(arrayField.items || {}).forEach(itemKey => {
-                const inputName = `${sectionId}.${fieldId}.${i}.${itemKey}`;
-                const input = formElement[inputName];
-                if (input) {
-                  itemData[itemKey] = input.value;
+            // Get existing array data from formData
+            const existingItems = formData[currentPage]?.[sectionId]?.[fieldId] || [];
+            pageData[sectionId][fieldId] = existingItems.map((item: any) => {
+              const itemData: Record<string, any> = {};
+              
+              // Process each field in the array item
+              Object.entries(field.items || {}).forEach(([itemKey, itemDef]) => {
+                if ((itemDef as Field).type === 'object') {
+                  // Handle nested objects within array items
+                  const nestedData: Record<string, any> = {};
+                  Object.entries((itemDef as Field).fields || {}).forEach(([nestedKey, nestedField]) => {
+                    nestedData[nestedKey] = item[itemKey]?.[nestedKey] || '';
+                  });
+                  itemData[itemKey] = nestedData;
+                } else {
+                  // Handle regular fields
+                  itemData[itemKey] = item[itemKey] || '';
                 }
               });
-              arrayData.push(itemData);
-            }
-            
-            pageData[sectionId][fieldId] = arrayData;
+              
+              return itemData;
+            });
+          }
+          else if (field.type === 'object') {
+            // Handle object fields
+            const objectData: Record<string, any> = {};
+            const fieldAsField = field as Field;  // Explicit type casting
+            Object.entries(fieldAsField.fields || {}).forEach(([subFieldId, subField]) => {
+              if ((subField as Field).type === 'object') {
+                // Handle nested objects
+                const nestedData: Record<string, any> = {};
+                Object.entries((subField as Field).fields || {}).forEach(([nestedKey, nestedField]) => {
+                  nestedData[nestedKey] = formData[currentPage]?.[sectionId]?.[fieldId]?.[subFieldId]?.[nestedKey] || '';
+                });
+                objectData[subFieldId] = nestedData;
+              } else {
+                // Handle regular fields within object
+                objectData[subFieldId] = formData[currentPage]?.[sectionId]?.[fieldId]?.[subFieldId] || '';
+              }
+            });
+            pageData[sectionId][fieldId] = objectData;
           }
           else {
-            // Use form input value
+            // Handle regular fields (keep existing logic)
             const formValue = (e.currentTarget as HTMLFormElement)[`${sectionId}.${fieldId}`]?.value;
             pageData[sectionId][fieldId] = formValue || '';
           }
