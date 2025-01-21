@@ -6,7 +6,21 @@ import axios from '@/lib/axios';
 import { isAxiosError } from 'axios';
 import Navbar from '@/components/layout/Navbar';
 import Breadcrumb from '@/components/layout/Breadcrumb';
-import { HiHome, HiTemplate, HiColorSwatch, HiCog, HiInformationCircle, HiMail } from 'react-icons/hi';
+
+import { IoSettingsOutline } from "react-icons/io5";
+import { HiOutlineHome } from "react-icons/hi2";
+import { FiInfo } from "react-icons/fi";
+import { FaRegBuilding } from "react-icons/fa";
+import { RiTeamLine } from "react-icons/ri";
+import { IoChatboxEllipsesOutline } from "react-icons/io5";
+import { IoCalendarOutline } from "react-icons/io5";
+import { LuContact } from "react-icons/lu";
+import { IoMegaphoneOutline } from "react-icons/io5";
+import { HiTemplate } from "react-icons/hi";
+
+
+
+
 import ImageUploadField from '@/components/form/ImageUploadField';
 
 // Types for our theme metadata
@@ -443,15 +457,18 @@ export default function CustomizeTheme() {
     }
   };
 
-  // Add this helper function to get icon for each step
+  // Update the getStepIcon function with all page types
   const getStepIcon = (page: string) => {
     const icons = {
-      home: HiHome,
-      about: HiInformationCircle,
-      contact: HiMail,
-      content: HiTemplate,
-      style: HiColorSwatch,
-      settings: HiCog,
+      global: IoSettingsOutline,
+      home: HiOutlineHome,
+      about: FiInfo,
+      facilities: FaRegBuilding,
+      team: RiTeamLine,
+      testimonial: IoChatboxEllipsesOutline,
+      appointment: IoCalendarOutline,
+      'call_to_action': IoMegaphoneOutline,
+      contact: LuContact
     };
     return icons[page as keyof typeof icons] || HiTemplate;
   };
@@ -540,7 +557,7 @@ export default function CustomizeTheme() {
             {/* Array items container */}
             <div className="space-y-4">
               {(formData[currentPage]?.[sectionId]?.[fieldId] || [{}]).map((item: any, index: number) => (
-                <div key={index} className="p-4 border rounded-lg bg-gray-50">
+                <div key={index} className="p-6 bg-gray-50 rounded-lg border border-gray-100">
                   <div className="flex justify-between items-center mb-4">
                     <span className="text-sm font-medium text-gray-700">
                       {field.label || 'Item'} {index + 1}
@@ -582,7 +599,7 @@ export default function CustomizeTheme() {
                         if (typedItemDef.type === 'array') {
                           return (
                             <div key={itemKey} className="mt-4">
-                              <label className="block text-sm font-medium text-gray-700 mb-2">
+                              <label className="block text-sm font-semibold text-gray-800 mb-2">
                                 {typedItemDef.label || itemKey.charAt(0).toUpperCase() + itemKey.slice(1)}
                               </label>
                               <div className="space-y-2 pl-4 border-l-2 border-gray-200">
@@ -593,7 +610,7 @@ export default function CustomizeTheme() {
                                       <div key={subIndex} className="flex gap-4 items-start">
                                         {Object.entries(typedItemDef.items || {}).map(([subItemKey, subItemDef]: [string, any]) => (
                                           <div key={subItemKey} className="flex-1">
-                                            <label className="block text-sm font-medium text-gray-700 mb-1">
+                                            <label className="block text-sm font-semibold text-gray-800 mb-1">
                                               {subItemDef.label || subItemKey.charAt(0).toUpperCase() + subItemKey.slice(1)}
                                             </label>
                                             <input
@@ -617,7 +634,9 @@ export default function CustomizeTheme() {
                                                   }
                                                 });
                                               }}
-                                              className="w-full px-3 py-2 border rounded-md text-sm"
+                                              className="w-full px-3 py-2.5 border border-gray-300 rounded-md 
+                                                text-gray-900 bg-white focus:ring-2 focus:ring-blue-500 
+                                                focus:border-blue-500 shadow-sm"
                                             />
                                           </div>
                                         ))}
@@ -675,7 +694,7 @@ export default function CustomizeTheme() {
                         if (typedItemDef.type === 'select') {
                           return (
                             <div key={itemKey} className="mb-4">
-                              <label className="block text-sm font-medium text-gray-700 mb-2">
+                              <label className="block text-sm font-semibold text-gray-800 mb-2">
                                 {typedItemDef.label || itemKey.charAt(0).toUpperCase() + itemKey.slice(1)}
                               </label>
                               <select
@@ -698,11 +717,13 @@ export default function CustomizeTheme() {
                                     }
                                   });
                                 }}
-                                className="w-full px-3 py-2 border rounded-md"
+                                className="w-full px-3 py-2.5 border border-gray-300 rounded-md 
+                                  text-gray-900 bg-white focus:ring-2 focus:ring-blue-500 
+                                  focus:border-blue-500 shadow-sm"
                               >
-                                <option value="">Select {typedItemDef.label || itemKey}</option>
+                                <option value="" className="text-gray-500">Select {typedItemDef.label || itemKey}</option>
                                 {typedItemDef.options?.map((option: string) => (
-                                  <option key={option} value={option}>
+                                  <option key={option} value={option} className="text-gray-900">
                                     {option.charAt(0).toUpperCase() + option.slice(1)}
                                   </option>
                                 ))}
@@ -715,7 +736,7 @@ export default function CustomizeTheme() {
                       // Handle simple fields (text, number, etc.)
                       return (
                         <div key={itemKey} className="mb-4">
-                          <label className="block text-sm font-medium text-gray-700 mb-2">
+                          <label className="block text-sm font-semibold text-gray-800 mb-2">
                             {(itemDef as Field).label || itemKey.charAt(0).toUpperCase() + itemKey.slice(1)}
                           </label>
                           <input
@@ -735,7 +756,10 @@ export default function CustomizeTheme() {
                                 }
                               });
                             }}
-                            className="w-full px-3 py-2 border rounded-md"
+                            className="w-full px-3 py-2.5 border border-gray-300 rounded-md 
+                              text-gray-900 bg-white focus:ring-2 focus:ring-blue-500 
+                              focus:border-blue-500 shadow-sm"
+                            placeholder={`Enter ${(itemDef as Field).label}`}
                           />
                         </div>
                       );
@@ -786,39 +810,43 @@ export default function CustomizeTheme() {
 
       case 'object':
         return (
-          <div className="space-y-4 p-6 bg-gray-50 rounded-lg border border-gray-200">
+          <div className="p-6 bg-gray-50 rounded-lg border border-gray-100">
             {field.fields && Object.entries(field.fields).map(([subFieldId, subField]) => (
               <div key={subFieldId} className="space-y-2">
-                <label className="block text-sm font-medium text-gray-700">
+                <label className="block text-sm font-semibold text-gray-800">
                   {(subField as Field).label}
                 </label>
                 {(subField as Field).type === 'object' ? (
-                  // Handle nested objects (like social_links)
-                  <div className="pl-4 space-y-4 border-l-2 border-gray-200">
+                  <div className="pl-4 space-y-4 border-l-2 border-blue-100 bg-gray-50 rounded-lg p-4">
                     {Object.entries((subField as Field).fields || {}).map(([nestedFieldId, nestedField]) => (
                       <div key={nestedFieldId} className="space-y-2">
-                        <label className="block text-sm font-medium text-gray-700">
+                        <label className="block text-sm font-semibold text-gray-800">
                           {(nestedField as Field).label}
                         </label>
                         <input
                           type="text"
                           id={`${sectionId}.${fieldId}.${subFieldId}.${nestedFieldId}`}
                           name={`${sectionId}.${fieldId}.${subFieldId}.${nestedFieldId}`}
-                          className="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                          className="w-full px-4 py-2.5 rounded-lg border border-gray-300 
+                            text-gray-900 bg-white focus:ring-2 focus:ring-blue-500 
+                            focus:border-blue-500 shadow-sm"
+                          placeholder={`Enter ${(nestedField as Field).label}`}
                           defaultValue={formData[currentPage]?.[sectionId]?.[fieldId]?.[subFieldId]?.[nestedFieldId]}
                         />
                       </div>
                     ))}
                   </div>
                 ) : (
-                  // Handle regular fields within object
                   <div>
                     {(subField as Field).type === 'long-text' ? (
                       <textarea
                         id={`${sectionId}.${fieldId}.${subFieldId}`}
                         name={`${sectionId}.${fieldId}.${subFieldId}`}
-                        className="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        className="w-full px-4 py-2.5 rounded-lg border border-gray-300 
+                          text-gray-900 bg-white focus:ring-2 focus:ring-blue-500 
+                          focus:border-blue-500 shadow-sm"
                         rows={4}
+                        placeholder={`Enter ${(subField as Field).label}`}
                         defaultValue={formData[currentPage]?.[sectionId]?.[fieldId]?.[subFieldId]}
                       />
                     ) : (
@@ -826,7 +854,10 @@ export default function CustomizeTheme() {
                         type="text"
                         id={`${sectionId}.${fieldId}.${subFieldId}`}
                         name={`${sectionId}.${fieldId}.${subFieldId}`}
-                        className="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        className="w-full px-4 py-2.5 rounded-lg border border-gray-300 
+                          text-gray-900 bg-white focus:ring-2 focus:ring-blue-500 
+                          focus:border-blue-500 shadow-sm"
+                        placeholder={`Enter ${(subField as Field).label}`}
                         defaultValue={formData[currentPage]?.[sectionId]?.[fieldId]?.[subFieldId]}
                       />
                     )}
@@ -859,7 +890,7 @@ export default function CustomizeTheme() {
       <div className="space-y-4 p-6 bg-white border border-gray-200 rounded-lg">
         {field.fields && Object.entries(field.fields).map(([key, subField]) => (
           <div key={key}>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-semibold text-gray-800 mb-1">
               {(subField as Field).label}
             </label>
             {renderField(`${sectionId}.${fieldId}`, key, subField as Field)}
@@ -940,8 +971,8 @@ export default function CustomizeTheme() {
             </p>
           </div>
 
-          {/* Progress Indicator - Fixed alignment */}
-          <div className="mb-12 bg-white rounded-xl p-8 shadow-sm">
+          {/* Progress Indicator - Remove scrolling, expand container */}
+          <div className="mb-12 bg-white rounded-xl p-8 shadow-sm w-full">
             <div className="flex items-center justify-between mb-8">
               <span className="text-sm font-semibold text-gray-700">
                 Customizing: <span className="text-blue-600">{currentPageData.title}</span>
@@ -951,15 +982,15 @@ export default function CustomizeTheme() {
                 {Object.keys(theme.metadata.pages).length}
               </span>
             </div>
-            
-            <div className="relative">
-              {/* Progress bar background - Adjusted positioning */}
+
+            <div className="relative w-full">
+              {/* Progress bar background */}
               <div 
                 className="absolute left-0 w-full h-1 bg-gray-200"
-                style={{ top: '24px' }} // Center the line relative to the circles
+                style={{ top: '24px' }}
               ></div>
-              
-              {/* Active progress bar - Adjusted positioning */}
+
+              {/* Active progress bar */}
               <div 
                 className="absolute h-1 bg-blue-500 transition-all duration-300"
                 style={{ 
@@ -969,8 +1000,8 @@ export default function CustomizeTheme() {
                 }}
               ></div>
 
-              {/* Steps */}
-              <div className="relative z-10 flex justify-between">
+              {/* Steps - Removed min-width and text labels */}
+              <div className="relative z-10 flex justify-between w-full">
                 {Object.entries(theme.metadata.pages).map(([pageId, page], index) => {
                   const StepIcon = getStepIcon(pageId);
                   const isActive = index <= Object.keys(theme.metadata.pages).indexOf(currentPage);
@@ -990,16 +1021,9 @@ export default function CustomizeTheme() {
                             : ''}
                         `}
                       >
-                        <StepIcon size="1.5em" />
+                        <StepIcon size={24} />
                       </div>
-                      <span 
-                        className={`
-                          mt-2 text-sm font-medium whitespace-nowrap
-                          ${isActive ? 'text-blue-600' : 'text-gray-500'}
-                        `}
-                      >
-                        {page.title}
-                      </span>
+                      {/* Removed the page title text */}
                     </div>
                   );
                 })}
@@ -1007,19 +1031,19 @@ export default function CustomizeTheme() {
             </div>
           </div>
 
-          {/* Page Navigation - Updated styling */}
-          <div className="flex space-x-4 mb-8 bg-white p-2 rounded-lg shadow-sm">
+          {/* Page Navigation - Single line with smaller text */}
+          <div className="flex items-center mb-8 bg-white p-2 rounded-lg shadow-sm w-full">
             {Object.entries(theme.metadata.pages).map(([pageId, page]) => (
               <button
                 key={pageId}
                 onClick={() => setCurrentPage(pageId)}
-                className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
-                  currentPage === pageId
+                className={`px-2 py-1.5 rounded-lg text-md font-medium transition-all duration-200 whitespace-nowrap
+                  ${currentPage === pageId
                     ? 'bg-blue-600 text-white shadow-md'
                     : 'text-gray-600 hover:bg-gray-100'
-                }`}
+                  } ${pageId === 'global' ? 'mr-auto' : 'mx-1'}`}
               >
-                {page.title}
+                {pageId === 'global' ? 'Global Settings' : page.title.replace(' Page', '')}
               </button>
             ))}
           </div>
@@ -1044,7 +1068,7 @@ export default function CustomizeTheme() {
                       <div key={fieldId} className="relative">
                         <label
                           htmlFor={`${sectionId}.${fieldId}`}
-                          className="block text-sm font-medium text-gray-700 mb-2"
+                          className="block text-sm font-semibold text-gray-800 mb-2"
                         >
                           {field.label}
                           {field.required && <span className="text-red-500 ml-1">*</span>}
