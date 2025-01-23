@@ -151,6 +151,7 @@ interface ItemDefinition {
   minHeight?: number;
   options?: string[];
   items?: Record<string, any>;
+  fields?: Record<string, Field>;
 }
 
 const isFieldDefinition = (obj: any): obj is Field => {
@@ -365,17 +366,25 @@ export default function CustomizeTheme() {
             const fieldAsField = field as Field;  // Explicit type casting
             Object.entries(fieldAsField.fields || {}).forEach(([subFieldId, subField]) => {
               if ((subField as Field).type === 'object') {
-                // Handle nested objects
+                // Handle nested objects (like social_links in footer.about)
                 const nestedData: Record<string, any> = {};
                 Object.entries((subField as Field).fields || {}).forEach(([nestedKey, nestedField]) => {
-                  nestedData[nestedKey] = formData[currentPage]?.[sectionId]?.[fieldId]?.[subFieldId]?.[nestedKey] || '';
+                  const nestedInput = e.currentTarget.elements.namedItem(
+                    `${sectionId}.${fieldId}.${subFieldId}.${nestedKey}`
+                  ) as HTMLInputElement;
+                  nestedData[nestedKey] = nestedInput?.value || '';
                 });
                 objectData[subFieldId] = nestedData;
               } else {
-                // Handle regular fields within object
-                objectData[subFieldId] = formData[currentPage]?.[sectionId]?.[fieldId]?.[subFieldId] || '';
+                // Handle direct fields within object (like description in footer.about)
+                const input = e.currentTarget.elements.namedItem(
+                  `${sectionId}.${fieldId}.${subFieldId}`
+                ) as HTMLInputElement;
+                objectData[subFieldId] = input?.value || '';
               }
             });
+            
+            // Update the page data with the object field values
             pageData[sectionId][fieldId] = objectData;
           }
           else {
@@ -591,11 +600,59 @@ export default function CustomizeTheme() {
                     {Object.entries(field.items || {}).map(([itemKey, itemDef]) => {
                       const inputId = `${sectionId}.${fieldId}.${index}.${itemKey}`;
                       
-                      // Handle nested object fields
                       if (!itemDef) return null;
                       if (typeof itemDef === 'object' && 'type' in itemDef) {
                         const typedItemDef = itemDef as ItemDefinition;
-                        // Handle nested array (like dropdown items)
+
+                        // Add handling for object type within array
+                        if (typedItemDef.type === 'object') {
+                          return (
+                            <div key={itemKey} className="p-4 bg-white rounded-lg border border-gray-200">
+                              <label className="block text-sm font-semibold text-gray-800 mb-3">
+                                {typedItemDef.label || itemKey.charAt(0).toUpperCase() + itemKey.slice(1)}
+                              </label>
+                              <div className="space-y-3">
+                                {Object.entries(typedItemDef.fields || {}).map(([fieldKey, fieldDef]) => (
+                                  <div key={fieldKey} className="ml-4">
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                                      {(fieldDef as Field).label}
+                                    </label>
+                                    <input
+                                      type="text"
+                                      value={item[itemKey]?.[fieldKey] || ''}
+                                      onChange={(e) => {
+                                        const newItems = [...(formData[currentPage]?.[sectionId]?.[fieldId] || [])];
+                                        newItems[index] = {
+                                          ...newItems[index],
+                                          [itemKey]: {
+                                            ...(newItems[index][itemKey] || {}),
+                                            [fieldKey]: e.target.value
+                                          }
+                                        };
+                                        setFormData({
+                                          ...formData,
+                                          [currentPage]: {
+                                            ...formData[currentPage],
+                                            [sectionId]: {
+                                              ...formData[currentPage]?.[sectionId],
+                                              [fieldId]: newItems
+                                            }
+                                          }
+                                        });
+                                      }}
+                                      className="w-full px-3 py-2 border border-gray-300 rounded-md 
+                                        text-gray-900 bg-white focus:ring-2 focus:ring-blue-500 
+                                        focus:border-blue-500 shadow-sm"
+                                      placeholder={`Enter ${(fieldDef as Field).label}`}
+                                    />
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          );
+                        }
+
+                        // Keep existing array and select handling
                         if (typedItemDef.type === 'array') {
                           return (
                             <div key={itemKey} className="mt-4">
@@ -690,7 +747,6 @@ export default function CustomizeTheme() {
                           );
                         }
 
-                        // Handle select fields
                         if (typedItemDef.type === 'select') {
                           return (
                             <div key={itemKey} className="mb-4">
