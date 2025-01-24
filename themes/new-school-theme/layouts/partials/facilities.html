@@ -1,0 +1,36 @@
+<!-- Facilities Start -->
+<div class="container-xxl py-5">
+  <div class="container">
+    <div
+      class="text-center mx-auto mb-5 wow fadeInUp"
+      data-wow-delay="0.1s"
+      style="max-width: 600px"
+    >
+      <h1 class="mb-3">{{ .Site.Data.data.facilities.title }}</h1>
+      <p>{{ .Site.Data.data.facilities.description }}</p>
+    </div>
+    <div class="row g-4">
+      {{ $colors := slice "primary" "success" "warning" "info" }} {{ range
+      $index, $facility := .Site.Data.data.facilities.items }} {{ $color :=
+      index $colors (mod $index 4) }}
+      <div
+        class="col-lg-3 col-sm-6 wow fadeInUp"
+        data-wow-delay="{{ mul 0.2 $index }}s"
+      >
+        <div class="facility-item">
+          <div class="facility-icon bg-{{ $color }}">
+            <span class="bg-{{ $color }}"></span>
+            <i class="{{ .icon }} fa-3x text-{{ $color }}"></i>
+            <span class="bg-{{ $color }}"></span>
+          </div>
+          <div class="facility-text bg-{{ $color }}">
+            <h3 class="text-{{ $color }} mb-3">{{ .name }}</h3>
+            <p class="mb-0">{{ .description }}</p>
+          </div>
+        </div>
+      </div>
+      {{ end }}
+    </div>
+  </div>
+</div>
+<!-- Facilities End -->

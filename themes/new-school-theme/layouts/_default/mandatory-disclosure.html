@@ -1,0 +1,202 @@
+{{ define "main" }}
+<div class="container mx-auto px-4 py-8">
+  <div class="text-center mb-12">
+    <h1 class="text-4xl font-bold text-gray-900 mb-2">Mandatory Disclosure</h1>
+    <p class="text-lg text-gray-600">
+      Transparency in Education as per CBSE Guidelines
+    </p>
+  </div>
+
+  <!-- School Information -->
+  <div class="bg-white shadow-md rounded-lg mb-8">
+    <div class="bg-primary-600 text-white px-6 py-4">
+      <h2 class="text-xl font-semibold">School Information</h2>
+    </div>
+    <div class="p-6">
+      <table class="min-w-full">
+        <tbody>
+          <tr class="border-b">
+            <td class="py-3 px-4 font-medium">School Name</td>
+            <td class="py-3 px-4">
+              {{ .Site.Data.data.mandatory_disclosure.school_info.school_name }}
+            </td>
+          </tr>
+          <tr class="border-b">
+            <td class="py-3 px-4 font-medium">Affiliation Number</td>
+            <td class="py-3 px-4">
+              {{
+              .Site.Data.data.mandatory_disclosure.school_info.affiliation_number
+              }}
+            </td>
+          </tr>
+          <tr class="border-b">
+            <td class="py-3 px-4 font-medium">School Code</td>
+            <td class="py-3 px-4">
+              {{ .Site.Data.data.mandatory_disclosure.school_info.school_code }}
+            </td>
+          </tr>
+          <tr class="border-b">
+            <td class="py-3 px-4 font-medium">Address</td>
+            <td class="py-3 px-4">
+              {{ .Site.Data.data.mandatory_disclosure.school_info.address }}
+            </td>
+          </tr>
+          <tr class="border-b">
+            <td class="py-3 px-4 font-medium">Principal Name</td>
+            <td class="py-3 px-4">
+              {{ .Site.Data.data.mandatory_disclosure.school_info.principal_name
+              }}
+            </td>
+          </tr>
+          <tr class="border-b">
+            <td class="py-3 px-4 font-medium">Contact Details</td>
+            <td class="py-3 px-4">
+              {{
+              .Site.Data.data.mandatory_disclosure.school_info.contact_details
+              }}
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Infrastructure Details -->
+  <div class="bg-white shadow-md rounded-lg mb-8">
+    <div class="bg-primary-600 text-white px-6 py-4">
+      <h2 class="text-xl font-semibold">Infrastructure Details</h2>
+    </div>
+    <div class="p-6">
+      <!-- Campus Overview -->
+      <div class="mb-8">
+        <h3 class="text-lg font-semibold text-gray-800 mb-4">
+          Campus Overview
+        </h3>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {{ range
+          .Site.Data.data.mandatory_disclosure.infrastructure.campus_overview }}
+          <div class="bg-gray-50 rounded-lg p-4 text-center">
+            <i class="{{ .icon }} text-3xl text-primary-600 mb-2"></i>
+            <h4 class="font-medium">{{ .name }}</h4>
+            <p class="text-gray-600">{{ .value }}</p>
+          </div>
+          {{ end }}
+        </div>
+      </div>
+
+      <!-- Facilities -->
+      <div>
+        <h3 class="text-lg font-semibold text-gray-800 mb-4">
+          Academic & Support Facilities
+        </h3>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {{ range
+          .Site.Data.data.mandatory_disclosure.infrastructure.facilities }}
+          <div
+            class="bg-white border border-gray-200 rounded-lg p-6 text-center hover:shadow-md transition-shadow duration-300"
+          >
+            <div class="bg-primary-50 inline-block rounded-full p-4 mb-4">
+              <i class="{{ .icon }} text-3xl text-primary-600"></i>
+            </div>
+            <h3 class="font-medium text-lg mb-2">{{ .name }}</h3>
+            <p class="text-gray-600 text-sm">{{ .details }}</p>
+          </div>
+          {{ end }}
+        </div>
+      </div>
+
+      <!-- Additional Features -->
+      <div class="mt-8">
+        <h3 class="text-lg font-semibold text-gray-800 mb-4">
+          Additional Features
+        </h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {{ range
+          .Site.Data.data.mandatory_disclosure.infrastructure.additional_features
+          }}
+          <div class="flex items-start space-x-3 p-4 bg-gray-50 rounded-lg">
+            <i class="{{ .icon }} text-primary-600 mt-1"></i>
+            <div>
+              <h4 class="font-medium">{{ .name }}</h4>
+              <p class="text-sm text-gray-600">{{ .details }}</p>
+            </div>
+          </div>
+          {{ end }}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Faculty Information -->
+  <div class="bg-white shadow-md rounded-lg mb-8">
+    <div class="bg-primary-600 text-white px-6 py-4">
+      <h2 class="text-xl font-semibold">Faculty Information</h2>
+    </div>
+    <div class="p-6">
+      <div class="overflow-x-auto">
+        <table class="min-w-full">
+          <thead>
+            <tr class="bg-gray-100">
+              <th class="py-3 px-4 text-left">Department</th>
+              <th class="py-3 px-4 text-left">Total Teachers</th>
+              <th class="py-3 px-4 text-left">Qualification</th>
+              <th class="py-3 px-4 text-left">Experience Range</th>
+            </tr>
+          </thead>
+          <tbody>
+            {{ range .Site.Data.data.mandatory_disclosure.faculty_info }}
+            <tr class="border-b">
+              <td class="py-3 px-4">{{ .department }}</td>
+              <td class="py-3 px-4">{{ .total_teachers }}</td>
+              <td class="py-3 px-4">{{ .qualification }}</td>
+              <td class="py-3 px-4">{{ .experience_range }}</td>
+            </tr>
+            {{ end }}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Fee Structure -->
+  <div class="bg-white shadow-md rounded-lg mb-8">
+    <div class="bg-primary-600 text-white px-6 py-4">
+      <h2 class="text-xl font-semibold">Fee Structure</h2>
+    </div>
+    <div class="p-6">
+      <div class="overflow-x-auto">
+        <table class="min-w-full">
+          <thead>
+            <tr class="bg-gray-100">
+              <th class="py-3 px-4 text-left">Class</th>
+              <th class="py-3 px-4 text-left">Admission Fee</th>
+              <th class="py-3 px-4 text-left">Tuition Fee (Monthly)</th>
+              <th class="py-3 px-4 text-left">Other Charges</th>
+            </tr>
+          </thead>
+          <tbody>
+            {{ range .Site.Data.data.mandatory_disclosure.fee_structure }}
+            <tr class="border-b">
+              <td class="py-3 px-4">{{ .class }}</td>
+              <td class="py-3 px-4">{{ .admission_fee }}</td>
+              <td class="py-3 px-4">{{ .tuition_fee }}</td>
+              <td class="py-3 px-4">{{ .other_charges }}</td>
+            </tr>
+            {{ end }}
+          </tbody>
+        </table>
+      </div>
+      <p class="text-sm text-gray-600 mt-4">
+        * All fees are subject to revision as per school management decision
+      </p>
+    </div>
+  </div>
+
+  <div class="text-center text-sm text-gray-600 mt-12">
+    <p>This information is provided in compliance with CBSE guidelines.</p>
+    <p class="mt-2">
+      Last updated: {{ .Site.Data.data.mandatory_disclosure.last_updated }}
+    </p>
+  </div>
+</div>
+{{ end }}

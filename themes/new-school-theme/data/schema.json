@@ -1,0 +1,436 @@
+{
+  "theme": "school-temp-2",
+  "displayName": "School Template 2",
+  "description": "A modern and clean Hugo theme for school websites",
+  "version": "1.0.0",
+  "pages": {
+    "global": {
+      "site_name": {
+        "name": "ABC International School"
+      },
+      "site_logo": {
+        "icon": "fas fa-graduation-cap",
+        "text": "ABC International"
+      },
+      "navigation": {
+        "main_menu": [
+          {
+            "name": "Home",
+            "url": "/",
+            "type": "link"
+          },
+          {
+            "name": "About",
+            "url": "/about",
+            "type": "dropdown",
+            "items": [
+              {
+                "name": "Our Story",
+                "url": "/about#story"
+              },
+              {
+                "name": "Mission & Vision",
+                "url": "/about#mission-vision"
+              },
+              {
+                "name": "Core Values",
+                "url": "/about#core-values"
+              }
+            ]
+          },
+          {
+            "name": "Admission",
+            "url": "/admission",
+            "type": "link"
+          },
+          {
+            "name": "Facilities",
+            "url": "/facilities",
+            "type": "link"
+          },
+          {
+            "name": "Team",
+            "url": "/team",
+            "type": "link"
+          },
+          {
+            "name": "Gallery",
+            "url": "/gallery",
+            "type": "link"
+          },
+          {
+            "name": "Contact",
+            "url": "/contact",
+            "type": "link"
+          },
+          {
+            "name": "Important Links",
+            "url": "#",
+            "type": "dropdown",
+            "items": [
+              {
+                "name": "Terms of Service",
+                "url": "/terms-of-service"
+              },
+              {
+                "name": "Privacy Policy",
+                "url": "/privacy-policy"
+              },
+              {
+                "name": "Mandatory Disclosure",
+                "url": "/mandatory-disclosure"
+              }
+            ]
+          }
+        ]
+      },
+      "footer": {
+        "about": {
+          "description": "ABC International School is committed to providing quality education and nurturing young minds for a better tomorrow.",
+          "social_links": {
+            "facebook": "https://facebook.com/abcinternational",
+            "twitter": "https://twitter.com/abcinternational",
+            "linkedin": "https://linkedin.com/company/abcinternational",
+            "youtube": "https://youtube.com/abcinternational"
+          }
+        },
+        "quick_links": [
+          {
+            "name": "Admission",
+            "url": "/admission"
+          },
+          {
+            "name": "Facilities",
+            "url": "/facilities"
+          },
+          {
+            "name": "Contact",
+            "url": "/contact"
+          }
+        ],
+        "newsletter": {
+          "title": "Subscribe to Our Newsletter",
+          "description": "Stay updated with our latest news and updates",
+          "button_text": "Subscribe Now"
+        }
+      }
+    },
+    "home": {
+      "hero": {
+        "title": "Welcome to ABC International School",
+        "subtitle": "Nurturing Minds, Shaping Futures",
+        "description": "We provide world-class education with a focus on holistic development and academic excellence.",
+        "cta": {
+          "primary": {
+            "text": "Apply Now",
+            "url": "/admission"
+          },
+          "secondary": {
+            "text": "Learn More",
+            "url": "/about"
+          }
+        }
+      },
+      "featured_classes": {
+        "items": [
+          {
+            "name": "Primary Education",
+            "age_group": "6-11 years",
+            "time": "8:00 AM - 2:00 PM",
+            "capacity": "25 students per class",
+            "price": "$5000/year",
+            "image": "/images/classes/primary.jpg",
+            "teacher": {
+              "name": "Sarah Johnson",
+              "image": "/images/teachers/sarah.jpg",
+              "position": "Head of Primary"
+            }
+          },
+          {
+            "name": "Secondary Education",
+            "age_group": "12-16 years",
+            "time": "8:00 AM - 3:00 PM",
+            "capacity": "30 students per class",
+            "price": "$6000/year",
+            "image": "/images/classes/secondary.jpg",
+            "teacher": {
+              "name": "Michael Brown",
+              "image": "/images/teachers/michael.jpg",
+              "position": "Head of Secondary"
+            }
+          }
+        ]
+      }
+    },
+    "about": {
+      "main": {
+        "title": "About ABC International School",
+        "description": [
+          "Founded in 1995, ABC International School has been a pioneer in providing quality education to students from diverse backgrounds.",
+          "Our curriculum combines international standards with local values to create well-rounded individuals ready for global challenges."
+        ],
+        "ceo": {
+          "name": "Dr. Robert Wilson",
+          "position": "Principal & CEO",
+          "image": "/images/team/principal.jpg"
+        }
+      },
+      "mission": {
+        "statement": "To provide exceptional education that empowers students to become lifelong learners and responsible global citizens."
+      },
+      "vision": {
+        "statement": "To be recognized globally as a center of academic excellence and holistic development."
+      },
+      "core_values": {
+        "values": [
+          "Excellence",
+          "Integrity",
+          "Innovation",
+          "Respect",
+          "Responsibility"
+        ]
+      }
+    },
+    "facilities": {
+      "main": {
+        "title": "Our World-Class Facilities",
+        "description": "We provide state-of-the-art facilities to ensure the best learning environment for our students.",
+        "items": [
+          {
+            "name": "Science Labs",
+            "description": "Fully equipped laboratories for Physics, Chemistry, and Biology",
+            "features": [
+              "Modern equipment",
+              "Safety gear",
+              "Interactive learning tools"
+            ],
+            "icon": "fas fa-flask"
+          },
+          {
+            "name": "Library",
+            "description": "Extensive collection of books, journals, and digital resources",
+            "features": ["Digital catalogs", "Study areas", "Online resources"],
+            "icon": "fas fa-book"
+          }
+        ]
+      }
+    },
+    "team": {
+      "main": {
+        "title": "Our Expert Team",
+        "description": "Meet our dedicated team of educators and staff members.",
+        "members": [
+          {
+            "name": "Dr. Emily Parker",
+            "position": "Head of Academics",
+            "image": "/images/team/emily.jpg",
+            "social": {
+              "linkedin": "https://linkedin.com/in/emilyparker",
+              "twitter": "https://twitter.com/emilyparker",
+              "email": "emily@abcinternational.com"
+            }
+          },
+          {
+            "name": "Prof. James Wilson",
+            "position": "Head of Sciences",
+            "image": "/images/team/james.jpg",
+            "social": {
+              "linkedin": "https://linkedin.com/in/jameswilson",
+              "twitter": "https://twitter.com/jameswilson",
+              "email": "james@abcinternational.com"
+            }
+          }
+        ]
+      }
+    },
+    "contact": {
+      "info": {
+        "address": {
+          "street": "123 Education Street",
+          "city": "New York",
+          "country": "United States"
+        },
+        "phone": {
+          "main": "+1 (555) 123-4567",
+          "admissions": "+1 (555) 123-4568"
+        },
+        "email": {
+          "info": "info@abcinternational.com",
+          "admissions": "admissions@abcinternational.com",
+          "careers": "careers@abcinternational.com"
+        },
+        "business_hours": {
+          "weekdays": {
+            "days": "Monday - Friday",
+            "hours": "8:00 AM - 4:00 PM"
+          },
+          "weekend": {
+            "days": "Saturday",
+            "hours": "9:00 AM - 1:00 PM"
+          }
+        }
+      }
+    },
+    "admission": {
+      "main": {
+        "title": "Admission Process",
+        "description": "Join our prestigious institution and embark on a journey of excellence.",
+        "process_steps": [
+          {
+            "title": "Submit Application",
+            "description": "Fill out the online application form with all required documents",
+            "icon": "fas fa-file-alt"
+          },
+          {
+            "title": "Entrance Test",
+            "description": "Complete the entrance assessment test",
+            "icon": "fas fa-pencil-alt"
+          },
+          {
+            "title": "Interview",
+            "description": "Personal interview with the admission committee",
+            "icon": "fas fa-users"
+          },
+          {
+            "title": "Final Selection",
+            "description": "Receive admission decision and complete enrollment",
+            "icon": "fas fa-check-circle"
+          }
+        ]
+      },
+      "requirements": {
+        "documents": [
+          "Birth Certificate",
+          "Previous School Records",
+          "Passport Size Photographs",
+          "Transfer Certificate",
+          "Medical Records"
+        ],
+        "age_criteria": {
+          "primary": "6-11 years",
+          "secondary": "12-16 years"
+        }
+      },
+      "fees": {
+        "structure": [
+          {
+            "grade": "Primary",
+            "tuition": "$5000/year",
+            "admission_fee": "$500",
+            "other_charges": "$300"
+          },
+          {
+            "grade": "Secondary",
+            "tuition": "$6000/year",
+            "admission_fee": "$600",
+            "other_charges": "$400"
+          }
+        ]
+      }
+    },
+    "gallery": {
+      "main": {
+        "title": "School Gallery",
+        "description": "Explore our vibrant school life through pictures",
+        "categories": [
+          {
+            "name": "Campus",
+            "images": [
+              {
+                "url": "/images/gallery/campus-1.jpg",
+                "caption": "Main Building"
+              },
+              {
+                "url": "/images/gallery/campus-2.jpg",
+                "caption": "Sports Ground"
+              }
+            ]
+          },
+          {
+            "name": "Events",
+            "images": [
+              {
+                "url": "/images/gallery/event-1.jpg",
+                "caption": "Annual Day"
+              },
+              {
+                "url": "/images/gallery/event-2.jpg",
+                "caption": "Sports Meet"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "terms": {
+      "main": {
+        "title": "Terms of Service",
+        "last_updated": "2024-03-15",
+        "sections": [
+          {
+            "title": "General Terms",
+            "content": "These terms and conditions outline the rules and regulations for the use of ABC International School's services."
+          },
+          {
+            "title": "School Policies",
+            "content": "Students and parents must adhere to all school policies and guidelines."
+          }
+        ]
+      }
+    },
+    "privacy": {
+      "main": {
+        "title": "Privacy Policy",
+        "last_updated": "2024-03-15",
+        "sections": [
+          {
+            "title": "Data Collection",
+            "content": "We collect personal information necessary for educational and administrative purposes."
+          },
+          {
+            "title": "Data Protection",
+            "content": "We implement appropriate security measures to protect your personal information."
+          }
+        ]
+      }
+    },
+    "mandatory_disclosure": {
+      "main": {
+        "title": "Mandatory Disclosure",
+        "last_updated": "2024-03-15",
+        "sections": [
+          {
+            "title": "School Information",
+            "items": [
+              "School Registration Number",
+              "Affiliation Details",
+              "Infrastructure Information",
+              "Staff Details"
+            ]
+          },
+          {
+            "title": "Academic Information",
+            "items": [
+              "Curriculum Details",
+              "Assessment System",
+              "Academic Calendar",
+              "Extra-Curricular Activities"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "config": {
+    "colors": {
+      "primary": "#2563eb",
+      "secondary": "#1e40af",
+      "text": "#1f2937",
+      "background": "#f3f4f6"
+    },
+    "fonts": {
+      "heading": "Inter",
+      "body": "Inter"
+    }
+  }
+}
