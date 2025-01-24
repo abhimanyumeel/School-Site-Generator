@@ -1,0 +1,97 @@
+{{ define "main" }} {{ $privacy := .Site.Data.data.privacy_policy }}
+<div class="container-fluid bg-primary mb-5">
+  <div class="container py-5">
+    <div class="row justify-content-center">
+      <div class="col-lg-10 text-center">
+        <h1 class="display-3 text-white animated slideInDown">
+          {{ $privacy.title }}
+        </h1>
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb justify-content-center">
+            <li class="breadcrumb-item">
+              <a class="text-white" href="/">Home</a>
+            </li>
+            <li class="breadcrumb-item text-white active" aria-current="page">
+              Privacy Policy
+            </li>
+          </ol>
+        </nav>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container py-5">
+  <div class="row g-5">
+    <div class="col-lg-8">
+      <div class="bg-light rounded p-4 p-sm-5">
+        <div class="section-title position-relative mb-4">
+          <h3 class="mb-4">Our Privacy Commitment</h3>
+          <div class="border-bottom mb-4"></div>
+        </div>
+        <div class="privacy-content">{{ .Content }}</div>
+        <div class="text-end mt-4">
+          <small class="text-muted fst-italic"
+            >Last Updated: {{ $privacy.last_updated }}</small
+          >
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-4">
+      <div class="bg-light rounded p-4 mb-4">
+        <h4 class="mb-4">Quick Links</h4>
+        <div class="d-flex flex-column">
+          {{ range $privacy.quick_links }}
+          <a class="h6 mb-3" href="{{ .url }}">
+            <i class="fas fa-angle-right me-2"></i>{{ .name }}
+          </a>
+          {{ end }}
+        </div>
+      </div>
+
+      <div class="bg-light rounded p-4">
+        <h4 class="mb-4">Have Questions?</h4>
+        {{ with $privacy.contact_info }}
+        <div class="d-flex align-items-center mb-3">
+          <div
+            class="d-flex align-items-center justify-content-center flex-shrink-0 bg-primary rounded-circle"
+            style="width: 45px; height: 45px"
+          >
+            <i class="fa fa-envelope-open text-white"></i>
+          </div>
+          <div class="ms-3">
+            <h6 class="text-primary mb-1">Email</h6>
+            <small>{{ .email }}</small>
+          </div>
+        </div>
+        <div class="d-flex align-items-center mb-3">
+          <div
+            class="d-flex align-items-center justify-content-center flex-shrink-0 bg-primary rounded-circle"
+            style="width: 45px; height: 45px"
+          >
+            <i class="fa fa-phone-alt text-white"></i>
+          </div>
+          <div class="ms-3">
+            <h6 class="text-primary mb-1">Phone</h6>
+            <small>{{ .phone }}</small>
+          </div>
+        </div>
+        <div class="d-flex align-items-center">
+          <div
+            class="d-flex align-items-center justify-content-center flex-shrink-0 bg-primary rounded-circle"
+            style="width: 45px; height: 45px"
+          >
+            <i class="fa fa-map-marker-alt text-white"></i>
+          </div>
+          <div class="ms-3">
+            <h6 class="text-primary mb-1">Address</h6>
+            <small>{{ .address }}</small>
+          </div>
+        </div>
+        {{ end }}
+      </div>
+    </div>
+  </div>
+</div>
+{{ end }}

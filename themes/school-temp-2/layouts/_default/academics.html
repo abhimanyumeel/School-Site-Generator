@@ -1,0 +1,173 @@
+{{ define "main" }}
+<!-- Page Header Start -->
+<div class="container-xxl py-5 page-header position-relative mb-5">
+  <div class="container py-5">
+    <h1 class="display-2 text-white animated slideInDown mb-4">Academics</h1>
+    <nav aria-label="breadcrumb animated slideInDown">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="/">Home</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Academics</li>
+      </ol>
+    </nav>
+  </div>
+</div>
+<!-- Page Header End -->
+
+<div class="academics-content">
+  <!-- Class & Curriculum Section -->
+  <section class="academic-section" id="curriculum">
+    <div class="container">
+      <h2 class="section-title">Class & Curriculum</h2>
+      <div class="curriculum-grid">
+        {{ with .Site.Data.data.academics.curriculum }}
+        <div class="curriculum-card">
+          <div class="card-icon">
+            <i class="fas fa-book-open"></i>
+          </div>
+          <h3>{{ .primary.title }}</h3>
+          <p>{{ .primary.description }} ({{ .primary.grades }})</p>
+        </div>
+        <div class="curriculum-card">
+          <div class="card-icon">
+            <i class="fas fa-pencil-alt"></i>
+          </div>
+          <h3>{{ .middle.title }}</h3>
+          <p>{{ .middle.description }} ({{ .middle.grades }})</p>
+        </div>
+        <div class="curriculum-card">
+          <div class="card-icon">
+            <i class="fas fa-graduation-cap"></i>
+          </div>
+          <h3>{{ .high.title }}</h3>
+          <p>{{ .high.description }} ({{ .high.grades }})</p>
+        </div>
+        {{ end }}
+      </div>
+    </div>
+  </section>
+
+  <!-- Teaching Methodology Section -->
+  <section class="academic-section methodology-section" id="methodology">
+    <div class="container">
+      <h2 class="section-title">
+        {{ .Site.Data.data.academics.methodology.title }}
+      </h2>
+      <div class="methodology-content">
+        {{ range .Site.Data.data.academics.methodology.items }}
+        <div class="methodology-item">
+          <h3>{{ .title }}</h3>
+          <p>{{ .description }}</p>
+        </div>
+        {{ end }}
+      </div>
+    </div>
+  </section>
+
+  <!-- Exam & Assessment Section -->
+  <section class="academic-section assessment-section" id="assessment">
+    <div class="container">
+      <h2 class="section-title">
+        {{ .Site.Data.data.academics.assessment.title }}
+      </h2>
+      <div class="assessment-grid">
+        {{ range .Site.Data.data.academics.assessment.items }}
+        <div class="assessment-card">
+          <h3>{{ .title }}</h3>
+          <ul>
+            {{ range .points }}
+            <li>{{ . }}</li>
+            {{ end }}
+          </ul>
+        </div>
+        {{ end }}
+      </div>
+    </div>
+  </section>
+
+  <!-- Syllabus Section -->
+  <section class="academic-section syllabus-section" id="syllabus">
+    <div class="container">
+      <div
+        class="text-center mx-auto mb-5 wow fadeInUp"
+        data-wow-delay="0.1s"
+        style="max-width: 600px"
+      >
+        <h2 class="section-title">
+          {{ .Site.Data.data.academics.syllabus.title }}
+        </h2>
+        <p>{{ .Site.Data.data.academics.syllabus.description }}</p>
+      </div>
+      <div class="syllabus-tabs">
+        <div class="tab-buttons">
+          {{ range $index, $grade := .Site.Data.data.academics.syllabus.grades
+          }}
+          <button
+            class="tab-btn{{ if eq $index 0 }} active{{ end }}"
+            data-grade="{{ .id }}"
+          >
+            {{ .name }}
+          </button>
+          {{ end }}
+        </div>
+
+        <!-- Primary School Content -->
+        {{ range $index, $grade := .Site.Data.data.academics.syllabus.grades }}
+        <div
+          class="tab-content{{ if eq $index 0 }} active{{ end }}"
+          id="{{ .id }}-content"
+        >
+          <h3>{{ .title }}</h3>
+          <div class="subject-list">
+            {{ range .subjects }}
+            <div class="subject-card">
+              <h4><i class="{{ .icon }} text-primary me-2"></i>{{ .name }}</h4>
+              <ul class="list-unstyled mt-3">
+                {{ range .topics }}
+                <li><i class="fa fa-check text-primary me-2"></i>{{ . }}</li>
+                {{ end }}
+              </ul>
+            </div>
+            {{ end }}
+          </div>
+        </div>
+        {{ end }}
+      </div>
+    </div>
+  </section>
+</div>
+{{ partial "team.html" . }}
+<!-- Add JavaScript for tab functionality -->
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const tabButtons = document.querySelectorAll(".tab-btn");
+    const tabContents = document.querySelectorAll(".tab-content");
+
+    // Initially hide all content except the first one
+    tabContents.forEach((content, index) => {
+      if (index !== 0) {
+        content.style.display = "none";
+      }
+    });
+
+    tabButtons.forEach((button) => {
+      button.addEventListener("click", () => {
+        const grade = button.getAttribute("data-grade");
+
+        // Remove active class from all buttons and contents
+        tabButtons.forEach((btn) => btn.classList.remove("active"));
+        tabContents.forEach((content) => {
+          content.style.display = "none";
+          content.classList.remove("active");
+        });
+
+        // Add active class to clicked button and show corresponding content
+        button.classList.add("active");
+        const selectedContent = document.getElementById(`${grade}-content`);
+        selectedContent.style.display = "block";
+        selectedContent.classList.add("active");
+      });
+    });
+  });
+</script>
+
+{{ end }}

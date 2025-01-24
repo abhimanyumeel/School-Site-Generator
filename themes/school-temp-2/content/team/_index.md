@@ -1,0 +1,63 @@
+---
+title: "Our Teachers"
+description: "Meet Our Expert Teachers"
+heading: "Meet Our Expert Teachers"
+mainContent: "Tempor ut dolore lorem kasd vero ipsum sit eirmod sit. Ipsum diam justo sed rebum vero dolor duo."
+teachers:
+  - name: "Julia Smith"
+    designation: "Music Teacher"
+    image: "img/team-1.jpg"
+    social:
+      facebook: "#"
+      twitter: "#"
+      instagram: "#"
+  - name: "Jhon Doe"
+    designation: "Language Teacher"
+    image: "img/team-2.jpg"
+    social:
+      facebook: "#"
+      twitter: "#"
+      instagram: "#"
+  - name: "Mollie Ross"
+    designation: "Dance Teacher"
+    image: "img/team-3.jpg"
+    social:
+      facebook: "#"
+      twitter: "#"
+      instagram: "#"
+  - name: "Donald John"
+    designation: "Art Teacher"
+    image: "img/team-1.jpg"
+    social:
+      facebook: "#"
+      twitter: "#"
+      instagram: "#"
+  - name: "Julia Smith"
+    designation: "Music Teacher"
+    image: "img/team-2.jpg"
+    social:
+      facebook: "#"
+      twitter: "#"
+      instagram: "#"
+  - name: "Jhon Doe"
+    designation: "Language Teacher"
+    image: "img/team-3.jpg"
+    social:
+      facebook: "#"
+      twitter: "#"
+      instagram: "#"
+  - name: "Mollie Ross"
+    designation: "Dance Teacher"
+    image: "img/team-1.jpg"
+    social:
+      facebook: "#"
+      twitter: "#"
+      instagram: "#"
+  - name: "Donald John"
+    designation: "Art Teacher"
+    image: "img/team-2.jpg"
+    social:
+      facebook: "#"
+      twitter: "#"
+      instagram: "#"
+---

@@ -1,0 +1,58 @@
+{{ define "main" }}
+<!-- Page Header Start -->
+<div class="container-xxl py-5 page-header position-relative mb-5">
+  <div class="container py-5">
+    <h1 class="display-2 text-white animated slideInDown mb-4">{{ .Title }}</h1>
+    <nav aria-label="breadcrumb animated slideInDown">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="/">Home</a></li>
+        <li class="breadcrumb-item active" aria-current="page">{{ .Title }}</li>
+      </ol>
+    </nav>
+  </div>
+</div>
+<!-- Page Header End -->
+
+<!-- About Content Start -->
+<div class="container-xxl py-5">
+  <!-- Overview Section -->
+  <section class="overview-section mb-5">
+    <div class="container">{{ .Content }}</div>
+  </section>
+
+  <!-- Director's Message Section -->
+  <section class="director-message mb-5">
+    <div class="container">
+      <div class="row align-items-center">
+        <div class="col-md-4">
+          <div class="director-image">
+            <img
+              src="{{ .Site.Data.data.about.main.ceo.image }}"
+              alt="{{ .Site.Data.data.about.main.ceo.name }}'s Photo"
+              class="img-fluid rounded"
+            />
+          </div>
+        </div>
+        <div class="col-md-8">
+          <h3>From the Director's Desk</h3>
+          <h4>{{ .Site.Data.data.about.main.ceo.name }}</h4>
+          <p class="designation">
+            {{ .Site.Data.data.about.main.ceo.position }}
+          </p>
+          <div class="message-content">
+            {{ range .Site.Data.data.about.main.description }}
+            <p>{{ . }}</p>
+            {{ end }}
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Faculty Section -->
+  {{ partial "team.html" . }}
+</div>
+<!-- About Content End -->
+
+<!-- Call To Action Section -->
+{{ end }}

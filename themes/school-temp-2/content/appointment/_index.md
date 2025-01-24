@@ -1,0 +1,22 @@
+---
+title: "Make Appointment"
+description: "Make an Appointment for Your Kid"
+heading: "Make an Appointment for Your Kid"
+mainContent: "Tempor ut dolore lorem kasd vero ipsum sit eirmod sit. Ipsum diam justo sed rebum vero dolor duo."
+formFields:
+  - label: "Guardian Name"
+    type: "text"
+    placeholder: "Your Name"
+  - label: "Guardian Email"
+    type: "email"
+    placeholder: "Your Email"
+  - label: "Child Name"
+    type: "text"
+    placeholder: "Child Name"
+  - label: "Child Age"
+    type: "text"
+    placeholder: "Child Age"
+  - label: "Message"
+    type: "textarea"
+    placeholder: "Leave a message here"
+---

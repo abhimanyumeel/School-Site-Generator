@@ -1,0 +1,46 @@
+params:
+  mission: "To provide exceptional education that empowers students to become lifelong learners and responsible global citizens."
+  vision: "To be a leading educational institution that inspires innovation, creativity, and excellence in every student."
+  values: "Excellence, Integrity, Inclusivity, Innovation, and Community"
+  schoolName: "Your School Name"
+  affiliationNumber: "XXXXX"
+  address: "Your School Address, City, State, PIN"
+  phone: "+91 XXXXXXXXXX"
+  email: "school@example.com"
+  website: "www.yourschool.com"
+
+  # Management Committee Data
+  management:
+    - name: "Dr. John Doe"
+      designation: "Chairman"
+    - name: "Mrs. Jane Smith"
+      designation: "Secretary"
+    - name: "Mr. Robert Johnson"
+      designation: "Treasurer"
+    - name: "Dr. Sarah Williams"
+      designation: "Member"
+
+  # Facilities Data
+  facilities:
+    - "Science Laboratories"
+    - "Computer Lab"
+    - "Library"
+    - "Sports Complex"
+    - "Smart Classrooms"
+    - "Auditorium"
+    - "Medical Room"
+    - "Transportation"
+    - "Cafeteria"
+
+  # Documents Data
+  documents:
+    - name: "CBSE Affiliation Letter"
+      url: "/documents/affiliation-letter.pdf"
+    - name: "NOC from State Government"
+      url: "/documents/noc.pdf"
+    - name: "Fire Safety Certificate"
+      url: "/documents/fire-safety.pdf"
+    - name: "Building Safety Certificate"
+      url: "/documents/building-safety.pdf"
+    - name: "Water & Sanitation Certificate"
+      url: "/documents/sanitation.pdf"
