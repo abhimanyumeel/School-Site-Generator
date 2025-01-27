@@ -365,7 +365,16 @@ export default function CustomizeTheme() {
             const objectData: Record<string, any> = {};
             const fieldAsField = field as Field;  // Explicit type casting
             Object.entries(fieldAsField.fields || {}).forEach(([subFieldId, subField]) => {
-              if ((subField as Field).type === 'object') {
+              if ((subField as Field).type === 'array') {
+                // Handle arrays within objects
+                const arrayData = formData[currentPage]?.[sectionId]?.[fieldId]?.[subFieldId] || [];
+                objectData[subFieldId] = arrayData;
+                console.log('Array within object data:', {
+                  path: `${sectionId}.${fieldId}.${subFieldId}`,
+                  data: arrayData
+                });
+              }
+              else if ((subField as Field).type === 'object') {
                 // Handle nested objects (like social_links in footer.about)
                 const nestedData: Record<string, any> = {};
                 Object.entries((subField as Field).fields || {}).forEach(([nestedKey, nestedField]) => {
