@@ -965,6 +965,11 @@ export default function CustomizeTheme() {
                       </div>
                     ))}
                   </div>
+                ) : (subField as Field).type === 'array' ? (
+                  // Handle array within object
+                  <div className="pl-4 space-y-4 border-l-2 border-blue-100 bg-gray-50 rounded-lg p-4">
+                    {renderField(sectionId, `${fieldId}.${subFieldId}`, subField as Field)}
+                  </div>
                 ) : (
                   <div>
                     {(subField as Field).type === 'long-text' ? (
