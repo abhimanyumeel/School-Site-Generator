@@ -1,12 +1,23 @@
 {
   "theme": "school-temp-2",
-  "displayName": "School Template 2",
+  "displayName": "School New Template 2",
   "description": "A modern and clean Hugo theme for school websites",
   "version": "1.0.0",
   "pages": {
     "global": {
+      "type": "page",
+      "title": "Global Settings",
+      "sections": {
       "site_name": {
-        "name": "ABC International School"
+        "title": "Site Name",
+        "fields": {
+          "name": {
+            "type": "short-text",
+            "label": "School Name",
+            "required": true,
+            "description": "Name of the school"
+          }
+        }
       },
       "site_logo": {
         "icon": "fas fa-graduation-cap",
@@ -114,6 +125,7 @@
           "button_text": "Subscribe Now"
         }
       }
+    }
     },
     "home": {
       "hero": {

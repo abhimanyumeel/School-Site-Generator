@@ -661,7 +661,7 @@ export default function CustomizeTheme() {
                               </label>
                               <div className="space-y-2 pl-4 border-l-2 border-gray-200">
                                 {/* Show nested items only if parent type is dropdown */}
-                                {item.type === 'dropdown' && (
+                                {item.type === 'dropdown' ? (
                                   <>
                                     {(item[itemKey] || []).map((subItem: any, subIndex: number) => (
                                       <div key={subIndex} className="flex gap-4 items-start">
@@ -741,6 +741,79 @@ export default function CustomizeTheme() {
                                       Add Item
                                     </button>
                                   </>
+                                ) : (
+                                    // Handle generic nested arrays (like features)
+                                    <>
+                                      {(item[itemKey] || []).map((value: string, subIndex: number) => (
+                                        <div key={subIndex} className="flex gap-4 items-start">
+                                          <input
+                                            type="text"
+                                            value={value}
+                                            onChange={(e) => {
+                                              const newItems = [...(formData[currentPage]?.[sectionId]?.[fieldId] || [])];
+                                              if (!newItems[index][itemKey]) newItems[index][itemKey] = [];
+                                              newItems[index][itemKey][subIndex] = e.target.value;
+                                              setFormData({
+                                                ...formData,
+                                                [currentPage]: {
+                                                  ...formData[currentPage],
+                                                  [sectionId]: {
+                                                     ...formData[currentPage]?.[sectionId],
+                                                     [fieldId]: newItems
+                                                  }
+                                                }
+                                              });
+                                            }}
+                                            className="flex-1 px-3 py-2.5 border border-gray-300 rounded-md 
+                                              text-gray-900 bg-white focus:ring-2 focus:ring-blue-500 
+                                              focus:border-blue-500 shadow-sm"
+                                            placeholder={`Enter ${typedItemDef.label || itemKey}`}
+                                          />
+                                          <button
+                                            type="button"
+                                            onClick={() => {
+                                              const newItems = [...(formData[currentPage]?.[sectionId]?.[fieldId] || [])];
+                                              newItems[index][itemKey].splice(subIndex, 1);
+                                              setFormData({
+                                                ...formData,
+                                                [currentPage]: {
+                                                  ...formData[currentPage],
+                                                  [sectionId]: {
+                                                    ...formData[currentPage]?.[sectionId],
+                                                    [fieldId]: newItems
+                                                  }
+                                                }
+                                              });
+                                            }}
+                                            className="text-red-500 hover:text-red-700 text-sm mt-2"
+                                          >
+                                            Remove
+                                          </button>
+                                        </div>
+                                      ))}
+                                      <button
+                                        type="button"
+                                        onClick={() => {
+                                          const newItems = [...(formData[currentPage]?.[sectionId]?.[fieldId] || [])];
+                                          if (!newItems[index][itemKey]) newItems[index][itemKey] = [];
+                                          newItems[index][itemKey].push('');
+                                          setFormData({
+                                            ...formData,
+                                            [currentPage]: {
+                                              ...formData[currentPage],
+                                               [sectionId]: {
+                                                ...formData[currentPage]?.[sectionId],
+                                                [fieldId]: newItems
+                                              }
+                                            }
+                                          });
+                                        }}
+                                        className="mt-2 text-sm text-blue-600 hover:text-blue-700"
+                                      >
+                                        Add Item
+                                      </button>
+                                    </>
+
                                 )}
                               </div>
                             </div>
