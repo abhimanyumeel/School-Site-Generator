@@ -23,8 +23,11 @@
           data-wow-delay="0.1s"
         >
           <h1 class="mb-4">{{ site.Data.data.about.main.title }}</h1>
-          {{ range site.Data.data.about.main.description }}
-          <p class="mb-4">{{ . }}</p>
+          {{ $paragraphs := split site.Data.data.about.main.description "\n\n"}}
+          {{ range $paragraphs }}
+            {{ if ne . "" }}
+              <p class="mb-4">{{ . }}</p>
+            {{ end }}
           {{ end }}
           <div class="row g-4">
             <div class="col-12">
