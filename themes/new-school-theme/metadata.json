@@ -843,90 +843,117 @@
         }
       }
     },
-    "terms_of_service": {
+    
+"terms-of-service": {
   "type": "page",
-  "title": "Terms of Service Page",
+  "title": "Terms of Service",
   "sections": {
-    "header": {
-      "title": "Page Header",
+    "main": {
+      "title": "Terms Content",
       "fields": {
-        "title": "short-text",
-        "last_updated": "date"
-      }
-    },
-    "navigation": {
-      "title": "Table of Contents",
-      "fields": {
-        "items": {
+        "title": {
+          "type": "short-text",
+          "label": "Page Title"
+        },
+        "last_updated": {
+          "type": "short-text",
+          "label": "Last Updated Date"
+        },
+        "navigation": {
           "type": "array",
-          "label": "Navigation Links",
+          "label": "Table of Contents",
           "items": {
-            "type": "object",
-            "fields": {
-              "id": "short-text",
-              "title": "short-text"
+            "id": {
+              "type": "short-text",
+              "label": "Section ID"
+            },
+            "title": {
+              "type": "short-text",
+              "label": "Section Title"
             }
           }
-        }
-      }
-    },
-    "sections": {
-      "title": "Content Sections",
-      "fields": {
-        "items": {
-          "type": "array",
-          "label": "Terms Sections",
-          "items": {
-            "type": "object",
-            "fields": {
-              "title": "short-text",
-              "content": "long-text",
-              "intro": "long-text",
+        },
+        "sections": {
+          "type": "object",
+          "label": "Content Sections",
+          "fields": {
+            "title": {
+              "type": "short-text",
+              "label": "Section Title"
+            },
+            "content": {
+              "type": "long-text",
+              "label": "Section Content"
+            },
+            "intro": {
+              "type": "long-text",
+              "label": "Section Introduction"
+            },
+            "items": {
+              "type": "array",
+              "label": "Section List Items",
               "items": {
-                "type": "array",
-                "items": "long-text"
-              },
-              "subsections": {
-                "type": "array",
+                "type": "long-text",
+                "label": "List Item"
+              }
+            },
+            "subsections": {
+              "type": "object",
+              "label": "Subsections",
+              "fields": {
+                "title": {
+                  "type": "short-text",
+                  "label": "Subsection Title"
+                },
                 "items": {
-                  "type": "object",
-                  "fields": {
-                    "title": "short-text",
-                    "items": {
-                      "type": "array",
-                      "items": "long-text"
-                    }
+                  "type": "array",
+                  "label": "Subsection List Items",
+                  "items": {
+                    "type": "long-text",
+                    "label": "List Item"
                   }
                 }
               }
             }
           }
-        }
-      }
-    },
-    "related_documents": {
-      "title": "Related Documents",
-      "fields": {
-        "items": {
+        },
+        "related_documents": {
           "type": "array",
-          "label": "Document Links",
+          "label": "Related Documents",
           "items": {
-            "type": "object",
-            "fields": {
-              "name": "short-text",
-              "url": "short-text",
-              "icon": "short-text"
+            "name": {
+              "type": "short-text",
+              "label": "Document Name"
+            },
+            "url": {
+              "type": "short-text",
+              "label": "Document URL"
+            },
+            "icon": {
+              "type": "short-text",
+              "label": "Document Icon Class"
+            }
+          }
+        },
+        "contact_info": {
+          "type": "object",
+          "label": "Contact Information",
+          "fields": {
+            "email": {
+              "type": "short-text",
+              "label": "Contact Email",
+              "format": "email"
+            },
+            "phone": {
+              "type": "short-text",
+              "label": "Contact Phone"
+            },
+            "address": {
+              "type": "short-text",
+              "label": "Contact Address"
             }
           }
         }
-      }
-    },
-    "contact_info": {
-      "title": "Contact Information",
-      "fields": {
-        "email": "short-text",
-        "phone": "short-text",
-        "address": "short-text"
       }
     }
   }
