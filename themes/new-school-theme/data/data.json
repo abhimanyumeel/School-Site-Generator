@@ -144,10 +144,7 @@
   "about": {
     "main": {
       "title": "Learn More About Our Work And Our Cultural Activities",
-      "description": [
-        "At our school, we believe in providing a holistic education that nurtures both academic excellence and character development.",
-        "Our dedicated team of educators works tirelessly to create an environment where every student can thrive and reach their full potential."
-      ],
+      "description": "At our school, we believe in providing a holistic education that nurtures both academic excellence and character development.\n\nOur dedicated team of educators works tirelessly to create an environment where every student can thrive and reach their full potential.",
       "ceo": {
         "name": "Dr. Rajesh Kumar",
         "position": "Director & Principal",
@@ -950,32 +947,37 @@
     },
     "contact_info": {
       "title": "For Admission Request",
-      "contacts": [
-        {
-          "name": "Ms. Suman Mathur",
-          "phone": "+918905551586",
-          "role": "Admission Coordinator"
-        },
+      "contacts": { 
+        "info": [
+          {
+            "name": "Ms. Suman Mathur",
+            "phone": "+918905551586",
+            "role": "Admission Coordinator"
+          },
         {
           "name": "Mr. Surendra Singh",
           "phone": "+919649261850",
           "role": "Administrative Officer"
         }
-      ],
-      "campuses": [
-        {
-          "name": "Mansarovar Campus",
-          "type": "WhatsApp enquiry"
-        },
-        {
+      ]
+    },
+      "campuses": {
+        "info": [
+          {
+            "name": "Mansarovar Campus",
+            "type": "WhatsApp enquiry"
+          },
+          {
           "name": "Kalwara Campus",
           "type": "WhatsApp enquiry"
         }
       ]
-    },
+    }
+  },
     "form": {
       "title": "Connect with us",
-      "fields": [
+      "fields": {
+        "connect": [
         {
           "type": "text",
           "name": "contact_name",
@@ -994,9 +996,11 @@
           "placeholder": "Email Address *",
           "required": true
         }
-      ],
+      ]
+    },
 
-      "class_options": [
+      "class_options": {
+        "class": [
         "Nursery",
         "Jr Kg",
         "Sr Kg",
@@ -1005,12 +1009,16 @@
         "III",
         "IV",
         "V",
-        "VI",
-        "VII",
-        "VIII",
-        "IX",
-        "XI"
-      ]
+          "VI",
+          "VII",
+          "VIII",
+          "IX",
+          "XI"
+        ]
+      }
     }
   }
 }
+  
+
+

@@ -42,13 +42,13 @@
           </h3>
           <div class="contact-person mb-4">
             <p><strong>Contact Us:</strong></p>
-            {{ range site.Data.data.admission.contact_info.contacts }}
+            {{ range site.Data.data.admission.contact_info.contacts.info }}
             <p>{{ .name }} <strong>({{ .phone }})</strong></p>
             {{ end }}
           </div>
           <div class="campus-enquiry">
             <p><strong>WhatsApp enquiry for:</strong></p>
-            {{ range site.Data.data.admission.contact_info.campuses }}
+            {{ range site.Data.data.admission.contact_info.campuses.info }}
             <p>- {{ .name }}</p>
             {{ end }}
           </div>
@@ -61,7 +61,7 @@
           <h3 class="mb-4">{{ site.Data.data.admission.form.title }}</h3>
           <form>
             <div class="row g-3">
-              {{ range site.Data.data.admission.form.fields }}
+              {{ range site.Data.data.admission.form.fields.connect }}
               <div class="col-12">
                 <input
                   type="{{ .type }}"
@@ -82,7 +82,7 @@
                   <option selected disabled>
                     Class in which admission sought *
                   </option>
-                  {{ range site.Data.data.admission.form.class_options }}
+                  {{ range site.Data.data.admission.form.class_options.class }}
                   <option>{{ . }}</option>
                   {{ end }}
                 </select>
