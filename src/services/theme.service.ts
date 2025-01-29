@@ -448,10 +448,15 @@ disableKinds = []
     const isListPage = this.determineIfListPage(pageName, pageConfig);
     const fileName = isListPage ? '_index.md' : 'index.md';
 
+    // Check if single.html exists in the page-specific directory
+    const singleTemplateExists = existsSync(path.resolve(this.themesDirectory, metadata.theme, 'layouts', pageName , 'single.html'));
+
+    const layout = singleTemplateExists ? `${pageName}/single` : pageName;
+
     // Create minimal frontmatter - remove pageSpecificData merge
     const frontmatter = {
         title: pageConfig.title,
-        layout: pageName,
+        layout: layout,
         type: pageName,
         draft: false,
         hideDate: true  // Add this to hide the date
