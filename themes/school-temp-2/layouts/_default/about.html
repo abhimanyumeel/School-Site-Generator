@@ -2,11 +2,11 @@
 <!-- Page Header Start -->
 <div class="container-xxl py-5 page-header position-relative mb-5">
   <div class="container py-5">
-    <h1 class="display-2 text-white animated slideInDown mb-4">{{ .Title }}</h1>
+    <h1 class="display-2 text-white animated slideInDown mb-4">{{ .Site.Data.data.about.main.title }}</h1>
     <nav aria-label="breadcrumb animated slideInDown">
       <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="/">Home</a></li>
-        <li class="breadcrumb-item active" aria-current="page">{{ .Title }}</li>
+        <li class="breadcrumb-item active" aria-current="page">{{ .Site.Data.data.about.main.title }}</li>
       </ol>
     </nav>
   </div>
@@ -17,7 +17,29 @@
 <div class="container-xxl py-5">
   <!-- Overview Section -->
   <section class="overview-section mb-5">
-    <div class="container">{{ .Content }}</div>
+    <div class="container">
+      <!-- Mission Section -->
+      <div class="mission-section mb-4">
+        <h3>Our Mission</h3>
+        <p>{{ .Site.Data.data.about.mission.statement }}</p>
+      </div>
+
+      <!-- Vision Section -->
+      <div class="vision-section mb-4">
+        <h3>Our Vision</h3>
+        <p>{{ .Site.Data.data.about.vision.statement }}</p>
+      </div>
+
+      <!-- Core Values Section -->
+      <div class="core-values-section">
+        <h3>Our Core Values</h3>
+        <ul>
+          {{ range .Site.Data.data.about.core_values.values }}
+          <li>{{ .type }}</li>
+          {{ end }}
+        </ul>
+      </div>
+    </div>
   </section>
 
   <!-- Director's Message Section -->
@@ -41,7 +63,7 @@
           </p>
           <div class="message-content">
             {{ range .Site.Data.data.about.main.description }}
-            <p>{{ . }}</p>
+            <p>{{ .type }}</p>
             {{ end }}
           </div>
         </div>

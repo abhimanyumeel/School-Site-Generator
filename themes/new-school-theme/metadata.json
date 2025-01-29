@@ -853,11 +853,13 @@
       "fields": {
         "title": {
           "type": "short-text",
-          "label": "Page Title"
+          "label": "Page Title",
+          "minLength": 1
         },
         "last_updated": {
           "type": "short-text",
-          "label": "Last Updated Date"
+          "label": "Last Updated Date",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
         },
         "navigation": {
           "type": "array",
@@ -865,11 +867,13 @@
           "items": {
             "id": {
               "type": "short-text",
-              "label": "Section ID"
+              "label": "Section ID",
+              "minLength": 1
             },
             "title": {
               "type": "short-text",
-              "label": "Section Title"
+              "label": "Section Title",
+              "minLength": 1
             }
           }
         },
@@ -879,15 +883,18 @@
           "fields": {
             "title": {
               "type": "short-text",
-              "label": "Section Title"
+              "label": "Section Title",
+              "minLength": 1
             },
             "content": {
               "type": "long-text",
-              "label": "Section Content"
+              "label": "Section Content",
+              "required": false
             },
             "intro": {
               "type": "long-text",
-              "label": "Section Introduction"
+              "label": "Section Introduction",
+              "required": false
             },
             "items": {
               "type": "array",
@@ -895,7 +902,8 @@
               "items": {
                 "type": "long-text",
                 "label": "List Item"
-              }
+              },
+              "required": false
             },
             "subsections": {
               "type": "object",
@@ -913,7 +921,8 @@
                     "label": "List Item"
                   }
                 }
-              }
+              },
+              "required": false
             }
           }
         },
@@ -923,15 +932,18 @@
           "items": {
             "name": {
               "type": "short-text",
-              "label": "Document Name"
+              "label": "Document Name",
+              "minLength": 1
             },
             "url": {
               "type": "short-text",
-              "label": "Document URL"
+              "label": "Document URL",
+              "minLength": 1
             },
             "icon": {
               "type": "short-text",
-              "label": "Document Icon Class"
+              "label": "Document Icon Class",
+              "minLength": 1
             }
           }
         },
@@ -946,11 +958,13 @@
             },
             "phone": {
               "type": "short-text",
-              "label": "Contact Phone"
+              "label": "Contact Phone",
+              "minLength": 1
             },
             "address": {
               "type": "short-text",
-              "label": "Contact Address"
+              "label": "Contact Address",
+              "minLength": 1
             }
           }
         }

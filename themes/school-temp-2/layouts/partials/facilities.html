@@ -6,12 +6,12 @@
       data-wow-delay="0.1s"
       style="max-width: 600px"
     >
-      <h1 class="mb-3">{{ .Site.Data.data.facilities.title }}</h1>
-      <p>{{ .Site.Data.data.facilities.description }}</p>
+      <h1 class="mb-3">{{ .Site.Data.data.facilities.main.title }}</h1>
+      <p>{{ .Site.Data.data.facilities.main.description }}</p>
     </div>
     <div class="row g-4">
       {{ $colors := slice "primary" "success" "warning" "info" }} {{ range
-      $index, $facility := .Site.Data.data.facilities.items }} {{ $color :=
+      $index, $facility := .Site.Data.data.facilities.main.items }} {{ $color :=
       index $colors (mod $index 4) }}
       <div
         class="col-lg-3 col-sm-6 wow fadeInUp"

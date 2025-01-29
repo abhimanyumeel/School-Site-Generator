@@ -4,53 +4,23 @@
       <div class="row g-0">
         <div class="col-lg-6 wow fadeIn" data-wow-delay="0.1s">
           <div class="h-100 d-flex flex-column justify-content-center p-5">
-            <h1 class="mb-4">Make Appointment</h1>
+            <h1 class="mb-4">{{ .Site.Data.data.appointment.main.title }}</h1>
+            <p class="mb-4">{{ .Site.Data.data.appointment.main.description }}</p>
             <form>
               <div class="row g-3">
+                {{ range .Site.Data.data.appointment.main.form.fields }}
                 <div class="col-sm-6">
                   <div class="form-floating">
                     <input
-                      type="text"
+                      type="{{ .type }}"
                       class="form-control border-0"
-                      id="gname"
-                      placeholder="Guardian Name"
+                      id="{{ .name }}"
+                      placeholder="{{ .label }}"
                     />
-                    <label for="gname">Guardian Name</label>
+                    <label for="{{ .name }}">{{ .label }}</label>
                   </div>
                 </div>
-                <div class="col-sm-6">
-                  <div class="form-floating">
-                    <input
-                      type="email"
-                      class="form-control border-0"
-                      id="gmail"
-                      placeholder="Guardian Email"
-                    />
-                    <label for="gmail">Guardian Email</label>
-                  </div>
-                </div>
-                <div class="col-sm-6">
-                  <div class="form-floating">
-                    <input
-                      type="text"
-                      class="form-control border-0"
-                      id="cname"
-                      placeholder="Child Name"
-                    />
-                    <label for="cname">Child Name</label>
-                  </div>
-                </div>
-                <div class="col-sm-6">
-                  <div class="form-floating">
-                    <input
-                      type="text"
-                      class="form-control border-0"
-                      id="cage"
-                      placeholder="Child Age"
-                    />
-                    <label for="cage">Child Age</label>
-                  </div>
-                </div>
+                {{ end }}
                 <div class="col-12">
                   <div class="form-floating">
                     <textarea
@@ -64,7 +34,7 @@
                 </div>
                 <div class="col-12">
                   <button class="btn btn-primary w-100 py-3" type="submit">
-                    Submit
+                    {{ .Site.Data.data.appointment.main.form.submit_text }}
                   </button>
                 </div>
               </div>
@@ -77,8 +47,12 @@
           style="min-height: 400px"
         >
           <div class="position-relative h-100">
-            <img class="position-absolute w-100 h-100 rounded" src="{{
-            "img/appointment.jpg" | relURL }}" style="object-fit: cover;">
+            <img 
+              class="position-absolute w-100 h-100 rounded" 
+              src="{{ "img/appointment.jpg" | relURL }}" 
+              style="object-fit: cover;"
+              alt="Appointment Image"
+            >
           </div>
         </div>
       </div>
