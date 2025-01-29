@@ -2,11 +2,11 @@
 <!-- Page Header Start -->
 <div class="container-xxl py-5 page-header position-relative mb-5">
     <div class="container py-5">
-        <h1 class="display-2 text-white animated slideInDown mb-4">Facilities</h1>
+        <h1 class="display-2 text-white animated slideInDown mb-4">{{ .Site.Data.data.facilities.main.title }}</h1>
         <nav aria-label="breadcrumb animated slideInDown">
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="{{ "/" | relURL }}">Home</a></li>
-                <li class="breadcrumb-item active" aria-current="page">Facilities</li>
+                <li class="breadcrumb-item active" aria-current="page">{{ .Site.Data.data.facilities.main.title }}</li>
             </ol>
         </nav>
     </div>
@@ -17,21 +17,28 @@
 <div class="container-xxl py-5">
     <div class="container">
         <div class="text-center mx-auto mb-5 wow fadeInUp" data-wow-delay="0.1s" style="max-width: 600px;">
-            <h1 class="mb-3">{{ .Site.Data.data.facilities.title }}</h1>
-            <p>{{ .Site.Data.data.facilities.description }}</p>
+            <h1 class="mb-3">{{ .Site.Data.data.facilities.main.title }}</h1>
+            <p>{{ .Site.Data.data.facilities.main.description }}</p>
         </div>
         <div class="row g-4">
-            {{ range .Site.Data.data.facilities.items }}
+            {{ range .Site.Data.data.facilities.main.items }}
             <div class="col-lg-3 col-sm-6 wow fadeInUp" data-wow-delay="0.1s">
                 <div class="facility-item">
-                    <div class="facility-icon bg-{{ .color }}">
-                        <span class="bg-{{ .color }}"></span>
-                        <i class="{{ .icon }} fa-3x text-{{ .color }}"></i>
-                        <span class="bg-{{ .color }}"></span>
+                    <div class="facility-icon">
+                        <span></span>
+                        <i class="{{ .icon }} fa-3x"></i>
+                        <span></span>
                     </div>
-                    <div class="facility-text bg-{{ .color }}">
-                        <h3 class="text-{{ .color }} mb-3">{{ .name }}</h3>
+                    <div class="facility-text">
+                        <h3 class="mb-3">{{ .name }}</h3>
                         <p class="mb-0">{{ .description }}</p>
+                        {{ if .features }}
+                        <ul class="facility-features mt-3">
+                            {{ range .features }}
+                            <li>{{ . }}</li>
+                            {{ end }}
+                        </ul>
+                        {{ end }}
                     </div>
                 </div>
             </div>

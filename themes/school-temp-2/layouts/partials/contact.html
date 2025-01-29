@@ -19,8 +19,9 @@
         </div>
         <h6>Our Location</h6>
         <p class="mb-0">
-          {{ .Site.Data.data.contact.address.street }}, {{
-          .Site.Data.data.contact.address.city }}
+          {{ .Site.Data.data.contact.info.address.street }}, 
+          {{ .Site.Data.data.contact.info.address.city }}, 
+          {{ .Site.Data.data.contact.info.address.country }}
         </p>
       </div>
       <div class="col-md-6 col-lg-4 text-center">
@@ -31,7 +32,7 @@
           <i class="fa fa-envelope-open fa-2x text-primary"></i>
         </div>
         <h6>Email Us</h6>
-        <p class="mb-0">{{ .Site.Data.data.contact.email.info }}</p>
+        <p class="mb-0">{{ .Site.Data.data.contact.info.email.info }}</p>
       </div>
       <div class="col-md-6 col-lg-4 text-center">
         <div
@@ -41,7 +42,7 @@
           <i class="fa fa-phone-alt fa-2x text-primary"></i>
         </div>
         <h6>Call Us</h6>
-        <p class="mb-0">{{ .Site.Data.data.contact.phone.main }}</p>
+        <p class="mb-0">{{ .Site.Data.data.contact.info.phone.main }}</p>
       </div>
     </div>
     <div class="bg-light rounded">
@@ -55,10 +56,10 @@
               </div>
               <div class="ms-3">
                 <h6>
-                  {{ .Site.Data.data.contact.business_hours.weekdays.days }}
+                  {{ .Site.Data.data.contact.info.business_hours.weekdays.days }}
                 </h6>
                 <span
-                  >{{ .Site.Data.data.contact.business_hours.weekdays.hours
+                  >{{ .Site.Data.data.contact.info.business_hours.weekdays.hours
                   }}</span
                 >
               </div>
@@ -69,10 +70,10 @@
               </div>
               <div class="ms-3">
                 <h6>
-                  {{ .Site.Data.data.contact.business_hours.weekend.days }}
+                  {{ .Site.Data.data.contact.info.business_hours.weekend.days }}
                 </h6>
                 <span
-                  >{{ .Site.Data.data.contact.business_hours.weekend.hours
+                  >{{ .Site.Data.data.contact.info.business_hours.weekend.hours
                   }}</span
                 >
               </div>

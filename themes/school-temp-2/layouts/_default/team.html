@@ -2,11 +2,11 @@
 <!-- Page Header Start -->
 <div class="container-xxl py-5 page-header position-relative mb-5">
     <div class="container py-5">
-        <h1 class="display-2 text-white animated slideInDown mb-4">Teachers</h1>
+        <h1 class="display-2 text-white animated slideInDown mb-4">{{ .Site.Data.data.team.main.title }}</h1>
         <nav aria-label="breadcrumb animated slideInDown">
             <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="{{ "/" | relURL }}">Home</a></li>
-                <li class="breadcrumb-item active" aria-current="page">Teachers</li>
+                <li class="breadcrumb-item"><a href="/">Home</a></li>
+                <li class="breadcrumb-item active" aria-current="page">{{ .Site.Data.data.team.main.title }}</li>
             </ol>
         </nav>
     </div>
@@ -17,22 +17,35 @@
 <div class="container-xxl py-5">
     <div class="container">
         <div class="text-center mx-auto mb-5 wow fadeInUp" data-wow-delay="0.1s" style="max-width: 600px;">
-            <h1 class="mb-3">Popular Teachers</h1>
-            <p>Eirmod sed ipsum dolor sit rebum labore magna erat. Tempor ut dolore lorem kasd vero ipsum sit
-                eirmod sit. Ipsum diam justo sed rebum vero dolor duo.</p>
+            <h1 class="mb-3">{{ .Site.Data.data.team.main.title }}</h1>
+            <p>{{ .Site.Data.data.team.main.description }}</p>
         </div>
         <div class="row g-4">
-            {{ range .Site.Data.faculty.teachers }}
+            {{ range .Site.Data.data.team.main.members }}
             <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
                 <div class="team-item position-relative">
-                    <img class="img-fluid rounded-circle w-75" src="{{ .image | relURL }}" alt="">
+                    <img class="img-fluid rounded-circle w-75" src="{{ .image | relURL }}" alt="{{ .name }}">
                     <div class="team-text">
                         <h3>{{ .name }}</h3>
-                        <p>{{ .designation }}</p>
+                        <p>{{ .position }}</p>
                         <div class="d-flex align-items-center">
-                            <a class="btn btn-square btn-primary mx-1" href="{{ .social.facebook }}"><i class="fab fa-facebook-f"></i></a>
-                            <a class="btn btn-square btn-primary mx-1" href="{{ .social.twitter }}"><i class="fab fa-twitter"></i></a>
-                            <a class="btn btn-square btn-primary mx-1" href="{{ .social.instagram }}"><i class="fab fa-instagram"></i></a>
+                            {{ with .social }}
+                            {{ if .twitter }}
+                            <a class="btn btn-square btn-primary mx-1" href="{{ .twitter }}">
+                                <i class="fab fa-twitter"></i>
+                            </a>
+                            {{ end }}
+                            {{ if .linkedin }}
+                            <a class="btn btn-square btn-primary mx-1" href="{{ .linkedin }}">
+                                <i class="fab fa-linkedin"></i>
+                            </a>
+                            {{ end }}
+                            {{ if .email }}
+                            <a class="btn btn-square btn-primary mx-1" href="mailto:{{ .email }}">
+                                <i class="fas fa-envelope"></i>
+                            </a>
+                            {{ end }}
+                            {{ end }}
                         </div>
                     </div>
                 </div>
