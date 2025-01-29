@@ -451,7 +451,7 @@ disableKinds = []
     // Create minimal frontmatter - remove pageSpecificData merge
     const frontmatter = {
         title: pageConfig.title,
-        layout: `${pageName}/single`,
+        layout: pageName,
         type: pageName,
         draft: false,
         hideDate: true  // Add this to hide the date
