@@ -12,6 +12,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { JwtAuthGuard } from '../guards/jwt-auth.guard';
 import { UploadService } from '../services/upload.service';
 import { UploadImageDto } from '../dto/upload.dto';
+import { Multer } from 'multer';
 
 @Controller('upload')
 @UseGuards(JwtAuthGuard)
