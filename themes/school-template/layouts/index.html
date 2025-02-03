@@ -1,0 +1,148 @@
+{{ define "main" }}
+<!-- Hero Section Start -->
+<div class="hero-section position-relative">
+  <div class="hero-slide-inner">
+    <img
+      class="slide-bg"
+      src="{{ .Site.Data.data.home.hero.image | relURL }}"
+      alt="Campus
+    Life"
+    />
+    <div class="slide-overlay"></div>
+    <div class="container">
+      <div class="row align-items-center min-vh-100">
+        <div class="col-lg-8">
+          <div class="slide-content" data-aos="fade-right">
+            <span class="subtitle">Welcome to Our School</span>
+            <h1 class="title">{{ .Site.Data.data.home.hero.title }}</h1>
+            <p class="description">
+              {{ .Site.Data.data.home.hero.description }}
+            </p>
+            <div class="slide-buttons">
+              <a
+                href="{{ .Site.Data.data.home.hero.cta.primary.url }}"
+                class="btn btn-primary"
+              >
+                {{ .Site.Data.data.home.hero.cta.primary.text }}
+              </a>
+              <a
+                href="{{ .Site.Data.data.home.hero.cta.secondary.url }}"
+                class="btn btn-outline"
+              >
+                {{ .Site.Data.data.home.hero.cta.secondary.text }}
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Hero Section End -->
+
+<!-- Notice Board Section Start -->
+<div class="container-xxl py-5 notice-board-section">
+  <div class="container">
+    <div class="row">
+      <div class="col-12">
+        <h1 class="notice-heading">{{ .Site.Data.data.home.notices.title }}</h1>
+        <div class="notice-list-wrapper">
+          <div class="notice-box">
+            <ul class="notice-list">
+              {{ range .Site.Data.data.home.notices.items }}
+              <li>
+                <a href="{{ .link }}">{{ .title }}</a>
+              </li>
+              {{ end }}
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Notice Board Section End -->
+
+<!-- Upcoming Events Start -->
+{{ if and .Site.Data.data.home.events }}
+<div class="container-xxl py-5">
+  <div class="container">
+    <div
+      class="text-center mx-auto mb-5 wow fadeInUp"
+      data-wow-delay="0.1s"
+      style="max-width: 600px"
+    >
+      <span class="section-tag">Stay Updated</span>
+      <h1 class="display-5 mb-3">{{ .Site.Data.data.home.events.title }}</h1>
+      <p class="fs-5 text-muted">
+        {{ .Site.Data.data.home.events.description }}
+      </p>
+    </div>
+
+    <div class="events-wrapper">
+      <div class="row g-4">
+        {{ range .Site.Data.data.home.events.items }}
+        <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
+          <div class="event-card">
+            <div class="event-image">
+              <img src="{{ .image | relURL }}" alt="{{ .title }}" />
+              <div class="event-overlay"></div>
+              <div class="event-date-badge">
+                {{ with .date }} {{ $date := time . }}
+                <span class="date-day">{{ $date.Day }}</span>
+                <span class="date-month">{{ $date.Format "Jan" }}</span>
+                {{ else }}
+                <span class="date-day">TBA</span>
+                <span class="date-month"></span>
+                {{ end }}
+              </div>
+            </div>
+            <div class="event-content">
+              <h3 class="event-title">{{ .title }}</h3>
+              <p class="event-description">{{ .description }}</p>
+            </div>
+          </div>
+        </div>
+        {{ end }}
+      </div>
+
+      <div class="text-center mt-5">
+        <a href="/gallery/" class="btn btn-view-all">
+          View All Events
+          <i class="fa fa-arrow-right ms-2"></i>
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+{{ end }}
+
+<!-- Back to Top -->
+<a href="#" class="btn btn-lg btn-primary btn-lg-square back-to-top">
+  <i class="bi bi-arrow-up"></i>
+</a>
+
+<!-- Scroll Script -->
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const scrollButton = document.querySelector('.slide-buttons .btn-outline');
+    const eventsSection = document.querySelector('.container-xxl.py-5');
+
+    scrollButton.addEventListener('click', function (e) {
+      e.preventDefault();
+
+      if (eventsSection) {
+        const headerOffset = 70;
+        const elementPosition = eventsSection.getBoundingClientRect().top;
+        const offsetPosition =
+          elementPosition + window.pageYOffset - headerOffset;
+
+        window.scrollTo({
+          top: offsetPosition,
+          behavior: 'smooth',
+        });
+      }
+    });
+  });
+</script>
+{{ end }}

@@ -1,0 +1,178 @@
+{{ define "main" }}
+<div class="container mx-auto px-4 py-8">
+  <div class="text-center mb-12">
+    <h1 class="text-4xl font-bold text-gray-900 mb-2">Mandatory Disclosure</h1>
+    <p class="text-lg text-gray-600">
+      Transparency in Education as per CBSE Guidelines
+    </p>
+  </div>
+
+  <!-- School Information -->
+  <div class="bg-white shadow-md rounded-lg mb-8">
+    <div class="bg-primary-600 text-white px-6 py-4">
+      <h2 class="text-xl font-semibold">School Information</h2>
+    </div>
+    <div class="p-6">
+      <table class="min-w-full">
+        <tbody>
+          <tr class="border-b">
+            <td class="py-3 px-4 font-medium">School Name</td>
+            <td class="py-3 px-4">
+              {{ .Site.Data.data.mandatory_disclosure.school_info.school_name }}
+            </td>
+          </tr>
+          <tr class="border-b">
+            <td class="py-3 px-4 font-medium">Affiliation Number</td>
+            <td class="py-3 px-4">
+              {{
+              .Site.Data.data.mandatory_disclosure.school_info.affiliation_number
+              }}
+            </td>
+          </tr>
+          <tr class="border-b">
+            <td class="py-3 px-4 font-medium">School Code</td>
+            <td class="py-3 px-4">
+              {{ .Site.Data.data.mandatory_disclosure.school_info.school_code }}
+            </td>
+          </tr>
+          <tr class="border-b">
+            <td class="py-3 px-4 font-medium">Address</td>
+            <td class="py-3 px-4">
+              {{ .Site.Data.data.mandatory_disclosure.school_info.address }}
+            </td>
+          </tr>
+          <tr class="border-b">
+            <td class="py-3 px-4 font-medium">Principal Name</td>
+            <td class="py-3 px-4">
+              {{ .Site.Data.data.mandatory_disclosure.school_info.principal_name
+              }}
+            </td>
+          </tr>
+          <tr class="border-b">
+            <td class="py-3 px-4 font-medium">Contact Details</td>
+            <td class="py-3 px-4">
+              {{
+              .Site.Data.data.mandatory_disclosure.school_info.contact_details
+              }}
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Infrastructure Details -->
+  <div class="bg-white shadow-md rounded-lg mb-8">
+    <div class="bg-primary-600 text-white px-6 py-4">
+      <h2 class="text-xl font-semibold">Infrastructure Details</h2>
+    </div>
+    <div class="p-6">
+      <div class="overflow-x-auto">
+        <table class="min-w-full">
+          <thead>
+            <tr class="bg-gray-100">
+              <th class="py-3 px-4 text-left">Facility Type</th>
+              <th class="py-3 px-4 text-left">Details</th>
+            </tr>
+          </thead>
+          <tbody>
+            {{ range
+            .Site.Data.data.mandatory_disclosure.infrastructure.campus_overview
+            }}
+            <tr class="border-b">
+              <td class="py-3 px-4 font-medium">{{ .name }}</td>
+              <td class="py-3 px-4">{{ .value }}</td>
+            </tr>
+            {{ end }} {{ range
+            .Site.Data.data.mandatory_disclosure.infrastructure.facilities }}
+            <tr class="border-b">
+              <td class="py-3 px-4 font-medium">{{ .name }}</td>
+              <td class="py-3 px-4">{{ .details }}</td>
+            </tr>
+            {{ end }} {{ range
+            .Site.Data.data.mandatory_disclosure.infrastructure.additional_features
+            }}
+            <tr class="border-b">
+              <td class="py-3 px-4 font-medium">{{ .name }}</td>
+              <td class="py-3 px-4">{{ .details }}</td>
+            </tr>
+            {{ end }}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Faculty Information -->
+  <div class="bg-white shadow-md rounded-lg mb-8">
+    <div class="bg-primary-600 text-white px-6 py-4">
+      <h2 class="text-xl font-semibold">Faculty Information</h2>
+    </div>
+    <div class="p-6">
+      <div class="overflow-x-auto">
+        <table class="min-w-full">
+          <thead>
+            <tr class="bg-gray-100">
+              <th class="py-3 px-4 text-left">Department</th>
+              <th class="py-3 px-4 text-left">Total Teachers</th>
+              <th class="py-3 px-4 text-left">Qualification</th>
+              <th class="py-3 px-4 text-left">Experience Range</th>
+            </tr>
+          </thead>
+          <tbody>
+            {{ range .Site.Data.data.mandatory_disclosure.faculty_info }}
+            <tr class="border-b">
+              <td class="py-3 px-4">{{ .department }}</td>
+              <td class="py-3 px-4">{{ .total_teachers }}</td>
+              <td class="py-3 px-4">{{ .qualification }}</td>
+              <td class="py-3 px-4">{{ .experience_range }}</td>
+            </tr>
+            {{ end }}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Fee Structure -->
+  <div class="bg-white shadow-md rounded-lg mb-8">
+    <div class="bg-primary-600 text-white px-6 py-4">
+      <h2 class="text-xl font-semibold">Fee Structure</h2>
+    </div>
+    <div class="p-6">
+      <div class="overflow-x-auto">
+        <table class="min-w-full">
+          <thead>
+            <tr class="bg-gray-100">
+              <th class="py-3 px-4 text-left">Class</th>
+              <th class="py-3 px-4 text-left">Admission Fee</th>
+              <th class="py-3 px-4 text-left">Tuition Fee (Monthly)</th>
+              <th class="py-3 px-4 text-left">Other Charges</th>
+            </tr>
+          </thead>
+          <tbody>
+            {{ range .Site.Data.data.mandatory_disclosure.fee_structure }}
+            <tr class="border-b">
+              <td class="py-3 px-4">{{ .class }}</td>
+              <td class="py-3 px-4">{{ .admission_fee }}</td>
+              <td class="py-3 px-4">{{ .tuition_fee }}</td>
+              <td class="py-3 px-4">{{ .other_charges }}</td>
+            </tr>
+            {{ end }}
+          </tbody>
+        </table>
+      </div>
+      <p class="text-sm text-gray-600 mt-4">
+        * All fees are subject to revision as per school management decision
+      </p>
+    </div>
+  </div>
+
+  <div class="text-center text-sm text-gray-600 mt-12">
+    <p>This information is provided in compliance with CBSE guidelines.</p>
+    <p class="mt-2">
+      Last updated: {{ .Site.Data.data.mandatory_disclosure.last_updated }}
+    </p>
+  </div>
+</div>
+{{ end }}
