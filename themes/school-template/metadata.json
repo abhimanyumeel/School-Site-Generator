@@ -909,12 +909,14 @@
             "title": {
               "type": "short-text",
               "label": "Page Title",
-              "minLength": 1
+              "minLength": 1,
+              "required": true
             },
             "last_updated": {
               "type": "short-text",
               "label": "Last Updated Date",
-              "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+              "required": true
             },
             "sections": {
               "type": "object",
@@ -926,14 +928,16 @@
                   "fields": {
                     "title": {
                       "type": "short-text",
-                      "label": "Section Title"
+                      "label": "Section Title",
+                      "required": true
                     },
                     "personal_info": {
                       "type": "object",
                       "fields": {
                         "title": {
                           "type": "short-text",
-                          "label": "Personal Information Title"
+                          "label": "Personal Information Title",
+                          "required": true
                         },
                         "items": {
                           "type": "array",
@@ -949,7 +953,8 @@
                       "fields": {
                         "title": {
                           "type": "short-text",
-                          "label": "Technical Information Title"
+                          "label": "Technical Information Title",
+                          "required": true
                         },
                         "items": {
                           "type": "array",
@@ -968,7 +973,8 @@
                   "fields": {
                     "title": {
                       "type": "short-text",
-                      "label": "Section Title"
+                      "label": "Section Title",
+                      "required": true
                     },
                     "items": {
                       "type": "array",
@@ -985,7 +991,8 @@
                   "fields": {
                     "title": {
                       "type": "short-text",
-                      "label": "Section Title"
+                      "label": "Section Title",
+                      "required": true
                     },
                     "items": {
                       "type": "array",
@@ -1002,7 +1009,8 @@
                   "fields": {
                     "title": {
                       "type": "short-text",
-                      "label": "Section Title"
+                      "label": "Section Title",
+                      "required": true
                     },
                     "items": {
                       "type": "array",
@@ -1019,7 +1027,8 @@
                   "fields": {
                     "title": {
                       "type": "short-text",
-                      "label": "Section Title"
+                      "label": "Section Title",
+                      "required": true
                     },
                     "items": {
                       "type": "array",
@@ -1036,16 +1045,18 @@
               "type": "array",
               "label": "Quick Links",
               "items": {
-                "name": {
-                  "type": "short-text",
-                  "label": "Link Name",
-                  "required": true
-                },
-                "url": {
-                  "type": "short-text",
-                  "label": "Link URL",
-                  "required": true,
-                  "pattern": "^(https?:\\/\\/)?[\\w\\-]+(\\.[\\w\\-]+)+[\\w\\-\\.,@?^=%&:/~\\+#]*$"
+                "type": "object",
+                "fields": {
+                  "name": {
+                    "type": "short-text",
+                    "label": "Link Name",
+                    "required": true
+                  },
+                  "url": {
+                    "type": "short-text",
+                    "label": "Link URL",
+                    "required": true
+                  }
                 }
               }
             },
@@ -1056,15 +1067,18 @@
                 "email": {
                   "type": "short-text",
                   "label": "Contact Email",
-                  "format": "email"
+                  "format": "email",
+                  "required": true
                 },
                 "phone": {
                   "type": "short-text",
-                  "label": "Contact Phone"
+                  "label": "Contact Phone",
+                  "required": true
                 },
                 "address": {
                   "type": "short-text",
-                  "label": "Contact Address"
+                  "label": "Contact Address",
+                  "required": true
                 }
               }
             }
