@@ -19,21 +19,6 @@
     <div class="row g-4">
       <!-- Left Sidebar Navigation -->
       <div class="col-lg-3 wow fadeInUp" data-wow-delay="0.1s">
-        <!-- Navigation Menu -->
-        <div class="bg-white rounded shadow p-4 mb-4">
-          <h4 class="mb-3">Table of Contents</h4>
-          <div class="d-flex flex-column">
-            {{ range .Site.Data.data.terms_of_service.navigation }}
-            <a
-              href="#{{ .id }}"
-              class="nav-link-terms h6 mb-3 text-decoration-none"
-            >
-              {{ .title }}
-            </a>
-            {{ end }}
-          </div>
-        </div>
-
         <!-- Related Documents -->
         <div class="bg-white rounded shadow p-4 mb-4">
           <h4 class="mb-3">Related Documents</h4>
@@ -175,7 +160,7 @@
   }
 
   .terms-content ul li:before {
-    content: "•";
+    content: '•';
     color: var(--primary);
     position: absolute;
     left: 0;
@@ -216,24 +201,24 @@
 </style>
 
 <script>
-  document.addEventListener("DOMContentLoaded", function () {
+  document.addEventListener('DOMContentLoaded', function () {
     // Get all navigation links
-    const navLinks = document.querySelectorAll(".nav-link-terms");
+    const navLinks = document.querySelectorAll('.nav-link-terms');
 
     // Add click event listener to each link
     navLinks.forEach((link) => {
-      link.addEventListener("click", function (e) {
+      link.addEventListener('click', function (e) {
         e.preventDefault();
 
         // Get the target section id from the href
-        const targetId = this.getAttribute("href").substring(1);
+        const targetId = this.getAttribute('href').substring(1);
         const targetSection = document.getElementById(targetId);
 
         if (targetSection) {
           // Smooth scroll to the section
           targetSection.scrollIntoView({
-            behavior: "smooth",
-            block: "start",
+            behavior: 'smooth',
+            block: 'start',
           });
 
           // Update URL without jumping

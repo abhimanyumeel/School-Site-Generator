@@ -785,42 +785,36 @@
             "title": {
               "type": "short-text",
               "label": "Page Title",
-              "minLength": 1
+              "minLength": 1,
+              "required": true
             },
             "last_updated": {
               "type": "short-text",
               "label": "Last Updated Date",
-              "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
-            },
-            "navigation": {
-              "type": "array",
-              "label": "Table of Contents",
-              "items": {
-                "id": {
-                  "type": "short-text",
-                  "label": "Section ID"
-                },
-                "title": {
-                  "type": "short-text",
-                  "label": "Section Title"
-                }
-              }
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+              "required": true
             },
             "related_documents": {
               "type": "array",
               "label": "Related Documents",
               "items": {
-                "name": {
-                  "type": "short-text",
-                  "label": "Document Name"
-                },
-                "url": {
-                  "type": "short-text",
-                  "label": "Document URL"
-                },
-                "icon": {
-                  "type": "short-text",
-                  "label": "Document Icon Class"
+                "type": "object",
+                "fields": {
+                  "name": {
+                    "type": "short-text",
+                    "label": "Document Name",
+                    "required": true
+                  },
+                  "url": {
+                    "type": "short-text",
+                    "label": "Document URL",
+                    "required": true
+                  },
+                  "icon": {
+                    "type": "short-text",
+                    "label": "Document Icon Class",
+                    "required": true
+                  }
                 }
               }
             },
@@ -831,15 +825,18 @@
                 "email": {
                   "type": "short-text",
                   "label": "Contact Email",
-                  "format": "email"
+                  "format": "email",
+                  "required": true
                 },
                 "phone": {
                   "type": "short-text",
-                  "label": "Contact Phone"
+                  "label": "Contact Phone",
+                  "required": true
                 },
                 "address": {
                   "type": "short-text",
-                  "label": "Contact Address"
+                  "label": "Contact Address",
+                  "required": true
                 }
               }
             },
@@ -888,7 +885,8 @@
                           "label": "Subsection Items",
                           "items": {
                             "type": "long-text"
-                          }
+                          },
+                          "required": true
                         }
                       }
                     },
