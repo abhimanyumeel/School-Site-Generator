@@ -18,6 +18,7 @@ import { UploadController } from './controllers/upload.controller';
 import { UploadService } from './services/upload.service';
 import { Document } from './entities/document.entity';
 import { DocumentGroup } from './entities/document-group.entity';
+import { MinioService } from './services/minio.service';
 
 @Module({
   imports: [
@@ -41,6 +42,6 @@ import { DocumentGroup } from './entities/document-group.entity';
     AuthModule,
   ],
   controllers: [AppController, WebsiteController, PreviewController, UploadController],
-  providers: [AppService, WebsiteService, PreviewService, UploadService],
+  providers: [AppService, WebsiteService, PreviewService, UploadService, MinioService],
 })
 export class AppModule {}
