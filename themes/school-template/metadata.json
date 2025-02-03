@@ -574,26 +574,18 @@
               "type": "array",
               "label": "Contact Persons",
               "items": {
-                "name": {
-                  "type": "short-text",
-                  "label": "Contact Name",
-                  "required": true
-                },
-                "phone": {
-                  "type": "short-text",
-                  "label": "Phone Number",
-                  "required": true
-                }
-              }
-            },
-            "campuses": {
-              "type": "array",
-              "label": "Campus Enquiry Details",
-              "items": {
-                "name": {
-                  "type": "short-text",
-                  "label": "Campus Name",
-                  "required": true
+                "type": "object",
+                "fields": {
+                  "name": {
+                    "type": "short-text",
+                    "label": "Contact Name",
+                    "required": true
+                  },
+                  "phone": {
+                    "type": "short-text",
+                    "label": "Phone Number",
+                    "required": true
+                  }
                 }
               }
             }
@@ -611,25 +603,24 @@
               "type": "array",
               "label": "Form Fields",
               "items": {
-                "type": {
-                  "type": "select",
-                  "label": "Field Type",
-                  "options": ["text", "email", "tel", "select"],
-                  "required": true
-                },
-                "label": {
-                  "type": "short-text",
-                  "label": "Field Label",
-                  "required": true
-                },
-                "placeholder": {
-                  "type": "short-text",
-                  "label": "Placeholder Text"
-                },
-                "required": {
-                  "type": "boolean",
-                  "label": "Is Required",
-                  "default": false
+                "type": "object",
+                "fields": {
+                  "type": {
+                    "type": "select",
+                    "label": "Field Type",
+                    "options": ["text", "email", "tel", "select"],
+                    "required": true
+                  },
+                  "placeholder": {
+                    "type": "short-text",
+                    "label": "Placeholder Text",
+                    "required": true
+                  },
+                  "required": {
+                    "type": "boolean",
+                    "label": "Is Required",
+                    "default": false
+                  }
                 }
               }
             },
@@ -640,6 +631,30 @@
                 "type": "short-text",
                 "label": "Class Name",
                 "required": true
+              }
+            },
+            "terms_checkbox": {
+              "type": "object",
+              "label": "Terms Checkbox",
+              "fields": {
+                "label": {
+                  "type": "short-text",
+                  "label": "Checkbox Label",
+                  "default": "I acknowledge that I have read, and do hereby accept the terms and conditions.",
+                  "required": true
+                }
+              }
+            },
+            "submit_button": {
+              "type": "object",
+              "label": "Submit Button",
+              "fields": {
+                "text": {
+                  "type": "short-text",
+                  "label": "Button Text",
+                  "default": "Submit",
+                  "required": true
+                }
               }
             }
           }
