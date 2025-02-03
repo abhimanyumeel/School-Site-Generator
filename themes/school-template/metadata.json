@@ -1,6 +1,6 @@
 {
   "theme": "school-temp",
-  "displayName": "School Theme",
+  "displayName": "school-template",
   "description": "A modern and clean Hugo theme for school websites",
   "version": "1.0.0",
   "pages": {
@@ -387,12 +387,16 @@
             "title": {
               "type": "short-text",
               "label": "Page Title",
-              "minLength": 1
+              "minLength": 1,
+              "default": "Contact Us",
+              "required": true
             },
             "description": {
               "type": "long-text",
               "label": "Contact Description",
-              "minLength": 5
+              "minLength": 5,
+              "default": "Get in touch with us for any questions or inquiries",
+              "required": true
             },
             "info": {
               "type": "object",
@@ -403,11 +407,14 @@
                   "fields": {
                     "icon": {
                       "type": "short-text",
-                      "label": "Address Icon Class"
+                      "label": "Address Icon Class",
+                      "default": "fas fa-map-marker-alt",
+                      "required": true
                     },
                     "text": {
                       "type": "long-text",
-                      "label": "Address Text"
+                      "label": "Address Text",
+                      "required": true
                     }
                   }
                 },
@@ -416,12 +423,15 @@
                   "fields": {
                     "icon": {
                       "type": "short-text",
-                      "label": "Email Icon Class"
+                      "label": "Email Icon Class",
+                      "default": "fas fa-envelope",
+                      "required": true
                     },
                     "text": {
                       "type": "short-text",
                       "label": "Email Address",
-                      "format": "email"
+                      "format": "email",
+                      "required": true
                     }
                   }
                 },
@@ -430,11 +440,14 @@
                   "fields": {
                     "icon": {
                       "type": "short-text",
-                      "label": "Phone Icon Class"
+                      "label": "Phone Icon Class",
+                      "default": "fas fa-phone",
+                      "required": true
                     },
                     "text": {
                       "type": "short-text",
-                      "label": "Phone Number"
+                      "label": "Phone Number",
+                      "required": true
                     }
                   }
                 }
@@ -446,34 +459,68 @@
               "fields": {
                 "note": {
                   "type": "long-text",
-                  "label": "Form Note"
+                  "label": "Form Note",
+                  "default": "Please fill out the form below to get in touch with us.",
+                  "required": true
                 },
                 "submit_text": {
                   "type": "short-text",
-                  "label": "Submit Button Text"
+                  "label": "Submit Button Text",
+                  "default": "Send Message",
+                  "required": true
                 },
                 "fields": {
                   "type": "array",
                   "label": "Form Fields",
+                  "default": [
+                    {
+                      "name": "name",
+                      "label": "Your Name",
+                      "type": "text",
+                      "placeholder": "Enter your name"
+                    },
+                    {
+                      "name": "email",
+                      "label": "Your Email",
+                      "type": "email",
+                      "placeholder": "Enter your email"
+                    },
+                    {
+                      "name": "subject",
+                      "label": "Subject",
+                      "type": "text",
+                      "placeholder": "Enter subject"
+                    },
+                    {
+                      "name": "message",
+                      "label": "Message",
+                      "type": "textarea",
+                      "placeholder": "Enter your message"
+                    }
+                  ],
                   "items": {
                     "type": "object",
                     "fields": {
                       "name": {
                         "type": "short-text",
-                        "label": "Field Name"
+                        "label": "Field Name",
+                        "required": true
                       },
                       "label": {
                         "type": "short-text",
-                        "label": "Field Label"
+                        "label": "Field Label",
+                        "required": true
                       },
                       "type": {
                         "type": "select",
                         "label": "Field Type",
-                        "options": ["text", "email", "tel", "textarea"]
+                        "options": ["text", "email", "tel", "textarea"],
+                        "required": true
                       },
                       "placeholder": {
                         "type": "short-text",
-                        "label": "Field Placeholder"
+                        "label": "Field Placeholder",
+                        "required": true
                       }
                     }
                   }
@@ -483,7 +530,9 @@
             "map_embed_url": {
               "type": "short-text",
               "label": "Map Embed URL",
-              "format": "uri"
+              "format": "uri",
+              "description": "Google Maps embed URL for your location",
+              "required": true
             }
           }
         }
