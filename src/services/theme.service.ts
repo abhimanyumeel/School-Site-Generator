@@ -79,6 +79,7 @@ export class ThemeService {
 
   async generateTheme(themeData: CreateThemeDataDto, userId: string) {
     try {
+      this.logger.log('=== Starting Theme Generation ===');
       const paths = await this.createPaths(themeData);
       
       await this.verifyAndPrepareDirectories(
@@ -87,7 +88,6 @@ export class ThemeService {
         paths.tempThemesPath
       );
 
-      // Log the incoming data to verify image URLs
       this.logger.log('Incoming theme data:', JSON.stringify(themeData.data, null, 2));
 
       // Create website record first to get the ID
@@ -104,39 +104,58 @@ export class ThemeService {
       });
 
       await websiteRepository.save(website);
+      this.logger.log(`Website created with ID: ${website.id}`);
 
       // 1. Create finalBuild/static/uploads directory
       const uploadsPath = path.join(paths.buildFolderPath, 'static', 'uploads');
       await fs.mkdir(uploadsPath, { recursive: true });
       
-      // 2. Copy images from temp to website's finalBuild/static/uploads directory
+      // 2. Process and upload images
       const tempUploadPath = path.join('public', 'uploads', 'temp');
       const files = await fs.readdir(tempUploadPath);
-
-      // Log found files
       this.logger.log('Found files in temp directory:', files);
 
-      // Copy files to finalBuild
+      // Upload to MinIO and copy files to finalBuild
       for (const file of files) {
-        await fs.copyFile(
-          path.join(tempUploadPath, file),
-          path.join(uploadsPath, file)
-        );
+        try {
+          this.logger.log(`Processing file: ${file}`);
+          const filePath = path.join(tempUploadPath, file);
+          
+          // Upload to MinIO
+          const fileBuffer = await fs.readFile(filePath);
+          const fileSize = (await fs.stat(filePath)).size;
+          
+          this.logger.log(`Uploading to MinIO: ${file}`);
+          const minioKey = await this.uploadService.uploadToMinIO(
+            fileBuffer,
+            file,
+            fileSize
+          );
+          this.logger.log(`MinIO upload successful. Key: ${minioKey}`);
+
+          // Copy to finalBuild
+          await fs.copyFile(
+            filePath,
+            path.join(uploadsPath, file)
+          );
+          this.logger.log(`File copied to finalBuild: ${file}`);
+        } catch (error) {
+          this.logger.error(`Failed to process file ${file}:`, error);
+        }
       }
 
       await this.uploadService.cleanTempDirectories();
 
-      // 3. Process data to include image URLs to point to static/uploads
+      // 3. Process data to include image URLs
       const processedData = {
         name: themeData.data.home?.hero?.title || 'My Website',
         description: themeData.data.home?.hero?.subtitle || 'My Website Description',
         author: 'Anonymous',
         createdAt: new Date().toISOString(),
-        ...JSON.parse(JSON.stringify(themeData.data)),  // Deep clone to avoid reference issues
+        ...JSON.parse(JSON.stringify(themeData.data)),
         images: {}
       };
 
-      // Log the structure before processing
       this.logger.log('Data structure before processing:', JSON.stringify(processedData, null, 2));
       
       // Add image URLs to data - recursive function to handle nested objects
@@ -148,6 +167,7 @@ export class ThemeService {
           if (typeof value === 'string' && value.startsWith('/uploads/temp/')) {
             const filename = value.split('/').pop();
             const newPath = `/static/uploads/${filename}`;
+            const minioKey = `uploads/${Date.now()}-${filename}`; // MinIO path format
             obj[key] = newPath;
             processedData.images[currentPath] = newPath;
 
@@ -161,13 +181,13 @@ export class ThemeService {
               type: 'image',
               name: filename,
               mimeType: 'image/webp',
-              path: newPath,
+              path: minioKey, // Store MinIO key instead of static path
               url: newPath,
               documentGroupId: documentGroup.id,
               order: 0,
             });
 
-            this.logger.log(`Persisted image for ${currentPath}:`, newPath);
+            this.logger.log(`Persisted image for ${currentPath}:`, { newPath, minioKey });
           } else if (Array.isArray(value)) {
             for (const [index, item] of value.entries()) {
               if (typeof item === 'string' && item.startsWith('/uploads/temp/')) {
