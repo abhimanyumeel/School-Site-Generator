@@ -171,6 +171,11 @@ export class ThemeService {
             obj[key] = newPath;
             processedData.images[currentPath] = newPath;
 
+            this.logger.log(`Processing image: ${filename}`, {
+              minioKey,
+              staticPath: newPath,
+            });
+
             // Add this block to persist image data
             const documentGroup = await this.documentGroupRepository.save({
               schoolWebsiteId: websiteId,
@@ -187,12 +192,14 @@ export class ThemeService {
               order: 0,
             });
 
-            this.logger.log(`Persisted image for ${currentPath}:`, { newPath, minioKey });
+            this.logger.log(`Saved document with MinIO key: ${minioKey}`);
           } else if (Array.isArray(value)) {
             for (const [index, item] of value.entries()) {
               if (typeof item === 'string' && item.startsWith('/uploads/temp/')) {
                 const filename = item.split('/').pop();
                 const newPath = `/static/uploads/${filename}`;
+                const timestamp = Date.now();
+                const minioKey = `uploads/${timestamp}-${filename}`;
                 value[index] = newPath;
                 processedData.images[`${currentPath}[${index}]`] = newPath;
 
@@ -206,13 +213,13 @@ export class ThemeService {
                   type: 'image',
                   name: filename,
                   mimeType: 'image/webp',
-                  path: newPath,
+                  path: minioKey,
                   url: newPath,
                   documentGroupId: documentGroup.id,
                   order: index,
                 });
 
-                this.logger.log(`Persisted array image for ${currentPath}[${index}]:`, newPath);
+                this.logger.log(`Saved array item with MinIO key: ${minioKey}`);
               } else if (typeof item === 'object' && item !== null) {
                 await processImageFields(item, `${currentPath}[${index}]`, websiteId);
               }
