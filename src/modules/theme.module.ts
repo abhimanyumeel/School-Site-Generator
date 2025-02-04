@@ -8,10 +8,12 @@ import { UploadService } from 'src/services/upload.service';
 import { Document } from 'src/entities/document.entity';
 import { DocumentGroup } from 'src/entities/document-group.entity';
 import { UploadController } from 'src/controllers/upload.controller';
+import { MinioModule } from './minio.module';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([SchoolWebsite, WebsiteVersion, Document, DocumentGroup])
+    TypeOrmModule.forFeature([SchoolWebsite, WebsiteVersion, Document, DocumentGroup]),
+    MinioModule
   ],
   controllers: [ThemeController, UploadController],
   providers: [ThemeService, UploadService],
