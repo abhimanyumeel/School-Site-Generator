@@ -947,205 +947,276 @@ export default function CustomizeTheme() {
         );
 
       case 'object':
+
         return (
           <div className="p-6 bg-gray-50 rounded-lg border border-gray-100">
+
+{Object.entries(formData[currentPage]?.[sectionId]?.[fieldId] || {}).map(([objectId, objectData]) => (
+        <div key={objectId} className="mb-6 p-4 border border-gray-200 rounded-lg">
+          {/* Remove button for each object instance */}
+          <div className="flex justify-end mb-4">
+            <button
+              type="button"
+              onClick={() => {
+                const updatedData = { ...formData[currentPage]?.[sectionId]?.[fieldId] };
+                delete updatedData[objectId];
+                setFormData({
+                  ...formData,
+                  [currentPage]: {
+                    ...(formData[currentPage] || {}),
+                    [sectionId]: {
+                      ...(formData[currentPage]?.[sectionId] || {}),
+                      [fieldId]: updatedData
+                    }
+                  }
+                });
+              }}
+              className="text-red-500 hover:text-red-700 text-sm"
+            >
+              Remove
+            </button>
+          </div>
             {field.fields && Object.entries(field.fields).map(([subFieldId, subField]) => (
               <div key={subFieldId} className="space-y-2">
                 <label className="block text-sm font-semibold text-gray-800">
                   {(subField as Field).label}
-                </label>
-                {(subField as Field).type === 'object' ? (
-                  <div className="pl-4 space-y-4 border-l-2 border-blue-100 bg-gray-50 rounded-lg p-4">
-                    {Object.entries((subField as Field).fields || {}).map(([nestedFieldId, nestedField]) => (
-                      <div key={nestedFieldId} className="space-y-2">
-                        <label className="block text-sm font-semibold text-gray-800">
-                          {(nestedField as Field).label}
-                        </label>
-                        <input
-                          type="text"
-                          id={`${sectionId}.${fieldId}.${subFieldId}.${nestedFieldId}`}
-                          name={`${sectionId}.${fieldId}.${subFieldId}.${nestedFieldId}`}
-                          className="w-full px-4 py-2.5 rounded-lg border border-gray-300 
-                            text-gray-900 bg-white focus:ring-2 focus:ring-blue-500 
-                            focus:border-blue-500 shadow-sm"
-                          placeholder={`Enter ${(nestedField as Field).label}`}
-                          defaultValue={formData[currentPage]?.[sectionId]?.[fieldId]?.[subFieldId]?.[nestedFieldId]}
-                        />
-                      </div>
-                    ))}
-                  </div>
-                ) : (subField as Field).type === 'array' ? (
-                  // Handle array within object
-                  <div className="space-y-4">
-                    {/* Show existing fields */}
-                    {(formData[currentPage]?.[sectionId]?.[fieldId]?.[subFieldId] || []).map((item: any, index: number) => (
-                      <div key={index} className="p-4 bg-white rounded-lg border border-gray-200 shadow-sm">
-                        <div className="grid grid-cols-4 gap-4 items-center">
-                          <input
-                            type="text"
-                            value={item.name || ''}
-                            onChange={(e) => {
-                              const newFields = [...(formData[currentPage]?.[sectionId]?.[fieldId]?.[subFieldId] || [])];
-                              newFields[index] = { ...newFields[index], name: e.target.value };
-                              setFormData({
-                                ...formData,
-                                [currentPage]: {
-                                  ...(formData[currentPage] || {}),
-                                  [sectionId]: {
-                                    ...(formData[currentPage]?.[sectionId] || {}),
-                                    [fieldId]: {
-                                      ...(formData[currentPage]?.[sectionId]?.[fieldId] || {}),
-                                      [subFieldId]: newFields
-                                    }
-                                  }
-                                }
-                              });
-                            }}
-                            placeholder="Field Name"
-                            className="w-full px-4 py-2.5 text-gray-900 bg-white border border-gray-300 
-                              rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500
-                              placeholder-gray-400"
-                          />
-                          <input
-                            type="text"
-                            value={item.label || ''}
-                            onChange={(e) => {
-                              const newFields = [...(formData[currentPage]?.[sectionId]?.[fieldId]?.[subFieldId] || [])];
-                              newFields[index] = { ...newFields[index], label: e.target.value };
-                              setFormData({
-                                ...formData,
-                                [currentPage]: {
-                                  ...(formData[currentPage] || {}),
-                                  [sectionId]: {
-                                    ...(formData[currentPage]?.[sectionId] || {}),
-                                    [fieldId]: {
-                                      ...(formData[currentPage]?.[sectionId]?.[fieldId] || {}),
-                                      [subFieldId]: newFields
-                                    }
-                                  }
-                                }
-                              });
-                            }}
-                            placeholder="Field Label"
-                            className="w-full px-4 py-2.5 text-gray-900 bg-white border border-gray-300 
-                              rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500
-                              placeholder-gray-400"
-                          />
-                          <select
-                            value={item.type || 'text'}
-                            onChange={(e) => {
-                              const newFields = [...(formData[currentPage]?.[sectionId]?.[fieldId]?.[subFieldId] || [])];
-                              newFields[index] = { ...newFields[index], type: e.target.value };
-                              setFormData({
-                                ...formData,
-                                [currentPage]: {
-                                  ...(formData[currentPage] || {}),
-                                  [sectionId]: {
-                                    ...(formData[currentPage]?.[sectionId] || {}),
-                                    [fieldId]: {
-                                      ...(formData[currentPage]?.[sectionId]?.[fieldId] || {}),
-                                      [subFieldId]: newFields
-                                    }
-                                  }
-                                }
-                              });
-                            }}
-                            className="w-full px-4 py-2.5 text-gray-900 bg-white border border-gray-300 
-                              rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500
-                              appearance-none cursor-pointer"
-                          >
-                            {((subField as Field).items?.type as Field)?.options?.map((option: string) => (
-                              <option key={option} value={option} className="py-2">
-                                {option.charAt(0).toUpperCase() + option.slice(1)}
-                              </option>
-                            ))}
-                          </select>
-                          <button
-                            type="button"
-                            onClick={() => {
-                              const newFields = [...(formData[currentPage]?.[sectionId]?.[fieldId]?.[subFieldId] || [])];
-                              newFields.splice(index, 1);
-                              setFormData({
-                                ...formData,
-                                [currentPage]: {
-                                  ...(formData[currentPage] || {}),
-                                  [sectionId]: {
-                                    ...(formData[currentPage]?.[sectionId] || {}),
-                                    [fieldId]: {
-                                      ...(formData[currentPage]?.[sectionId]?.[fieldId] || {}),
-                                      [subFieldId]: newFields
-                                    }
-                                  }
-                                }
-                              });
-                            }}
-                            className="px-4 py-2 text-sm font-medium text-red-600 hover:text-red-700 
-                              bg-red-50 hover:bg-red-100 rounded-lg border border-red-200
-                              transition-colors duration-200"
-                          >
-                            Remove
-                          </button>
-                        </div>
-                      </div>
-                    ))}
-                    
-                    {/* Add new field button */}
-                    <button
-                      type="button"
-                      onClick={() => {
-                        const newFields = [...(formData[currentPage]?.[sectionId]?.[fieldId]?.[subFieldId] || [])];
-                        newFields.push({ name: '', label: '', type: 'text' });
-                        setFormData({
-                          ...formData,
-                          [currentPage]: {
-                            ...(formData[currentPage] || {}),
-                            [sectionId]: {
-                              ...(formData[currentPage]?.[sectionId] || {}),
-                              [fieldId]: {
-                                ...(formData[currentPage]?.[sectionId]?.[fieldId] || {}),
-                                [subFieldId]: newFields
-                              }
-                            }
-                          }
-                        });
-                      }}
-                      className="w-full px-4 py-2.5 text-sm font-medium text-blue-600 
-                        bg-blue-50 hover:bg-blue-100 rounded-lg border border-blue-200
-                        transition-colors duration-200"
-                    >
-                      Add Form Field
-                    </button>
-                  </div>
-                ) : (
-                  <div>
-                    {(subField as Field).type === 'long-text' ? (
-                      <textarea
-                        id={`${sectionId}.${fieldId}.${subFieldId}`}
-                        name={`${sectionId}.${fieldId}.${subFieldId}`}
-                        className="w-full px-4 py-2.5 rounded-lg border border-gray-300 
-                          text-gray-900 bg-white focus:ring-2 focus:ring-blue-500 
-                          focus:border-blue-500 shadow-sm"
-                        rows={4}
-                        placeholder={`Enter ${(subField as Field).label}`}
-                        defaultValue={formData[currentPage]?.[sectionId]?.[fieldId]?.[subFieldId]}
+            </label>
+            {(subField as Field).type === 'object' ? (
+              <div className="pl-4 space-y-4 border-l-2 border-blue-100 bg-gray-50 rounded-lg p-4">
+                {Object.entries((subField as Field).fields || {}).map(([nestedFieldId, nestedField]) => (
+                  <div key={nestedFieldId} className="space-y-2">
+                    <label className="block text-sm font-semibold text-gray-800">
+                      {(nestedField as Field).label}
+                    </label>
+                    <input
+                      type="text"
+                      id={`${sectionId}.${fieldId}.${subFieldId}.${nestedFieldId}`}
+                      name={`${sectionId}.${fieldId}.${subFieldId}.${nestedFieldId}`}
+                      className="w-full px-4 py-2.5 rounded-lg border border-gray-300 
+                      text-gray-900 bg-white focus:ring-2 focus:ring-blue-500 
+                      focus:border-blue-500 shadow-sm"
+                      placeholder={`Enter ${(nestedField as Field).label}`}
+                      defaultValue={formData[currentPage]?.[sectionId]?.[fieldId]?.[subFieldId]?.[nestedFieldId]}
                       />
-                    ) : (
+                  </div>
+                ))}
+              </div>
+            ) : (subField as Field).type === 'array' ? (
+              // Handle array within object
+              <div className="space-y-4">
+                {/* Show existing fields */}
+                {(formData[currentPage]?.[sectionId]?.[fieldId]?.[subFieldId] || []).map((item: any, index: number) => (
+                  <div key={index} className="p-4 bg-white rounded-lg border border-gray-200 shadow-sm">
+                    <div className="grid grid-cols-4 gap-4 items-center">
                       <input
                         type="text"
-                        id={`${sectionId}.${fieldId}.${subFieldId}`}
-                        name={`${sectionId}.${fieldId}.${subFieldId}`}
-                        className="w-full px-4 py-2.5 rounded-lg border border-gray-300 
-                          text-gray-900 bg-white focus:ring-2 focus:ring-blue-500 
-                          focus:border-blue-500 shadow-sm"
-                        placeholder={`Enter ${(subField as Field).label}`}
-                        defaultValue={formData[currentPage]?.[sectionId]?.[fieldId]?.[subFieldId]}
-                      />
-                    )}
+                        value={item.name || ''}
+                        onChange={(e) => {
+                          const newFields = [...(formData[currentPage]?.[sectionId]?.[fieldId]?.[subFieldId] || [])];
+                          newFields[index] = { ...newFields[index], name: e.target.value };
+                          setFormData({
+                            ...formData,
+                            [currentPage]: {
+                              ...(formData[currentPage] || {}),
+                              [sectionId]: {
+                                ...(formData[currentPage]?.[sectionId] || {}),
+                                [fieldId]: {
+                                  ...(formData[currentPage]?.[sectionId]?.[fieldId] || {}),
+                                  [subFieldId]: newFields
+                                }
+                              }
+                            }
+                          });
+                        }}
+                        placeholder="Field Name"
+                        className="w-full px-4 py-2.5 text-gray-900 bg-white border border-gray-300 
+                        rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500
+                        placeholder-gray-400"
+                        />
+                      <input
+                        type="text"
+                        value={item.label || ''}
+                        onChange={(e) => {
+                          const newFields = [...(formData[currentPage]?.[sectionId]?.[fieldId]?.[subFieldId] || [])];
+                          newFields[index] = { ...newFields[index], label: e.target.value };
+                          setFormData({
+                            ...formData,
+                            [currentPage]: {
+                              ...(formData[currentPage] || {}),
+                              [sectionId]: {
+                                ...(formData[currentPage]?.[sectionId] || {}),
+                                [fieldId]: {
+                                  ...(formData[currentPage]?.[sectionId]?.[fieldId] || {}),
+                                  [subFieldId]: newFields
+                                }
+                              }
+                            }
+                          });
+                        }}
+                        placeholder="Field Label"
+                        className="w-full px-4 py-2.5 text-gray-900 bg-white border border-gray-300 
+                        rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500
+                        placeholder-gray-400"
+                        />
+                      <select
+                        value={item.type || 'text'}
+                        onChange={(e) => {
+                          const newFields = [...(formData[currentPage]?.[sectionId]?.[fieldId]?.[subFieldId] || [])];
+                          newFields[index] = { ...newFields[index], type: e.target.value };
+                          setFormData({
+                            ...formData,
+                            [currentPage]: {
+                              ...(formData[currentPage] || {}),
+                              [sectionId]: {
+                                ...(formData[currentPage]?.[sectionId] || {}),
+                                [fieldId]: {
+                                  ...(formData[currentPage]?.[sectionId]?.[fieldId] || {}),
+                                  [subFieldId]: newFields
+                                }
+                              }
+                            }
+                          });
+                        }}
+                        className="w-full px-4 py-2.5 text-gray-900 bg-white border border-gray-300 
+                        rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500
+                        appearance-none cursor-pointer"
+                        >
+                        {((subField as Field).items?.type as Field)?.options?.map((option: string) => (
+                          <option key={option} value={option} className="py-2">
+                            {option.charAt(0).toUpperCase() + option.slice(1)}
+                          </option>
+                        ))}
+                      </select>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const newFields = [...(formData[currentPage]?.[sectionId]?.[fieldId]?.[subFieldId] || [])];
+                          newFields.splice(index, 1);
+                          setFormData({
+                            ...formData,
+                            [currentPage]: {
+                              ...(formData[currentPage] || {}),
+                              [sectionId]: {
+                                ...(formData[currentPage]?.[sectionId] || {}),
+                                [fieldId]: {
+                                  ...(formData[currentPage]?.[sectionId]?.[fieldId] || {}),
+                                  [subFieldId]: newFields
+                                }
+                              }
+                            }
+                          });
+                        }}
+                        className="px-4 py-2 text-sm font-medium text-red-600 hover:text-red-700 
+                        bg-red-50 hover:bg-red-100 rounded-lg border border-red-200
+                        transition-colors duration-200"
+                        >
+                        Remove
+                      </button>
+                    </div>
                   </div>
+                ))}
+                
+                {/* Add new field button */}
+                <button
+                  type="button"
+                  onClick={() => {
+                    const newFields = [...(formData[currentPage]?.[sectionId]?.[fieldId]?.[subFieldId] || [])];
+                    newFields.push({ name: '', label: '', type: 'text' });
+                    setFormData({
+                      ...formData,
+                      [currentPage]: {
+                        ...(formData[currentPage] || {}),
+                        [sectionId]: {
+                          ...(formData[currentPage]?.[sectionId] || {}),
+                          [fieldId]: {
+                            ...(formData[currentPage]?.[sectionId]?.[fieldId] || {}),
+                            [subFieldId]: newFields
+                          }
+                        }
+                      }
+                    });
+                  }}
+                  className="w-full px-4 py-2.5 text-sm font-medium text-blue-600 
+                    bg-blue-50 hover:bg-blue-100 rounded-lg border border-blue-200
+                    transition-colors duration-200"
+                >
+                  Add Form Field
+                </button>
+              </div>
+            ) : (
+              <div>
+                {(subField as Field).type === 'long-text' ? (
+                  <textarea
+                    id={`${sectionId}.${fieldId}.${subFieldId}`}
+                    name={`${sectionId}.${fieldId}.${subFieldId}`}
+                    className="w-full px-4 py-2.5 rounded-lg border border-gray-300 
+                      text-gray-900 bg-white focus:ring-2 focus:ring-blue-500 
+                      focus:border-blue-500 shadow-sm"
+                      rows={4}
+                      placeholder={`Enter ${(subField as Field).label}`}
+                    defaultValue={formData[currentPage]?.[sectionId]?.[fieldId]?.[subFieldId]}
+                  />
+                ) : (
+                  <input
+                    type="text"
+                    id={`${sectionId}.${fieldId}.${subFieldId}`}
+                    name={`${sectionId}.${fieldId}.${subFieldId}`}
+                    className="w-full px-4 py-2.5 rounded-lg border border-gray-300 
+                    text-gray-900 bg-white focus:ring-2 focus:ring-blue-500 
+                    focus:border-blue-500 shadow-sm"
+                    placeholder={`Enter ${(subField as Field).label}`}
+                    defaultValue={formData[currentPage]?.[sectionId]?.[fieldId]?.[subFieldId]}
+                  />
                 )}
               </div>
-            ))}
+            )}
           </div>
+
+        ))}
+        </div>
+        ))}
+
+      <button
+        type="button"
+        onClick={() => {
+          const newObjectId = `item_${Date.now()}`;
+          // Create new object with empty values for all fields
+          const newObject: Record<string, any> = {};
+          Object.entries(field.fields || {}).forEach(([key, value]) => {
+            if ((value as Field).type === 'array') {
+              newObject[key] = [];
+            } else if ((value as Field).type === 'object') {
+              newObject[key] = {};
+            } else {
+              newObject[key] = '';
+            }
+          });
+
+          setFormData({
+            ...formData,
+            [currentPage]: {
+              ...(formData[currentPage] || {}),
+              [sectionId]: {
+                ...(formData[currentPage]?.[sectionId] || {}),
+                [fieldId]: {
+                  ...(formData[currentPage]?.[sectionId]?.[fieldId] || {}),
+                  [newObjectId]: newObject
+                }
+              }
+            }
+          });
+        }}
+        className="w-full mt-4 px-4 py-2.5 bg-blue-50 hover:bg-blue-100 
+          text-blue-600 font-medium rounded-lg text-sm
+          border border-blue-100 transition-colors duration-200
+          flex items-center justify-center gap-2"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+          <path fillRule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clipRule="evenodd" />
+        </svg>
+        Add {field.label || 'Item'}
+      </button>
+        </div>
         );
 
       case 'html':
