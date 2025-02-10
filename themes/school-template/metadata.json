@@ -518,6 +518,426 @@
           }
         }
       }
+    },
+    "privacy-policy": {
+      "type": "page",
+      "title": "Privacy Policy",
+      "sections": {
+        "main": {
+          "title": "Privacy Content",
+          "fields": {
+            "title": {
+              "type": "short-text",
+              "label": "Page Title",
+              "minLength": 1,
+              "required": true,
+              "default": "Privacy Policy"
+            },
+            "last_updated": {
+              "type": "short-text",
+              "label": "Last Updated Date",
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+              "required": true,
+              "default": "2024-01-01"
+            },
+            "sections": {
+              "type": "object",
+              "label": "Privacy Policy Sections",
+              "fields": {
+                "information_collected": {
+                  "type": "object",
+                  "label": "Information We Collect",
+                  "fields": {
+                    "title": {
+                      "type": "short-text",
+                      "label": "Section Title",
+                      "required": true,
+                      "default": "Information We Collect"
+                    },
+                    "personal_info": {
+                      "type": "object",
+                      "fields": {
+                        "title": {
+                          "type": "short-text",
+                          "label": "Personal Information Title",
+                          "required": true,
+                          "default": "Personal Information"
+                        },
+                        "items": {
+                          "type": "array",
+                          "label": "Personal Information Items",
+                          "items": {
+                            "type": "long-text",
+                            "default": "Name, email address, and contact information provided through forms"
+                          }
+                        }
+                      }
+                    },
+                    "technical_info": {
+                      "type": "object",
+                      "fields": {
+                        "title": {
+                          "type": "short-text",
+                          "label": "Technical Information Title",
+                          "required": true
+                        },
+                        "items": {
+                          "type": "array",
+                          "label": "Technical Information Items",
+                          "items": {
+                            "type": "long-text"
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "information_usage": {
+                  "type": "object",
+                  "label": "How We Use Information",
+                  "fields": {
+                    "title": {
+                      "type": "short-text",
+                      "label": "Section Title",
+                      "required": true
+                    },
+                    "items": {
+                      "type": "array",
+                      "label": "Usage Items",
+                      "items": {
+                        "type": "long-text"
+                      }
+                    }
+                  }
+                },
+                "data_protection": {
+                  "type": "object",
+                  "label": "Data Protection",
+                  "fields": {
+                    "title": {
+                      "type": "short-text",
+                      "label": "Section Title",
+                      "required": true
+                    },
+                    "items": {
+                      "type": "array",
+                      "label": "Protection Measures",
+                      "items": {
+                        "type": "long-text"
+                      }
+                    }
+                  }
+                },
+                "information_sharing": {
+                  "type": "object",
+                  "label": "Information Sharing",
+                  "fields": {
+                    "title": {
+                      "type": "short-text",
+                      "label": "Section Title",
+                      "required": true
+                    },
+                    "items": {
+                      "type": "array",
+                      "label": "Sharing Policies",
+                      "items": {
+                        "type": "long-text"
+                      }
+                    }
+                  }
+                },
+                "user_rights": {
+                  "type": "object",
+                  "label": "User Rights",
+                  "fields": {
+                    "title": {
+                      "type": "short-text",
+                      "label": "Section Title",
+                      "required": true
+                    },
+                    "items": {
+                      "type": "array",
+                      "label": "User Rights Items",
+                      "items": {
+                        "type": "long-text"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "quick_links": {
+              "type": "array",
+              "label": "Quick Links",
+              "items": {
+                "type": "object",
+                "fields": {
+                  "name": {
+                    "type": "short-text",
+                    "label": "Link Name",
+                    "required": true
+                  },
+                  "url": {
+                    "type": "short-text",
+                    "label": "Link URL",
+                    "required": true
+                  }
+                }
+              }
+            },
+            "contact_info": {
+              "type": "object",
+              "label": "Contact Information",
+              "fields": {
+                "email": {
+                  "type": "short-text",
+                  "label": "Contact Email",
+                  "format": "email",
+                  "required": true,
+                  "default": "privacy@school.edu"
+                },
+                "phone": {
+                  "type": "short-text",
+                  "label": "Contact Phone",
+                  "required": true,
+                  "default": "+1 (555) 123-4567"
+                },
+                "address": {
+                  "type": "short-text",
+                  "label": "Contact Address",
+                  "required": true,
+                  "default": "123 School Street, Education City, ST 12345"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "mandatory-disclosure": {
+      "type": "page",
+      "title": "Mandatory Disclosure",
+      "sections": {
+        "main": {
+          "title": "Disclosure Content",
+          "fields": {
+            "last_updated": {
+              "type": "short-text",
+              "label": "Last Updated Date",
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+              "default": "2024-01-01"
+            },
+            "school_info": {
+              "type": "object",
+              "label": "School Information",
+              "fields": {
+                "school_name": {
+                  "type": "short-text",
+                  "label": "School Name",
+                  "minLength": 1,
+                  "default": "Example School"
+                },
+                "affiliation_number": {
+                  "type": "short-text",
+                  "label": "Affiliation Number",
+                  "minLength": 1,
+                  "default": "ABC12345"
+                },
+                "school_code": {
+                  "type": "short-text",
+                  "label": "School Code",
+                  "minLength": 1,
+                  "default": "12345"
+                },
+                "address": {
+                  "type": "long-text",
+                  "label": "Address",
+                  "minLength": 1,
+                  "default": "123 School Street, Education City, ST 12345"
+                },
+                "principal_name": {
+                  "type": "short-text",
+                  "label": "Principal Name",
+                  "minLength": 1,
+                  "default": "Dr. John Smith"
+                },
+                "contact_details": {
+                  "type": "long-text",
+                  "label": "Contact Details",
+                  "minLength": 1,
+                  "default": "Phone: +1 (555) 123-4567\nEmail: contact@school.edu"
+                }
+              }
+            },
+            "infrastructure": {
+              "type": "object",
+              "label": "Infrastructure Details",
+              "fields": {
+                "campus_overview": {
+                  "type": "array",
+                  "label": "Campus Overview",
+                  "items": {
+                    "type": "object",
+                    "fields": {
+                      "name": {
+                        "type": "short-text",
+                        "label": "Feature Name",
+                        "minLength": 1,
+                        "default": "Campus Area"
+                      },
+                      "value": {
+                        "type": "short-text",
+                        "label": "Feature Value",
+                        "minLength": 1,
+                        "default": "5 acres"
+                      },
+                      "icon": {
+                        "type": "short-text",
+                        "label": "Feature Icon Class",
+                        "minLength": 1,
+                        "default": "fas fa-building"
+                      }
+                    }
+                  }
+                },
+                "facilities": {
+                  "type": "array",
+                  "label": "Academic & Support Facilities",
+                  "items": {
+                    "type": "object",
+                    "fields": {
+                      "name": {
+                        "type": "short-text",
+                        "label": "Facility Name",
+                        "minLength": 1
+                      },
+                      "details": {
+                        "type": "long-text",
+                        "label": "Facility Details",
+                        "minLength": 1
+                      },
+                      "icon": {
+                        "type": "short-text",
+                        "label": "Facility Icon Class",
+                        "minLength": 1
+                      }
+                    }
+                  }
+                },
+                "additional_features": {
+                  "type": "array",
+                  "label": "Additional Features",
+                  "items": {
+                    "type": "object",
+                    "fields": {
+                      "name": {
+                        "type": "short-text",
+                        "label": "Feature Name",
+                        "minLength": 1
+                      },
+                      "details": {
+                        "type": "long-text",
+                        "label": "Feature Details",
+                        "minLength": 1
+                      },
+                      "icon": {
+                        "type": "short-text",
+                        "label": "Feature Icon Class",
+                        "minLength": 1
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "faculty_info": {
+              "type": "array",
+              "label": "Faculty Information",
+              "default": [
+                {
+                  "department": "Primary Section",
+                  "total_teachers": "25",
+                  "qualification": "B.Ed, M.Ed",
+                  "experience_range": "5-15 years"
+                }
+              ],
+              "items": {
+                "type": "object",
+                "fields": {
+                  "department": {
+                    "type": "short-text",
+                    "label": "Department",
+                    "minLength": 1
+                  },
+                  "total_teachers": {
+                    "type": "short-text",
+                    "label": "Total Teachers",
+                    "minLength": 1
+                  },
+                  "qualification": {
+                    "type": "short-text",
+                    "label": "Qualification",
+                    "minLength": 1
+                  },
+                  "experience_range": {
+                    "type": "short-text",
+                    "label": "Experience Range",
+                    "minLength": 1
+                  }
+                }
+              }
+            },
+            "fee_structure": {
+              "type": "array",
+              "label": "Fee Structure",
+              "items": {
+                "type": "object",
+                "fields": {
+                  "class": {
+                    "type": "short-text",
+                    "label": "Class",
+                    "minLength": 1
+                  },
+                  "admission_fee": {
+                    "type": "short-text",
+                    "label": "Admission Fee",
+                    "minLength": 1
+                  },
+                  "tuition_fee": {
+                    "type": "short-text",
+                    "label": "Tuition Fee (Monthly)",
+                    "minLength": 1
+                  },
+                  "other_charges": {
+                    "type": "short-text",
+                    "label": "Other Charges",
+                    "minLength": 1
+                  }
+                }
+              }
+            },
+            "documents": {
+              "type": "array",
+              "label": "Supporting Documents",
+              "items": {
+                "type": "object",
+                "fields": {
+                  "name": {
+                    "type": "short-text",
+                    "label": "Document Name",
+                    "minLength": 1
+                  },
+                  "file": {
+                    "type": "file",
+                    "label": "Document File",
+                    "allowedTypes": ["application/pdf"]
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "config": {

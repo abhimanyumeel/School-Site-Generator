@@ -18,33 +18,39 @@
           <tr class="border-b">
             <td class="py-3 px-4 font-medium">School Name</td>
             <td class="py-3 px-4">
-              {{ .Site.Data.data.mandatory_disclosure.school_info.school_name }}
+              {{
+              .Site.Data.data.mandatory_disclosure.main.school_info.school_name
+              }}
             </td>
           </tr>
           <tr class="border-b">
             <td class="py-3 px-4 font-medium">Affiliation Number</td>
             <td class="py-3 px-4">
               {{
-              .Site.Data.data.mandatory_disclosure.school_info.affiliation_number
+              .Site.Data.data.mandatory_disclosure.main.school_info.affiliation_number
               }}
             </td>
           </tr>
           <tr class="border-b">
             <td class="py-3 px-4 font-medium">School Code</td>
             <td class="py-3 px-4">
-              {{ .Site.Data.data.mandatory_disclosure.school_info.school_code }}
+              {{
+              .Site.Data.data.mandatory_disclosure.main.school_info.school_code
+              }}
             </td>
           </tr>
           <tr class="border-b">
             <td class="py-3 px-4 font-medium">Address</td>
             <td class="py-3 px-4">
-              {{ .Site.Data.data.mandatory_disclosure.school_info.address }}
+              {{ .Site.Data.data.mandatory_disclosure.main.school_info.address
+              }}
             </td>
           </tr>
           <tr class="border-b">
             <td class="py-3 px-4 font-medium">Principal Name</td>
             <td class="py-3 px-4">
-              {{ .Site.Data.data.mandatory_disclosure.school_info.principal_name
+              {{
+              .Site.Data.data.mandatory_disclosure.main.school_info.principal_name
               }}
             </td>
           </tr>
@@ -52,7 +58,7 @@
             <td class="py-3 px-4 font-medium">Contact Details</td>
             <td class="py-3 px-4">
               {{
-              .Site.Data.data.mandatory_disclosure.school_info.contact_details
+              .Site.Data.data.mandatory_disclosure.main.school_info.contact_details
               }}
             </td>
           </tr>
@@ -77,24 +83,25 @@
           </thead>
           <tbody>
             {{ range
-            .Site.Data.data.mandatory_disclosure.infrastructure.campus_overview
+            .Site.Data.data.mandatory_disclosure.main.infrastructure.campus_overview
             }}
             <tr class="border-b">
               <td class="py-3 px-4 font-medium">{{ .name }}</td>
-              <td class="py-3 px-4">{{ .value }}</td>
+              <td class="py-3 px-4">{{ .label }}</td>
             </tr>
             {{ end }} {{ range
-            .Site.Data.data.mandatory_disclosure.infrastructure.facilities }}
-            <tr class="border-b">
-              <td class="py-3 px-4 font-medium">{{ .name }}</td>
-              <td class="py-3 px-4">{{ .details }}</td>
-            </tr>
-            {{ end }} {{ range
-            .Site.Data.data.mandatory_disclosure.infrastructure.additional_features
+            .Site.Data.data.mandatory_disclosure.main.infrastructure.facilities
             }}
             <tr class="border-b">
               <td class="py-3 px-4 font-medium">{{ .name }}</td>
-              <td class="py-3 px-4">{{ .details }}</td>
+              <td class="py-3 px-4">{{ .label }}</td>
+            </tr>
+            {{ end }} {{ range
+            .Site.Data.data.mandatory_disclosure.main.infrastructure.additional_features
+            }}
+            <tr class="border-b">
+              <td class="py-3 px-4 font-medium">{{ .name }}</td>
+              <td class="py-3 px-4">{{ .label }}</td>
             </tr>
             {{ end }}
           </tbody>
@@ -120,7 +127,7 @@
             </tr>
           </thead>
           <tbody>
-            {{ range .Site.Data.data.mandatory_disclosure.faculty_info }}
+            {{ range .Site.Data.data.mandatory_disclosure.main.faculty_info }}
             <tr class="border-b">
               <td class="py-3 px-4">{{ .department }}</td>
               <td class="py-3 px-4">{{ .total_teachers }}</td>
@@ -151,7 +158,7 @@
             </tr>
           </thead>
           <tbody>
-            {{ range .Site.Data.data.mandatory_disclosure.fee_structure }}
+            {{ range .Site.Data.data.mandatory_disclosure.main.fee_structure }}
             <tr class="border-b">
               <td class="py-3 px-4">{{ .class }}</td>
               <td class="py-3 px-4">{{ .admission_fee }}</td>
@@ -171,7 +178,7 @@
   <div class="text-center text-sm text-gray-600 mt-12">
     <p>This information is provided in compliance with CBSE guidelines.</p>
     <p class="mt-2">
-      Last updated: {{ .Site.Data.data.mandatory_disclosure.last_updated }}
+      Last updated: {{ .Site.Data.data.mandatory_disclosure.main.last_updated }}
     </p>
   </div>
 </div>
