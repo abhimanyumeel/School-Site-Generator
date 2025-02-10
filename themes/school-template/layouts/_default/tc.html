@@ -3,15 +3,15 @@
 <div class="container-xxl py-5 page-header position-relative mb-5">
   <div class="container py-5">
     <h1 class="display-2 text-white animated slideInDown mb-4">
-      {{ site.Data.data.tc.title }}
+      {{ .Site.Data.data.tc.main.title }}
     </h1>
     <nav aria-label="breadcrumb animated slideInDown">
       <ol class="breadcrumb">
         <li class="breadcrumb-item">
-          <a href="/">{{ site.Data.data.tc.breadcrumb.home }}</a>
+          <a href="/">{{ .Site.Data.data.tc.main.breadcrumb.home }}</a>
         </li>
         <li class="breadcrumb-item active" aria-current="page">
-          {{ site.Data.data.tc.breadcrumb.current }}
+          {{ .Site.Data.data.tc.main.breadcrumb.current }}
         </li>
       </ol>
     </nav>
@@ -23,15 +23,19 @@
   <div class="container">
     <div class="row justify-content-center">
       <div class="col-lg-8">
-        {{ .Content }}
-
+        <div class="content-section mb-5">
+          <h2>{{ .Site.Data.data.tc.main.subtitle }}</h2>
+          <p>{{ .Site.Data.data.tc.main.description }}</p>
+        </div>
         <div class="card shadow-sm">
           <div class="card-body p-4">
-            <h4 class="text-center mb-4">{{ site.Data.data.tc.form.title }}</h4>
+            <h4 class="text-center mb-4">
+              {{ .Site.Data.data.tc.main.form.title }}
+            </h4>
 
             <form class="tc-form" id="tcForm">
               <div class="row">
-                {{ range site.Data.data.tc.form.fields }}
+                {{ range .Site.Data.data.tc.main.form.fields }}
                 <div class="{{ .col }} mb-3">
                   <div class="form-group">
                     <label for="{{ .id }}" class="form-label"
@@ -72,17 +76,17 @@
 
               <div class="alert alert-info mb-4">
                 <small
-                  ><i class="fas fa-info-circle me-2"></i>{{
-                  site.Data.data.tc.form.note }}</small
+                  ><i class="fas fa-info-circle me-2"></i> Fields marked with *
+                  are mandatory</small
                 >
               </div>
 
               <div class="text-center">
                 <button type="submit" class="btn btn-primary px-4 py-2">
                   <i
-                    class="{{ site.Data.data.tc.form.submit_button.icon }} me-2"
+                    class="{{ site.Data.data.tc.main.form.submit_button.icon }} me-2"
                   ></i
-                  >{{ site.Data.data.tc.form.submit_button.text }}
+                  >{{ .Site.Data.data.tc.main.form.submit_button.text }}
                 </button>
               </div>
             </form>
