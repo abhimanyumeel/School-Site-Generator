@@ -938,6 +938,113 @@
           }
         }
       }
+    },
+    "tc": {
+      "type": "page",
+      "title": "Transfer Certificate",
+      "sections": {
+        "main": {
+          "title": "TC Content",
+          "fields": {
+            "title": {
+              "type": "short-text",
+              "label": "Page Title",
+              "minLength": 1,
+              "required": true,
+              "default": "Transfer Certificate Application"
+            },
+            "subtitle": {
+              "type": "short-text",
+              "label": "Page Subtitle",
+              "minLength": 1,
+              "required": true,
+              "default": "Request Your Transfer Certificate"
+            },
+            "description": {
+              "type": "long-text",
+              "label": "Page Description",
+              "minLength": 10,
+              "required": true,
+              "default": "Fill out the form below to request your Transfer Certificate. Please ensure all information is accurate."
+            },
+            "breadcrumb": {
+              "type": "object",
+              "label": "Breadcrumb Navigation",
+              "fields": {
+                "home": {
+                  "type": "short-text",
+                  "label": "Home Link Text",
+                  "required": true
+                },
+                "current": {
+                  "type": "short-text",
+                  "label": "Current Page Text",
+                  "required": true
+                }
+              }
+            },
+            "form": {
+              "type": "object",
+              "label": "TC Form Configuration",
+              "fields": {
+                "title": {
+                  "type": "short-text",
+                  "label": "Form Title",
+                  "required": true,
+                  "default": "TC Request Form"
+                },
+                "fields": {
+                  "type": "array",
+                  "label": "Form Fields",
+                  "items": {
+                    "type": "object",
+                    "fields": {
+                      "id": {
+                        "type": "short-text",
+                        "label": "Field ID",
+                        "required": true,
+                        "pattern": "^[a-zA-Z][a-zA-Z0-9]*$",
+                        "default": "studentName"
+                      },
+                      "label": {
+                        "type": "short-text",
+                        "label": "Field Label",
+                        "required": true,
+                        "default": "Student Name"
+                      },
+                      "type": {
+                        "type": "select",
+                        "label": "Field Type",
+                        "required": true,
+                        "options": ["text", "date", "select"],
+                        "default": "text"
+                      }
+                    }
+                  }
+                },
+                "submit_button": {
+                  "type": "object",
+                  "label": "Submit Button",
+                  "fields": {
+                    "text": {
+                      "type": "short-text",
+                      "label": "Button Text",
+                      "required": true,
+                      "default": "Submit Request"
+                    },
+                    "icon": {
+                      "type": "short-text",
+                      "label": "Button Icon Class",
+                      "required": true,
+                      "default": "fas fa-paper-plane"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "config": {
