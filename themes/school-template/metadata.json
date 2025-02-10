@@ -146,7 +146,116 @@
         }
       }
     },
-
+    "about": {
+      "type": "page",
+      "title": "About Page",
+      "sections": {
+        "main": {
+          "title": "Main Content",
+          "fields": {
+            "title": {
+              "type": "short-text",
+              "label": "Page Title",
+              "required": true
+            },
+            "description": {
+              "type": "array",
+              "label": "Page Description",
+              "items": {
+                "type": "long-text",
+                "minLength": 5
+              }
+            },
+            "mission": {
+              "type": "long-text",
+              "label": "Mission Statement",
+              "minLength": 5
+            },
+            "vision": {
+              "type": "long-text",
+              "label": "Vision Statement",
+              "minLength": 5
+            },
+            "ceo": {
+              "type": "object",
+              "label": "CEO Information",
+              "fields": {
+                "name": {
+                  "type": "short-text",
+                  "label": "CEO Name",
+                  "required": true
+                },
+                "position": {
+                  "type": "short-text",
+                  "label": "CEO Position",
+                  "required": true
+                },
+                "image": {
+                  "type": "image",
+                  "label": "CEO Image"
+                }
+              }
+            }
+          }
+        },
+        "team": {
+          "title": "Team Section",
+          "fields": {
+            "title": {
+              "type": "short-text",
+              "label": "Section Title",
+              "required": true,
+              "default": "Our Faculty"
+            },
+            "description": {
+              "type": "long-text",
+              "label": "Section Description",
+              "required": true,
+              "default": "Meet our experienced and dedicated faculty members"
+            },
+            "members": {
+              "type": "array",
+              "label": "Team Members",
+              "items": {
+                "type": "object",
+                "fields": {
+                  "name": {
+                    "type": "short-text",
+                    "label": "Member Name",
+                    "required": true
+                  },
+                  "position": {
+                    "type": "short-text",
+                    "label": "Position",
+                    "required": true
+                  },
+                  "department": {
+                    "type": "short-text",
+                    "label": "Department",
+                    "required": true
+                  },
+                  "college": {
+                    "type": "short-text",
+                    "label": "College",
+                    "required": true
+                  },
+                  "image": {
+                    "type": "image",
+                    "label": "Member Photo",
+                    "required": true
+                  },
+                  "bio": {
+                    "type": "long-text",
+                    "label": "Biography",
+                    "required": false
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "contact": {
       "type": "page",
       "title": "Contact Page",
