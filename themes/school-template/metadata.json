@@ -4,6 +4,310 @@
   "description": "A modern and clean Hugo theme for school websites",
   "version": "1.0.0",
   "pages": {
+    "home": {
+      "type": "page",
+      "title": "Home Page",
+      "sections": {
+        "hero": {
+          "title": "Hero Section",
+          "fields": {
+            "title": {
+              "type": "short-text",
+              "label": "Hero Title",
+              "required": true
+            },
+            "subtitle": {
+              "type": "short-text",
+              "label": "Hero Subtitle",
+              "required": true
+            },
+            "description": {
+              "type": "long-text",
+              "label": "Hero Description",
+              "required": true
+            },
+            "image": {
+              "type": "image",
+              "label": "Hero Background Image",
+              "required": true,
+              "description": "Large background image for hero section (recommended: 1920x1080px)"
+            },
+            "cta": {
+              "type": "object",
+              "label": "Call to Action",
+              "fields": {
+                "primary": {
+                  "type": "object",
+                  "fields": {
+                    "text": {
+                      "type": "short-text",
+                      "label": "Primary Button Text"
+                    },
+                    "url": {
+                      "type": "short-text",
+                      "label": "Primary Button URL"
+                    }
+                  }
+                },
+                "secondary": {
+                  "type": "object",
+                  "fields": {
+                    "text": {
+                      "type": "short-text",
+                      "label": "Secondary Button Text"
+                    },
+                    "url": {
+                      "type": "short-text",
+                      "label": "Secondary Button URL"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "notices": {
+          "title": "Notice Board Section",
+          "fields": {
+            "title": {
+              "type": "short-text",
+              "label": "Notice Board Title",
+              "required": true
+            },
+            "items": {
+              "type": "array",
+              "label": "Notice Items",
+              "items": {
+                "title": {
+                  "type": "short-text",
+                  "label": "Notice Title",
+                  "required": true
+                },
+                "link": {
+                  "type": "short-text",
+                  "label": "Notice Link",
+                  "required": true
+                }
+              }
+            }
+          }
+        },
+        "events": {
+          "title": "Events Section",
+          "fields": {
+            "title": {
+              "type": "short-text",
+              "label": "Events Section Title",
+              "required": true
+            },
+            "description": {
+              "type": "long-text",
+              "label": "Events Section Description",
+              "required": true
+            },
+            "items": {
+              "type": "array",
+              "label": "Event Items",
+              "items": {
+                "title": {
+                  "type": "short-text",
+                  "label": "Event Title",
+                  "required": true
+                },
+                "description": {
+                  "type": "long-text",
+                  "label": "Event Description",
+                  "required": true
+                },
+                "date": {
+                  "type": "short-text",
+                  "label": "Event Date",
+                  "required": true,
+                  "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+                },
+                "time": {
+                  "type": "short-text",
+                  "label": "Event Time",
+                  "required": true
+                },
+                "location": {
+                  "type": "short-text",
+                  "label": "Event Location",
+                  "required": true
+                },
+                "image": {
+                  "type": "image",
+                  "label": "Event Image",
+                  "required": true
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+
+    "contact": {
+      "type": "page",
+      "title": "Contact Page",
+      "sections": {
+        "main": {
+          "title": "Contact Information",
+          "fields": {
+            "title": {
+              "type": "short-text",
+              "label": "Page Title",
+              "minLength": 1,
+              "default": "Contact Us",
+              "required": true
+            },
+            "description": {
+              "type": "long-text",
+              "label": "Contact Description",
+              "minLength": 5,
+              "default": "Get in touch with us for any questions or inquiries",
+              "required": true
+            },
+            "info": {
+              "type": "object",
+              "label": "Contact Information",
+              "fields": {
+                "address": {
+                  "type": "object",
+                  "fields": {
+                    "icon": {
+                      "type": "short-text",
+                      "label": "Address Icon Class",
+                      "default": "fas fa-map-marker-alt",
+                      "required": true
+                    },
+                    "text": {
+                      "type": "long-text",
+                      "label": "Address Text",
+                      "required": true
+                    }
+                  }
+                },
+                "email": {
+                  "type": "object",
+                  "fields": {
+                    "icon": {
+                      "type": "short-text",
+                      "label": "Email Icon Class",
+                      "default": "fas fa-envelope",
+                      "required": true
+                    },
+                    "text": {
+                      "type": "short-text",
+                      "label": "Email Address",
+                      "format": "email",
+                      "required": true
+                    }
+                  }
+                },
+                "phone": {
+                  "type": "object",
+                  "fields": {
+                    "icon": {
+                      "type": "short-text",
+                      "label": "Phone Icon Class",
+                      "default": "fas fa-phone",
+                      "required": true
+                    },
+                    "text": {
+                      "type": "short-text",
+                      "label": "Phone Number",
+                      "required": true
+                    }
+                  }
+                }
+              }
+            },
+            "form": {
+              "type": "object",
+              "label": "Contact Form",
+              "fields": {
+                "note": {
+                  "type": "long-text",
+                  "label": "Form Note",
+                  "default": "Please fill out the form below to get in touch with us.",
+                  "required": true
+                },
+                "submit_text": {
+                  "type": "short-text",
+                  "label": "Submit Button Text",
+                  "default": "Send Message",
+                  "required": true
+                },
+                "fields": {
+                  "type": "array",
+                  "label": "Form Fields",
+                  "default": [
+                    {
+                      "name": "name",
+                      "label": "Your Name",
+                      "type": "text",
+                      "placeholder": "Enter your name"
+                    },
+                    {
+                      "name": "email",
+                      "label": "Your Email",
+                      "type": "email",
+                      "placeholder": "Enter your email"
+                    },
+                    {
+                      "name": "subject",
+                      "label": "Subject",
+                      "type": "text",
+                      "placeholder": "Enter subject"
+                    },
+                    {
+                      "name": "message",
+                      "label": "Message",
+                      "type": "textarea",
+                      "placeholder": "Enter your message"
+                    }
+                  ],
+                  "items": {
+                    "type": "object",
+                    "fields": {
+                      "name": {
+                        "type": "short-text",
+                        "label": "Field Name",
+                        "required": true
+                      },
+                      "label": {
+                        "type": "short-text",
+                        "label": "Field Label",
+                        "required": true
+                      },
+                      "type": {
+                        "type": "select",
+                        "label": "Field Type",
+                        "options": ["text", "email", "tel", "textarea"],
+                        "required": true
+                      },
+                      "placeholder": {
+                        "type": "short-text",
+                        "label": "Field Placeholder",
+                        "required": true
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "map_embed_url": {
+              "type": "short-text",
+              "label": "Map Embed URL",
+              "format": "uri",
+              "description": "Google Maps embed URL for your location",
+              "required": true
+            }
+          }
+        }
+      }
+    },
     "terms-of-service": {
       "type": "page",
       "title": "Terms of Service",
