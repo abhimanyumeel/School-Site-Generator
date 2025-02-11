@@ -1434,162 +1434,144 @@ export default function CustomizeTheme() {
                                 <label className="block text-sm font-semibold text-gray-800">
                                   {(nestedField as Field).label}
                                 </label>
-                                <input
+                                {(nestedField as Field).type === 'array' ? (
+                                  <div className="space-y-4">
+                                    {(formData[currentPage]?.[sectionId]?.[fieldId]?.[subFieldId]?.[nestedFieldId] || []).map((item: any, index: number) => (
+                                      <div key={index} className="p-4 bg-white rounded-lg border border-gray-200 shadow-sm">
+                                        {/*Array item fields*/}
+                                              <div className="flex items-center gap-2 w-full">
+                                                <textarea
+                                                  value={item.name || ''}
+                                                  onChange={(e) => {
+                                                    const newFields = [...(formData[currentPage]?.[sectionId]?.[fieldId]?.[subFieldId]?.[nestedFieldId] || [])];
+                                                    newFields[index] = {
+                                                      ...newFields[index],
+                                                      name: e.target.value,
+                                                    };
+                                                    setFormData({
+                                                      ...formData,
+                                                      [currentPage]:{
+                                                        ...(formData[currentPage] || {}),
+                                                        [sectionId]: {
+                                                          ...(formData[currentPage]?.[sectionId] || {}),
+                                                          [fieldId]: {
+                                                            ...(formData[currentPage]?.[sectionId]?.[fieldId] || {}),
+                                                            [subFieldId]: {
+                                                              ...(formData[currentPage]?.[sectionId]?.[fieldId]?.[subFieldId] || {}),
+                                                              [nestedFieldId]: newFields
+                                                            }
+                                                          },
+                                                        },
+                                                      },
+                                                    });
+                                                  }}
+                                                  className="flex-1 px-4 py-2.5 text-gray-900 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                                  placeholder={`Enter ${(nestedField as Field).label}`}
+                                                  />
+
+                                                  <button
+                                                  type="button"
+                                                  onClick={() => {
+                                                    const newItems = [
+                                                      ...(formData[currentPage]?.[sectionId]?.[fieldId]?.[subFieldId]?.[nestedFieldId] || []),
+                                                    ];
+                                                    newItems.splice(index, 1);
+                                                    setFormData({
+                                                      ...formData,
+                                                      [currentPage]: {
+                                                        ...(formData[currentPage] || {}),
+                                                        [sectionId]: {
+                                                          ...(formData[currentPage]?.[sectionId] || {}),
+                                                          [fieldId]: {
+                                                            ...(formData[currentPage]?.[sectionId]?.[fieldId] || {}),
+                                                            [subFieldId]:{
+                                                              ...(formData[currentPage]?.[sectionId]?.[fieldId]?.[subFieldId] || {}),
+                                                              [nestedFieldId]: newItems
+                                                            }
+                                                          },
+                                                        },
+                                                      },
+                                                    });
+                                                  }}
+                                                  className="p-2.5 text-red-600 hover:text-red-700 bg-transparent transition-color duration-200 flex items-center justify-center"
+                                                  title="Remove item"
+                                                  >
+                                                                                        <svg 
+                                   xmlns="http://www.w3.org/2000/svg" 
+                                  className="h-5 w-5" 
+                                   viewBox="0 0 20 20" 
+                                  fill="currentColor"
+                                    >
+                                    <path 
+                                    fillRule="evenodd" 
+                                    d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" 
+                                  clipRule="evenodd" 
+                                    />
+                                   </svg>
+                                                  </button>
+                                              </div>
+
+                                      </div>
+                                    ))}
+                                  
+
+                                  {/* Add new item button */}
+                                  <button
+                                    type="button"
+                                    onClick = {() => {
+                                      const newItems = [
+                                        ...(formData[currentPage]?.[sectionId]?.[fieldId]?.[subFieldId]?.[nestedFieldId] || []),
+                                      {}
+                                      ];
+                                      setFormData({
+                                        ...formData,
+                                        [currentPage]: {
+                                          ...(formData[currentPage] || {}),
+                                          [sectionId]: {
+                                            ...(formData[currentPage]?.[sectionId] || {}),
+                                            [fieldId]: {
+                                              ...(formData[currentPage]?.[sectionId]?.[fieldId] || {}),
+                                              [subFieldId]: {
+                                                ...(formData[currentPage]?.[sectionId]?.[fieldId]?.[subFieldId] || {}),
+                                                [nestedFieldId]: newItems
+                                              }
+                                            }
+                                          }
+                                        }
+                                      });
+                                    }}
+                                    className="w-full px-4 py-2.5 text-sm font-medium text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-lg border border-blue-200 transition-colors duration-200"
+                                  >
+                                    {`Add ${nestedField.label}`}
+                                  </button>
+                                </div>
+                                ) : (
+
+                                  <input
                                   type="text"
                                   id={`${sectionId}.${fieldId}.${subFieldId}.${nestedFieldId}`}
                                   name={`${sectionId}.${fieldId}.${subFieldId}.${nestedFieldId}`}
                                   className="w-full px-4 py-2.5 rounded-lg border border-gray-300 
-                      text-gray-900 bg-white focus:ring-2 focus:ring-blue-500 
-                      focus:border-blue-500 shadow-sm"
+                                  text-gray-900 bg-white focus:ring-2 focus:ring-blue-500 
+                                  focus:border-blue-500 shadow-sm"
                                   placeholder={`Enter ${(nestedField as Field).label}`}
                                   defaultValue={formData[currentPage]?.[sectionId]?.[fieldId]?.[subFieldId]?.[nestedFieldId]}
-                                />
+                                  />
+                                )
+                                }
                               </div>
-                            ),
+                            )
                           )}
                         </div>
-                      ) : (subField as Field).type === 'array' ? (
+                      ): (subField as Field).type === 'array' ? (
                         // Handle array within object
                         <div className="space-y-4">
-                          {subFieldId === 'items' &&
-                          fieldId === 'subsections' ? (
-                            <>
-                              {(
-                                formData[currentPage]?.main?.sections?.[
-                                  objectId
-                                ]?.subsections?.items || []
-                              ).map((item: string, index: number) => (
-                                <div
-                                  key={index}
-                                  className="flex gap-2 items-center"
-                                >
-                                  <input
-                                    type="text"
-                                    value={item}
-                                    onChange={(e) => {
-                                      const newItems = [
-                                        ...(formData[currentPage]?.main
-                                          ?.sections?.[objectId]?.subsections
-                                          ?.items || []),
-                                      ];
-                                      newItems[index] = e.target.value;
-                                      setFormData({
-                                        ...formData,
-                                        [currentPage]: {
-                                          ...formData[currentPage],
-                                          main: {
-                                            ...formData[currentPage]?.main,
-                                            sections: {
-                                              ...(formData[currentPage]?.main
-                                                ?.sections || {}),
-                                              [objectId]: {
-                                                ...(formData[currentPage]?.main
-                                                  ?.sections?.[objectId] || {}),
-                                                subsections: {
-                                                  ...(formData[currentPage]
-                                                    ?.main?.sections?.[objectId]
-                                                    ?.subsections || {}),
-                                                  items: newItems,
-                                                },
-                                              },
-                                            },
-                                          },
-                                        },
-                                      });
-                                    }}
-                                    placeholder={`Enter ${(subField as Field).label}`}
-                                    className="flex-1 px-4 py-2.5 text-gray-900 bg-white border border-gray-300 
-                rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                                  />
-                                  <button
-                                    type="button"
-                                    onClick={() => {
-                                      const newItems = [
-                                        ...(formData[currentPage]?.main
-                                          ?.sections?.[objectId]?.subsections
-                                          ?.items || []),
-                                      ];
-                                      newItems.splice(index, 1);
-                                      setFormData({
-                                        ...formData,
-                                        [currentPage]: {
-                                          ...formData[currentPage],
-                                          main: {
-                                            ...formData[currentPage]?.main,
-                                            sections: {
-                                              ...(formData[currentPage]?.main
-                                                ?.sections || {}),
-                                              [objectId]: {
-                                                ...(formData[currentPage]?.main
-                                                  ?.sections?.[objectId] || {}),
-                                                subsections: {
-                                                  ...(formData[currentPage]
-                                                    ?.main?.sections?.[objectId]
-                                                    ?.subsections || {}),
-                                                  items: newItems,
-                                                },
-                                              },
-                                            },
-                                          },
-                                        },
-                                      });
-                                    }}
-                                    className="p-2 text-red-600 hover:text-red-700 
-                bg-red-50 hover:bg-red-100 rounded-lg border border-red-200"
-                                  >
-                                    Remove
-                                  </button>
-                                </div>
-                              ))}
-
-                              <button
-                                type="button"
-                                onClick={() => {
-                                  const newItems = [
-                                    ...(formData[currentPage]?.main?.sections?.[
-                                      objectId
-                                    ]?.subsections?.items || []),
-                                  ];
-                                  newItems.push('');
-                                  setFormData({
-                                    ...formData,
-                                    [currentPage]: {
-                                      ...formData[currentPage],
-                                      main: {
-                                        ...formData[currentPage]?.main,
-                                        sections: {
-                                          ...(formData[currentPage]?.main
-                                            ?.sections || {}),
-                                          [objectId]: {
-                                            ...(formData[currentPage]?.main
-                                              ?.sections?.[objectId] || {}),
-                                            subsections: {
-                                              ...(formData[currentPage]?.main
-                                                ?.sections?.[objectId]
-                                                ?.subsections || {}),
-                                              items: newItems,
-                                            },
-                                          },
-                                        },
-                                      },
-                                    },
-                                  });
-                                }}
-                                className="w-full px-4 py-2.5 text-sm font-medium text-blue-600 
-            bg-blue-50 hover:bg-blue-100 rounded-lg border border-blue-200
-            transition-colors duration-200"
-                              >
-                                Add List Item
-                              </button>
-                            </>
-                          ) : (
-                            <>
                               {/* Show existing fields */}
                               {(
                                 formData[currentPage]?.[sectionId]?.[fieldId]?.[subFieldId] || []).map((item: any, index: number) => (
                                 <div
                                   key={index}
-                                  className="p-2 bg-white rounded-lg border border-gray-200 shadow-sm"
+                                  className="p-4 bg-white rounded-lg border border-gray-200 shadow-sm"
                                 >
                                   <div className="flex items-center gap-2 w-full">
                                     <textarea
@@ -1710,10 +1692,8 @@ export default function CustomizeTheme() {
                       bg-blue-50 hover:bg-blue-100 rounded-lg border border-blue-200
                       transition-colors duration-200"
                               >
-                                Add Form Field
+                                {`Add ${subField.label}`}
                               </button>
-                            </>
-                          )}
                         </div>
                       ) : (
                         <div>
