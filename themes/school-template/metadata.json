@@ -146,6 +146,136 @@
         }
       }
     },
+    "admission": {
+      "type": "page",
+      "title": "Admission Page",
+      "sections": {
+        "welcome": {
+          "title": "Welcome Section",
+          "fields": {
+            "title": {
+              "type": "short-text",
+              "label": "Welcome Section Title",
+              "minLength": 1,
+              "required": true
+            },
+            "description": {
+              "type": "array",
+              "label": "Welcome Description Paragraphs",
+              "items": {
+                "type": "long-text",
+                "minLength": 10,
+                "required": true
+              }
+            }
+          }
+        },
+        "contact_info": {
+          "title": "Contact Information",
+          "fields": {
+            "title": {
+              "type": "short-text",
+              "label": "Contact Section Title",
+              "required": true,
+              "default": "Contact Information"
+            },
+            "contacts": {
+              "type": "array",
+              "label": "Contact Persons",
+              "default": [
+                {
+                  "name": "Admission Coordinator",
+                  "phone": "+1 (555) 123-4567"
+                }
+              ],
+              "items": {
+                "type": "object",
+                "fields": {
+                  "name": {
+                    "type": "short-text",
+                    "label": "Contact Name",
+                    "required": true
+                  },
+                  "phone": {
+                    "type": "short-text",
+                    "label": "Phone Number",
+                    "required": true
+                  }
+                }
+              }
+            }
+          }
+        },
+        "form": {
+          "title": "Admission Form",
+          "fields": {
+            "title": {
+              "type": "short-text",
+              "label": "Form Title",
+              "required": true
+            },
+            "fields": {
+              "type": "array",
+              "label": "Form Fields",
+              "items": {
+                "type": "object",
+                "fields": {
+                  "type": {
+                    "type": "select",
+                    "label": "Field Type",
+                    "options": ["text", "email", "tel", "select"],
+                    "required": true
+                  },
+                  "placeholder": {
+                    "type": "short-text",
+                    "label": "Placeholder Text",
+                    "required": true
+                  },
+                  "required": {
+                    "type": "boolean",
+                    "label": "Is Required",
+                    "default": false
+                  }
+                }
+              }
+            },
+            "class_options": {
+              "type": "array",
+              "label": "Available Class Options",
+              "items": {
+                "type": "short-text",
+                "label": "Class Name",
+                "required": true
+              }
+            },
+            "terms_checkbox": {
+              "type": "object",
+              "label": "Terms Checkbox",
+              "fields": {
+                "label": {
+                  "type": "short-text",
+                  "label": "Checkbox Label",
+                  "default": "I acknowledge that I have read, and do hereby accept the terms and conditions.",
+                  "required": true
+                }
+              }
+            },
+            "submit_button": {
+              "type": "object",
+              "label": "Submit Button",
+              "fields": {
+                "text": {
+                  "type": "short-text",
+                  "label": "Button Text",
+                  "default": "Submit",
+                  "required": true
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "about": {
       "type": "page",
       "title": "About Page",
