@@ -1602,9 +1602,9 @@ export default function CustomizeTheme() {
                         <div className="space-y-4">
                               {/* Show existing fields */}
                               {(
-                                formData[currentPage]?.[sectionId]?.[fieldId]?.[subFieldId] || []).map((item: any, index: number) => (
+                                formData[currentPage]?.[sectionId]?.[fieldId]?.[objectId]?.[subFieldId] || []).map((item: any, index: number) => (
                                 <div
-                                  key={index}
+                                  key={item.id ||index}
                                   className="p-4 bg-white rounded-lg border border-gray-200 shadow-sm"
                                 >
                                   <div className="flex items-center gap-2 w-full">
@@ -1612,12 +1612,10 @@ export default function CustomizeTheme() {
                                       value={item.name || ''}
                                       onChange={(e) => {
                                         const newFields = [
-                                          ...(formData[currentPage]?.[sectionId]?.[fieldId]?.[subFieldId] || []),
+                                          ...(formData[currentPage]?.[sectionId]?.[fieldId]?.[objectId]?.[subFieldId] || []),
                                         ];
-                                        newFields[index] = {
-                                          ...newFields[index],
-                                          name: e.target.value,
-                                        };
+                                        newFields[index] = e.target.value;
+                                        
                                         setFormData({
                                           ...formData,
                                           [currentPage]: {
@@ -1630,8 +1628,11 @@ export default function CustomizeTheme() {
                                                 ...(formData[currentPage]?.[
                                                   sectionId
                                                 ]?.[fieldId] || {}),
+                                                [objectId]: {
+                                                  ...(formData[currentPage]?.[sectionId]?.[fieldId]?.[objectId] || {}),
                                                 [subFieldId]: newFields,
-                                              },
+                                              }
+                                            }
                                             },
                                           },
                                         });
@@ -1646,7 +1647,7 @@ export default function CustomizeTheme() {
                                       onClick={(e) => {
                                         e.stopPropagation();
                                         setFormData((prevData) => {
-                                          const newFields = [...(formData[currentPage]?.[sectionId]?.[fieldId]?.[subFieldId] || []),];
+                                          const newFields = [...(formData[currentPage]?.[sectionId]?.[fieldId]?.[objectId]?.[subFieldId] || []),];
                                           newFields.splice(index, 1);
 
                                           return {
@@ -1661,8 +1662,11 @@ export default function CustomizeTheme() {
                                                 ...(prevData[currentPage]?.[
                                                   sectionId
                                                 ]?.[fieldId] || {}),
+                                                [objectId]: {
+                                                  ...(prevData[currentPage]?.[sectionId]?.[fieldId]?.[objectId] || {}),
                                                 [subFieldId]: newFields,
-                                              },
+                                              }
+                                            }
                                             },
                                           },
                                         };
@@ -1694,37 +1698,36 @@ export default function CustomizeTheme() {
                               <button
                                 type="button"
                                 onClick={(e) => {
+                                  console.log('Second button clicked');
                                   e.preventDefault();
                                   e.stopPropagation();
-                                  console.log('Second button clicked');
 
-                                  setFormData((prevData) => {
-                                    const newFields = [...(prevData[currentPage]?.[sectionId]?.[fieldId]?.[subFieldId] || []),];
+                                  //Get the specific parent object
+                                  const parentObject = formData[currentPage]?.[sectionId]?.[fieldId]?.[objectId];
+                                  const currentFields = parentObject?.[subFieldId] || [];
 
-                                    newFields.push({
-                                      id: `field_${Date.now()}`,
-                                        name: '',
-                                        label: '',
-                                        type: 'text',
-                                      }); 
+                                  const newFields = [
+                                    ...currentFields,''];
 
-                                    return {
-                                      ...prevData,
+                                  setFormData({
+                                    ...formData,
                                       [currentPage]: {
-                                        ...(prevData[currentPage] || {}),
+                                        ...(formData[currentPage] || {}),
                                         [sectionId]: {
-                                        ...(prevData[currentPage]?.[
+                                        ...(formData[currentPage]?.[
                                           sectionId
                                         ] || {}),
                                         [fieldId]: {
-                                          ...(prevData[currentPage]?.[
+                                          ...(formData[currentPage]?.[
                                             sectionId
                                           ]?.[fieldId] || {}),
+                                          [objectId]: {
+                                            ...parentObject,
                                           [subFieldId]: newFields,
-                                        },
+                                        }
                                       },
                                     },
-                                  };
+                                  },
                                 });
                                 }}
                                 className="w-full px-4 py-2.5 text-sm font-medium text-blue-600 
