@@ -1400,19 +1400,18 @@ export default function CustomizeTheme() {
                   <button
                     type="button"
                     onClick={() => {
-                      const updatedData = {
-                        ...formData[currentPage]?.[sectionId]?.[fieldId],
-                      };
-                      delete updatedData[objectId];
-                      setFormData({
-                        ...formData,
-                        [currentPage]: {
-                          ...(formData[currentPage] || {}),
-                          [sectionId]: {
-                            ...(formData[currentPage]?.[sectionId] || {}),
-                            [fieldId]: updatedData,
-                          },
-                        },
+                      setFormData((prevData) => {
+                        const newState = structuredClone(prevData);
+
+                        if (
+                          newState[currentPage] &&
+                          newState[currentPage][sectionId] &&
+                          newState[currentPage][sectionId][fieldId]
+                        ) {
+                          delete newState[currentPage][sectionId][fieldId][objectId];
+                        }
+
+                        return newState;
                       });
                     }}
                     className="text-red-500 hover:text-red-700 text-sm"
@@ -1436,18 +1435,15 @@ export default function CustomizeTheme() {
                                 </label>
                                 {(nestedField as Field).type === 'array' ? (
                                   <div className="space-y-4">
-                                    {(formData[currentPage]?.[sectionId]?.[fieldId]?.[subFieldId]?.[nestedFieldId] || []).map((item: any, index: number) => (
-                                      <div key={index} className="p-4 bg-white rounded-lg border border-gray-200 shadow-sm">
+                                    {(formData[currentPage]?.[sectionId]?.[fieldId]?.[objectId]?.[subFieldId]?.[nestedFieldId] || []).map((item: any, index: number) => (
+                                      <div key={item.id || index} className="p-4 bg-white rounded-lg border border-gray-200 shadow-sm">
                                         {/*Array item fields*/}
                                               <div className="flex items-center gap-2 w-full">
                                                 <textarea
-                                                  value={item.name || ''}
+                                                  value={item || ''}
                                                   onChange={(e) => {
-                                                    const newFields = [...(formData[currentPage]?.[sectionId]?.[fieldId]?.[subFieldId]?.[nestedFieldId] || [])];
-                                                    newFields[index] = {
-                                                      ...newFields[index],
-                                                      name: e.target.value,
-                                                    };
+                                                    const newFields = [...(formData[currentPage]?.[sectionId]?.[fieldId]?.[objectId]?.[subFieldId]?.[nestedFieldId] || [])];
+                                                    newFields[index] =  e.target.value;
                                                     setFormData({
                                                       ...formData,
                                                       [currentPage]:{
@@ -1456,10 +1452,13 @@ export default function CustomizeTheme() {
                                                           ...(formData[currentPage]?.[sectionId] || {}),
                                                           [fieldId]: {
                                                             ...(formData[currentPage]?.[sectionId]?.[fieldId] || {}),
+                                                            [objectId]: {
+                                                              ...(formData[currentPage]?.[sectionId]?.[fieldId]?.[objectId] || {}),
                                                             [subFieldId]: {
-                                                              ...(formData[currentPage]?.[sectionId]?.[fieldId]?.[subFieldId] || {}),
+                                                              ...(formData[currentPage]?.[sectionId]?.[fieldId]?.[objectId]?.[subFieldId] || {}),
                                                               [nestedFieldId]: newFields
                                                             }
+                                                          }
                                                           },
                                                         },
                                                       },
@@ -1471,27 +1470,32 @@ export default function CustomizeTheme() {
 
                                                   <button
                                                   type="button"
-                                                  onClick={() => {
-                                                    const newItems = [
-                                                      ...(formData[currentPage]?.[sectionId]?.[fieldId]?.[subFieldId]?.[nestedFieldId] || []),
-                                                    ];
+                                                  onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    const parentObject = formData[currentPage]?.[sectionId]?.[fieldId]?.[objectId];
+                                                    const currentItems = parentObject?.[subFieldId]?.[nestedFieldId] || [];
+                                                    const newItems = [...currentItems]
                                                     newItems.splice(index, 1);
-                                                    setFormData({
-                                                      ...formData,
-                                                      [currentPage]: {
-                                                        ...(formData[currentPage] || {}),
+
+                                                    setFormData(prevData => ({
+                                                      ...prevData,
+                                                        [currentPage]: {
+                                                          ...(prevData[currentPage] || {}),
                                                         [sectionId]: {
-                                                          ...(formData[currentPage]?.[sectionId] || {}),
+                                                          ...(prevData[currentPage]?.[sectionId] || {}),
                                                           [fieldId]: {
-                                                            ...(formData[currentPage]?.[sectionId]?.[fieldId] || {}),
+                                                            ...(prevData[currentPage]?.[sectionId]?.[fieldId] || {}),
+                                                            [objectId]: {
+                                                              ...parentObject,
                                                             [subFieldId]:{
-                                                              ...(formData[currentPage]?.[sectionId]?.[fieldId]?.[subFieldId] || {}),
+                                                              ...(parentObject?.[subFieldId] || {}),
                                                               [nestedFieldId]: newItems
                                                             }
                                                           },
                                                         },
                                                       },
-                                                    });
+                                                    }}
+                                                  ));
                                                   }}
                                                   className="p-2.5 text-red-600 hover:text-red-700 bg-transparent transition-color duration-200 flex items-center justify-center"
                                                   title="Remove item"
@@ -1518,26 +1522,56 @@ export default function CustomizeTheme() {
                                   {/* Add new item button */}
                                   <button
                                     type="button"
-                                    onClick = {() => {
-                                      const newItems = [
-                                        ...(formData[currentPage]?.[sectionId]?.[fieldId]?.[subFieldId]?.[nestedFieldId] || []),
-                                      {}
-                                      ];
-                                      setFormData({
-                                        ...formData,
+                                    onClick = {(e) => {
+                                      e.preventDefault();
+                                      e.stopPropagation();
+                                      console.log('First button clicked');
+                                      console.log({
+                                        currentPage,
+                                        sectionId,
+                                        fieldId,
+                                        objectId,
+                                        subFieldId,
+                                        nestedFieldId,
+                                        currentFormData: formData[currentPage]?.[sectionId]?.[fieldId]?.[objectId]
+                                      });
+
+                                      const parentObject = formData[currentPage]?.[sectionId]?.[fieldId]?.[objectId];
+
+                                      console.log('Before update:', {
+                                        parentObject,
+                                        currentItems: parentObject?.[subFieldId]?.[nestedFieldId] || [],
+                                        fullPath: `${currentPage}.${sectionId}.${fieldId}.${objectId}.${subFieldId}.${nestedFieldId}`
+                                      });
+                                      const currentItems = parentObject?.[subFieldId]?.[nestedFieldId] || [];
+                                      const newItems = [...currentItems, ''];
+
+                                      setFormData(prevData => ({
+                                        
+                                        ...prevData,
                                         [currentPage]: {
-                                          ...(formData[currentPage] || {}),
+                                          ...(prevData[currentPage] || {}),
                                           [sectionId]: {
-                                            ...(formData[currentPage]?.[sectionId] || {}),
+                                            ...(prevData[currentPage]?.[sectionId] || {}),
                                             [fieldId]: {
-                                              ...(formData[currentPage]?.[sectionId]?.[fieldId] || {}),
+                                              ...(prevData[currentPage]?.[sectionId]?.[fieldId] || {}),
+                                              [objectId]: {
+                                                ...parentObject,
                                               [subFieldId]: {
-                                                ...(formData[currentPage]?.[sectionId]?.[fieldId]?.[subFieldId] || {}),
+                                                ...(parentObject?.[subFieldId] || {}),
                                                 [nestedFieldId]: newItems
+                                              }
                                               }
                                             }
                                           }
-                                        }
+                                          }
+                                        
+                                      }));
+
+                                      console.log('After update:', {
+                                        parentObject,
+                                        currentItems: parentObject?.[subFieldId]?.[nestedFieldId] || [],
+                                        fullPath: `${currentPage}.${sectionId}.${fieldId}.${objectId}.${subFieldId}.${nestedFieldId}`
                                       });
                                     }}
                                     className="w-full px-4 py-2.5 text-sm font-medium text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-lg border border-blue-200 transition-colors duration-200"
@@ -1609,30 +1643,30 @@ export default function CustomizeTheme() {
                                     />
                                     <button
                                       type="button"
-                                      onClick={() => {
-                                        const newFields = [
-                                          ...(formData[currentPage]?.[
-                                            sectionId
-                                          ]?.[fieldId]?.[subFieldId] || []),
-                                        ];
-                                        newFields.splice(index, 1);
-                                        setFormData({
-                                          ...formData,
-                                          [currentPage]: {
-                                            ...(formData[currentPage] || {}),
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        setFormData((prevData) => {
+                                          const newFields = [...(formData[currentPage]?.[sectionId]?.[fieldId]?.[subFieldId] || []),];
+                                          newFields.splice(index, 1);
+
+                                          return {
+                                            ...prevData,
+                                            [currentPage]: {
+                                              ...(prevData[currentPage] || {}),
                                             [sectionId]: {
-                                              ...(formData[currentPage]?.[
+                                              ...(prevData[currentPage]?.[
                                                 sectionId
                                               ] || {}),
                                               [fieldId]: {
-                                                ...(formData[currentPage]?.[
+                                                ...(prevData[currentPage]?.[
                                                   sectionId
                                                 ]?.[fieldId] || {}),
                                                 [subFieldId]: newFields,
                                               },
                                             },
                                           },
-                                        });
+                                        };
+                                      });
                                       }}
                                       className=" text-red-600 hover:text-red-700 
                                       bg-transparent 
@@ -1659,34 +1693,39 @@ export default function CustomizeTheme() {
                               {/* Add new field button */}
                               <button
                                 type="button"
-                                onClick={() => {
-                                  const newFields = [
-                                    ...(formData[currentPage]?.[sectionId]?.[
-                                      fieldId
-                                    ]?.[subFieldId] || []),
-                                  ];
-                                  newFields.push({
-                                    name: '',
-                                    label: '',
-                                    type: 'text',
-                                  });
-                                  setFormData({
-                                    ...formData,
-                                    [currentPage]: {
-                                      ...(formData[currentPage] || {}),
-                                      [sectionId]: {
-                                        ...(formData[currentPage]?.[
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                  e.stopPropagation();
+                                  console.log('Second button clicked');
+
+                                  setFormData((prevData) => {
+                                    const newFields = [...(prevData[currentPage]?.[sectionId]?.[fieldId]?.[subFieldId] || []),];
+
+                                    newFields.push({
+                                      id: `field_${Date.now()}`,
+                                        name: '',
+                                        label: '',
+                                        type: 'text',
+                                      }); 
+
+                                    return {
+                                      ...prevData,
+                                      [currentPage]: {
+                                        ...(prevData[currentPage] || {}),
+                                        [sectionId]: {
+                                        ...(prevData[currentPage]?.[
                                           sectionId
                                         ] || {}),
                                         [fieldId]: {
-                                          ...(formData[currentPage]?.[
+                                          ...(prevData[currentPage]?.[
                                             sectionId
                                           ]?.[fieldId] || {}),
                                           [subFieldId]: newFields,
                                         },
                                       },
                                     },
-                                  });
+                                  };
+                                });
                                 }}
                                 className="w-full px-4 py-2.5 text-sm font-medium text-blue-600 
                       bg-blue-50 hover:bg-blue-100 rounded-lg border border-blue-200
@@ -1739,6 +1778,7 @@ export default function CustomizeTheme() {
             <button
               type="button"
               onClick={() => {
+                console.log('Outer button clicked');
                 const newObjectId = `item_${Date.now()}`;
                 // Create new object with empty values for all fields
                 const newObject: Record<string, any> = {};
@@ -1752,19 +1792,22 @@ export default function CustomizeTheme() {
                   }
                 });
 
-                setFormData({
-                  ...formData,
-                  [currentPage]: {
-                    ...(formData[currentPage] || {}),
+                setFormData((prevData) => {
+                  const newstate = structuredClone(prevData);
+                  return {
+                    ...newstate,
+                    [currentPage]: {
+                      ...(newstate[currentPage] || {}),
                     [sectionId]: {
-                      ...(formData[currentPage]?.[sectionId] || {}),
+                      ...(newstate[currentPage]?.[sectionId] || {}),
                       [fieldId]: {
-                        ...(formData[currentPage]?.[sectionId]?.[fieldId] ||
+                        ...(newstate[currentPage]?.[sectionId]?.[fieldId] ||
                           {}),
                         [newObjectId]: newObject,
                       },
                     },
-                  },
+                    },
+                  };
                 });
               }}
               className="w-full mt-4 px-4 py-2.5 bg-blue-50 hover:bg-blue-100 
