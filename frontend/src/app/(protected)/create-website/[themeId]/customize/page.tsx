@@ -628,6 +628,8 @@ export default function CustomizeTheme() {
                     key={index}
                     className="p-6 bg-gray-50 rounded-lg border border-gray-100"
                   >
+
+
                     <div className="flex justify-between items-center mb-4">
                       <span className="text-sm font-medium text-gray-700">
                         {field.label || 'Item'} {index + 1}
@@ -660,6 +662,45 @@ export default function CustomizeTheme() {
                         </button>
                       )}
                     </div>
+
+              {typeof field.items === 'object' && 
+               'type' in field.items && 
+               (field.items as unknown as Field).type === 'object' && 
+               'fields' in field.items && 
+               field.items.fields && (
+                <div className="space-y-3">
+                  {Object.entries((field.items as unknown as {fields: Record<string, Field>}).fields).map(([fieldKey, fieldDef]) => (
+                    <div key={fieldKey} className="flex flex-col">
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        {(fieldDef as Field).label}
+                      </label>
+                      <input
+                        type="text"
+                        value={item[fieldKey] || ''}
+                        onChange={(e) => {
+                          const newItems = [...(formData[currentPage]?.[sectionId]?.[fieldId] || [])];
+                          newItems[index] = {
+                            ...newItems[index],
+                            [fieldKey]: e.target.value,
+                          };
+                          setFormData({
+                            ...formData,
+                            [currentPage]: {
+                              ...formData[currentPage],
+                              [sectionId]: {
+                                ...formData[currentPage]?.[sectionId],
+                                [fieldId]: newItems,
+                              },
+                            },
+                          });
+                        }}
+                        className="flex-1 px-4 py-2.5 text-gray-900 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        placeholder={`Enter ${(fieldDef as Field).label}`}
+                      />
+                    </div>
+                  ))}
+                </div>
+              )}
 
                     {/* Render item fields */}
                     <div className="space-y-4">
@@ -1302,44 +1343,49 @@ export default function CustomizeTheme() {
                           }
 
                           // Handle simple fields (text, number, etc.)
-                          return (
-                            <div key={itemKey} className="mb-4">
-                              <label className="block text-sm font-semibold text-gray-800 mb-2">
-                                {(itemDef as Field).label ||
-                                  itemKey.charAt(0).toUpperCase() +
-                                    itemKey.slice(1)}
-                              </label>
-                              <input
-                                type="text"
-                                value={item[itemKey] || ''}
-                                onChange={(e) => {
-                                  const newItems = [
-                                    ...(formData[currentPage]?.[sectionId]?.[
-                                      fieldId
-                                    ] || []),
-                                  ];
-                                  newItems[index] = {
-                                    ...newItems[index],
-                                    [itemKey]: e.target.value,
-                                  };
-                                  setFormData({
-                                    ...formData,
-                                    [currentPage]: {
-                                      ...formData[currentPage],
-                                      [sectionId]: {
-                                        ...formData[currentPage]?.[sectionId],
-                                        [fieldId]: newItems,
+
+                          // Handle simple fields (text, number, etc.) but skip if it's an object type
+                          if (typeof itemDef === 'object' && 'type' in itemDef && (itemDef as { type: string }).type !== 'object') {
+                            return (
+                              <div key={itemKey} className="mb-4">
+                                <label className="block text-sm font-semibold text-gray-800 mb-2">
+                                  {(itemDef as Field).label ||
+                                    itemKey.charAt(0).toUpperCase() +
+                                      itemKey.slice(1)}
+                                </label>
+                                <input
+                                  type="text"
+                                  value={item[itemKey] || ''}
+                                  onChange={(e) => {
+                                    const newItems = [
+                                      ...(formData[currentPage]?.[sectionId]?.[
+                                        fieldId
+                                      ] || []),
+                                    ];
+                                    newItems[index] = {
+                                      ...newItems[index],
+                                      [itemKey]: e.target.value,
+                                    };
+                                    setFormData({
+                                      ...formData,
+                                      [currentPage]: {
+                                        ...formData[currentPage],
+                                        [sectionId]: {
+                                          ...formData[currentPage]?.[sectionId],
+                                          [fieldId]: newItems,
+                                        },
                                       },
-                                    },
-                                  });
-                                }}
-                                className="w-full px-3 py-2.5 border border-gray-300 rounded-md 
-                              text-gray-900 bg-white focus:ring-2 focus:ring-blue-500 
-                              focus:border-blue-500 shadow-sm"
-                                placeholder={`Enter ${(itemDef as Field).label}`}
-                              />
-                            </div>
-                          );
+                                    });
+                                  }}
+                                  className="w-full px-3 py-2.5 border border-gray-300 rounded-md 
+                                text-gray-900 bg-white focus:ring-2 focus:ring-blue-500 
+                                focus:border-blue-500 shadow-sm"
+                                  placeholder={`Enter ${(itemDef as Field).label}`}
+                                />
+                              </div>
+                            );
+                          }
+                          return null;
                         },
                       )}
                     </div>
