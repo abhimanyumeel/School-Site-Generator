@@ -1579,6 +1579,166 @@ export default function CustomizeTheme() {
                                     {`Add ${nestedField.label}`}
                                   </button>
                                 </div>
+                                ) : (nestedField as Field).type === 'object' ? (
+                                                              // Handle object within nested object
+                            <div className="pl-4 space-y-4 border-l-2 border-blue-100 bg-gray-50 rounded-lg p-4">
+                            {Object.entries((nestedField as Field).fields || {}).map(
+                              ([deepNestedFieldId, deepNestedField]) => (
+                                <div key={deepNestedFieldId} className="space-y-2">
+                                  <label className="block text-sm font-semibold text-gray-800">
+                                    {(deepNestedField as Field).label}
+                                  </label>
+                                  {(deepNestedField as Field).type === 'array' ? (
+                                      // Handle array within deep nested object
+                                      <div className="space-y-4">
+                                        {(formData[currentPage]?.[sectionId]?.[fieldId]?.[objectId]?.[subFieldId]?.[nestedFieldId]?.[deepNestedFieldId] || []).map((item: any, index: number) => (
+                                          <div key={item.id ||index} className="p-4 bg-white rounded-lg border border-gray-200 shadow-sm">
+                                            <div className="flex items-center gap-2 w-full">
+                                              <textarea
+                                                value={item || ''}
+                                                onChange={(e) => {
+                                                  const newItems = [
+                                                    ...(formData[currentPage]?.[sectionId]?.[fieldId]?.[objectId]?.[subFieldId]?.[nestedFieldId]?.[deepNestedFieldId] || []),
+                                                  ];
+                                                  newItems[index] = e.target.value;
+                                                  setFormData({
+                                                    ...formData,
+                                                    [currentPage]: {
+                                                      ...(formData[currentPage] || {}),
+                                                      [sectionId]: {
+                                                        ...(formData[currentPage]?.[sectionId] || {}),
+                                                        [fieldId]: {
+                                                          ...(formData[currentPage]?.[sectionId]?.[fieldId] || {}),
+                                                          [objectId]: {
+                                                            ...(formData[currentPage]?.[sectionId]?.[fieldId]?.[objectId] || {}),
+                                                            [subFieldId]: {
+                                                              ...(formData[currentPage]?.[sectionId]?.[fieldId]?.[objectId]?.[subFieldId] || {}),
+                                                              [nestedFieldId]: {
+                                                                ...(formData[currentPage]?.[sectionId]?.[fieldId]?.[objectId]?.[subFieldId]?.[nestedFieldId] || {}),
+                                                                [deepNestedFieldId]: newItems
+                                                              }
+                                                            }
+                                                          }
+                                                        }
+                                                      }
+                                                    }
+                                                  });
+                                                }}
+                                                className="flex-1 px-4 py-2.5 text-gray-900 bg-white border border-gray-300 rounded-lg"
+                                                placeholder={`Enter ${(deepNestedField as Field).label}`}
+                                              />
+                                                <button
+                                                type="button"
+                                                onClick={(e) => {
+                                                  e.stopPropagation();
+                                                  const currentItems = formData[currentPage]?.[sectionId]?.[fieldId]?.[objectId]?.[subFieldId]?.[nestedFieldId]?.[deepNestedFieldId] || [];
+                                                  const newItems = [...currentItems];
+                                                  newItems.splice(index, 1);
+                                                  setFormData({
+                                                    ...formData,
+                                                    [currentPage]: {
+                                                      ...(formData[currentPage] || {}),
+                                                      [sectionId]: {
+                                                        ...(formData[currentPage]?.[sectionId] || {}),
+                                                        [fieldId]: {
+                                                          ...(formData[currentPage]?.[sectionId]?.[fieldId] || {}),
+                                                          [objectId]: {
+                                                            ...(formData[currentPage]?.[sectionId]?.[fieldId]?.[objectId] || {}),
+                                                            [subFieldId]: {
+                                                              ...(formData[currentPage]?.[sectionId]?.[fieldId]?.[objectId]?.[subFieldId] || {}),
+                                                              [nestedFieldId]: {
+                                                                ...(formData[currentPage]?.[sectionId]?.[fieldId]?.[objectId]?.[subFieldId]?.[nestedFieldId] || {}),
+                                                                [deepNestedFieldId]: newItems
+                                                              }
+                                                            }
+                                                          }
+                                                        }
+                                                      }
+                                                    }
+                                                  });
+                                                }}
+                                                className="text-red-600 hover:text-red-700"
+                                              >
+                                                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                                  <path fillRule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd" />
+                                                </svg>
+                                              </button>
+                                              </div>
+                                              </div>
+                                        ))}
+
+                                        {/* Add button for deep nested array */}
+                                        <button
+                                          type="button"
+                                          onClick={() => {
+                                            const currentItems = formData[currentPage]?.[sectionId]?.[fieldId]?.[objectId]?.[subFieldId]?.[nestedFieldId]?.[deepNestedFieldId] || [];
+                                            const newItems = [...currentItems, ''];
+                                            setFormData({
+                                              ...formData,
+                                              [currentPage]: {
+                                                ...(formData[currentPage] || {}),
+                                                [sectionId]: {
+                                                  ...(formData[currentPage]?.[sectionId] || {}),
+                                                  [fieldId]: {
+                                                    ...(formData[currentPage]?.[sectionId]?.[fieldId] || {}),
+                                                    [objectId]: {
+                                                      ...(formData[currentPage]?.[sectionId]?.[fieldId]?.[objectId] || {}),
+                                                      [subFieldId]: {
+                                                        ...(formData[currentPage]?.[sectionId]?.[fieldId]?.[objectId]?.[subFieldId] || {}),
+                                                        [nestedFieldId]: {
+                                                          ...(formData[currentPage]?.[sectionId]?.[fieldId]?.[objectId]?.[subFieldId]?.[nestedFieldId] || {}),
+                                                          [deepNestedFieldId]: newItems
+                                                        }
+                                                      }
+                                                    }
+                                                  }
+                                                }
+                                              }
+                                            });
+                                          }}
+                                          className="w-full px-4 py-2.5 text-sm font-medium text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-lg border border-blue-200 transition-colors duration-200"
+                                        >
+                                          {`Add ${(deepNestedField as Field).label}`}
+                                        </button>
+                                        </div>
+                                  ) : (
+                                      // Handle regular fields in deep nested object
+                                      <input
+                                        type="text"
+                                        value={formData[currentPage]?.[sectionId]?.[fieldId]?.[objectId]?.[subFieldId]?.[nestedFieldId]?.[deepNestedFieldId] || ''}
+                                        onChange={(e) => {
+                                          setFormData({
+                                            ...formData,
+                                            [currentPage]: {
+                                              ...(formData[currentPage] || {}),
+                                              [sectionId]: {
+                                                ...(formData[currentPage]?.[sectionId] || {}),
+                                                [fieldId]: {
+                                                  ...(formData[currentPage]?.[sectionId]?.[fieldId] || {}),
+                                                  [objectId]: {
+                                                    ...(formData[currentPage]?.[sectionId]?.[fieldId]?.[objectId] || {}),
+                                                    [subFieldId]: {
+                                                      ...(formData[currentPage]?.[sectionId]?.[fieldId]?.[objectId]?.[subFieldId] || {}),
+                                                      [nestedFieldId]: {
+                                                        ...(formData[currentPage]?.[sectionId]?.[fieldId]?.[objectId]?.[subFieldId]?.[nestedFieldId] || {}),
+                                                        [deepNestedFieldId]: e.target.value
+                                                      }
+                                                    }
+                                                  }
+                                                }
+                                              }
+                                            }
+                                          });
+                                        }}
+                                        className="w-full px-4 py-2.5 rounded-lg border border-gray-300 text-gray-900 bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 shadow-sm"
+                                        placeholder={`Enter ${(deepNestedField as Field).label}`}
+                                      />
+                                  )}
+                                </div>
+                              )
+                            )}
+                            </div>
+
                                 ) : (
 
                                   <input
