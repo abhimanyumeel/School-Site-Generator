@@ -14,17 +14,20 @@
             "title": {
               "type": "short-text",
               "label": "Hero Title",
-              "required": true
+              "required": true,
+              "default": "Welcome to Our School"
             },
             "subtitle": {
               "type": "short-text",
               "label": "Hero Subtitle",
-              "required": true
+              "required": true,
+              "default": "Nurturing Minds, Building Futures"
             },
             "description": {
               "type": "long-text",
               "label": "Hero Description",
-              "required": true
+              "required": true,
+              "default": "We provide quality education with a focus on academic excellence and character development. Join us in creating a bright future for your child."
             },
             "image": {
               "type": "image",
@@ -41,11 +44,13 @@
                   "fields": {
                     "text": {
                       "type": "short-text",
-                      "label": "Primary Button Text"
+                      "label": "Primary Button Text",
+                      "default": "Apply Now"
                     },
                     "url": {
                       "type": "short-text",
-                      "label": "Primary Button URL"
+                      "label": "Primary Button URL",
+                      "default": "/admissions"
                     }
                   }
                 },
@@ -54,11 +59,13 @@
                   "fields": {
                     "text": {
                       "type": "short-text",
-                      "label": "Secondary Button Text"
+                      "label": "Secondary Button Text",
+                      "default": "Learn More"
                     },
                     "url": {
                       "type": "short-text",
-                      "label": "Secondary Button URL"
+                      "label": "Secondary Button URL",
+                      "default": "/about"
                     }
                   }
                 }
@@ -72,11 +79,22 @@
             "title": {
               "type": "short-text",
               "label": "Notice Board Title",
-              "required": true
+              "required": true,
+              "default": "Latest Announcements"
             },
             "items": {
               "type": "array",
               "label": "Notice Items",
+              "default": [
+                {
+                  "title": "School Reopening Date",
+                  "link": "/notices/school-reopening"
+                },
+                {
+                  "title": "Parent-Teacher Meeting Schedule",
+                  "link": "/notices/ptm-schedule"
+                }
+              ],
               "items": {
                 "title": {
                   "type": "short-text",
@@ -98,16 +116,32 @@
             "title": {
               "type": "short-text",
               "label": "Events Section Title",
-              "required": true
+              "required": true,
+              "default": "Upcoming Events"
             },
             "description": {
               "type": "long-text",
               "label": "Events Section Description",
-              "required": true
+              "required": true,
+              "default": "Stay updated with our school events and activities. Join us in making learning fun and engaging."
             },
             "items": {
               "type": "array",
               "label": "Event Items",
+              "default": [
+                {
+                  "title": "Annual Sports Day",
+                  "description": "Join us for a day of sports and athletic excellence",
+                  "date": "2024-03-15",
+                  "image": "/defaults/sports-day.jpg"
+                },
+                {
+                  "title": "Science Exhibition",
+                  "description": "Showcasing innovative projects by our young scientists",
+                  "date": "2024-03-20",
+                  "image": "/defaults/science-fair.jpg"
+                }
+              ],
               "items": {
                 "title": {
                   "type": "short-text",
@@ -122,17 +156,6 @@
                 "date": {
                   "type": "short-text",
                   "label": "Event Date",
-                  "required": true,
-                  "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
-                },
-                "time": {
-                  "type": "short-text",
-                  "label": "Event Time",
-                  "required": true
-                },
-                "location": {
-                  "type": "short-text",
-                  "label": "Event Location",
                   "required": true
                 },
                 "image": {
@@ -157,11 +180,13 @@
               "type": "short-text",
               "label": "Welcome Section Title",
               "minLength": 1,
-              "required": true
+              "required": true,
+              "default": "Welcome to Our Admissions"
             },
             "description": {
               "type": "long-text",
-              "label": "Welcome Description Paragraphs"
+              "label": "Welcome Description Paragraphs",
+              "default": "We are delighted that you are considering our school for your child's education. Our admission process is designed to be straightforward and transparent. Please read through the information below and feel free to contact us with any questions."
             }
           }
         },
@@ -177,12 +202,7 @@
             "contacts": {
               "type": "array",
               "label": "Contact Persons",
-              "default": [
-                {
-                  "name": "Admission Coordinator",
-                  "phone": "+1 (555) 123-4567"
-                }
-              ],
+
               "items": {
                 "type": "object",
                 "fields": {
@@ -213,57 +233,52 @@
               "type": "array",
               "label": "Form Fields",
               "items": {
-                "type": "object",
-                "fields": {
-                  "type": {
-                    "type": "select",
-                    "label": "Field Type",
-                    "options": ["text", "email", "tel", "select"],
-                    "required": true
-                  },
-                  "placeholder": {
-                    "type": "short-text",
-                    "label": "Placeholder Text",
-                    "required": true
-                  },
-                  "required": {
-                    "type": "boolean",
-                    "label": "Is Required",
-                    "default": false
+                "connect": {
+                  "type": "object",
+                  "fields": {
+                    "type": {
+                      "type": "select",
+                      "label": "Field Type",
+                      "options": ["text", "tel", "email", "select"]
+                    },
+                    "name": {
+                      "type": "short-text",
+                      "label": "Field Name"
+                    },
+                    "placeholder": {
+                      "type": "short-text",
+                      "label": "Field Placeholder"
+                    },
+                    "required": {
+                      "type": "select",
+                      "label": "Is Required",
+                      "options": ["true", "false"]
+                    }
                   }
                 }
               }
             },
             "class_options": {
               "type": "array",
-              "label": "Available Class Options",
+              "label": "Available Classes",
               "items": {
-                "type": "short-text",
-                "label": "Class Name",
-                "required": true
-              }
-            },
-            "terms_checkbox": {
-              "type": "object",
-              "label": "Terms Checkbox",
-              "fields": {
-                "label": {
-                  "type": "short-text",
-                  "label": "Checkbox Label",
-                  "default": "I acknowledge that I have read, and do hereby accept the terms and conditions.",
-                  "required": true
-                }
-              }
-            },
-            "submit_button": {
-              "type": "object",
-              "label": "Submit Button",
-              "fields": {
-                "text": {
-                  "type": "short-text",
-                  "label": "Button Text",
-                  "default": "Submit",
-                  "required": true
+                "class": {
+                  "type": "select",
+                  "label": "Class Name",
+                  "options": [
+                    "Class 1",
+                    "Class 2",
+                    "Class 3",
+                    "Class 4",
+                    "Class 5",
+                    "Class 6",
+                    "Class 7",
+                    "Class 8",
+                    "Class 9",
+                    "Class 10",
+                    "Class 11",
+                    "Class 12"
+                  ]
                 }
               }
             }
@@ -1172,6 +1187,7 @@
       }
     }
   },
+
   "config": {
     "colors": {
       "primary": "#2563eb",
