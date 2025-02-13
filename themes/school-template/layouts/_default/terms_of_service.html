@@ -65,29 +65,18 @@
       <div class="col-lg-9 wow fadeInUp" data-wow-delay="0.3s">
         <div class="bg-white rounded shadow p-4">
           <div class="terms-content">
-            {{ range $id, $section :=
-            .Site.Data.data.terms_of_service.main.sections }}
-            <div id="{{ $id }}">
-              <h2>{{ $section.title }}</h2>
-              {{ if $section.content }}
-              <p>{{ $section.content }}</p>
-              {{ end }} {{ if $section.intro }}
-              <p>{{ $section.intro }}</p>
-              {{ end }} {{ if $section.items }}
+            {{ range .Site.Data.data.terms_of_service.main.sections }}
+            <div class="terms-section">
+              <h2>{{ .title }}</h2>
+              {{ if .content }}
+              <p>{{ .content }}</p>
+              {{ end }} {{ if .items }}
               <ul>
-                {{ range $section.items }}
+                {{ range .items }}
                 <li>{{ . }}</li>
                 {{ end }}
               </ul>
-              {{ end }} {{ if $section.subsections }} {{ range $subid,
-              $subsection := $section.subsections }}
-              <h3>{{ $subsection.title }}</h3>
-              <ul>
-                {{ range $subsection.items }}
-                <li>{{ . }}</li>
-                {{ end }}
-              </ul>
-              {{ end }} {{ end }}
+              {{ end }}
             </div>
             {{ end }}
           </div>
@@ -105,21 +94,24 @@
                   <div class="d-flex align-items-center">
                     <i class="fas fa-envelope text-primary me-3"></i>
                     <span
-                      >{{ .Site.Data.data.terms_of_service.contact_info.email
+                      >{{
+                      .Site.Data.data.terms_of_service.main.contact_info.email
                       }}</span
                     >
                   </div>
                   <div class="d-flex align-items-center">
                     <i class="fas fa-phone text-primary me-3"></i>
                     <span
-                      >{{ .Site.Data.data.terms_of_service.contact_info.phone
+                      >{{
+                      .Site.Data.data.terms_of_service.main.contact_info.phone
                       }}</span
                     >
                   </div>
                   <div class="d-flex align-items-center">
                     <i class="fas fa-map-marker-alt text-primary me-3"></i>
                     <span
-                      >{{ .Site.Data.data.terms_of_service.contact_info.address
+                      >{{
+                      .Site.Data.data.terms_of_service.main.contact_info.address
                       }}</span
                     >
                   </div>
@@ -171,6 +163,10 @@
   .terms-content p {
     margin-bottom: 1rem;
     line-height: 1.6;
+  }
+
+  .terms-section {
+    margin-bottom: 2rem;
   }
 
   @media (max-width: 991px) {
