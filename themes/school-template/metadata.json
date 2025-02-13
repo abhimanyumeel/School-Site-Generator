@@ -299,17 +299,16 @@
               "required": true
             },
             "description": {
-              "type": "array",
+              "type": "long-text",
               "label": "Page Description",
-              "items": {
-                "type": "long-text",
-                "minLength": 5
-              }
+              "minLength": 5,
+              "default": "We are a leading educational institution dedicated to providing quality education and nurturing the next generation of leaders."
             },
             "mission": {
               "type": "long-text",
               "label": "Mission Statement",
-              "minLength": 5
+              "minLength": 5,
+              "default": "Our mission is to provide a comprehensive and innovative educational experience that empowers students to achieve their full potential and contribute positively to society."
             },
             "vision": {
               "type": "long-text",
@@ -319,6 +318,7 @@
             "ceo": {
               "type": "object",
               "label": "CEO Information",
+
               "fields": {
                 "name": {
                   "type": "short-text",
@@ -369,25 +369,9 @@
                     "label": "Position",
                     "required": true
                   },
-                  "department": {
-                    "type": "short-text",
-                    "label": "Department",
-                    "required": true
-                  },
-                  "college": {
-                    "type": "short-text",
-                    "label": "College",
-                    "required": true
-                  },
                   "image": {
                     "type": "image",
-                    "label": "Member Photo",
-                    "required": true
-                  },
-                  "bio": {
-                    "type": "long-text",
-                    "label": "Biography",
-                    "required": false
+                    "label": "Member Image"
                   }
                 }
               }
@@ -424,12 +408,6 @@
                 "address": {
                   "type": "object",
                   "fields": {
-                    "icon": {
-                      "type": "short-text",
-                      "label": "Address Icon Class",
-                      "default": "fas fa-map-marker-alt",
-                      "required": true
-                    },
                     "text": {
                       "type": "long-text",
                       "label": "Address Text",
@@ -440,12 +418,6 @@
                 "email": {
                   "type": "object",
                   "fields": {
-                    "icon": {
-                      "type": "short-text",
-                      "label": "Email Icon Class",
-                      "default": "fas fa-envelope",
-                      "required": true
-                    },
                     "text": {
                       "type": "short-text",
                       "label": "Email Address",
@@ -457,12 +429,6 @@
                 "phone": {
                   "type": "object",
                   "fields": {
-                    "icon": {
-                      "type": "short-text",
-                      "label": "Phone Icon Class",
-                      "default": "fas fa-phone",
-                      "required": true
-                    },
                     "text": {
                       "type": "short-text",
                       "label": "Phone Number",
@@ -479,7 +445,6 @@
                 "note": {
                   "type": "long-text",
                   "label": "Form Note",
-                  "default": "Please fill out the form below to get in touch with us.",
                   "required": true
                 },
                 "submit_text": {
@@ -491,56 +456,32 @@
                 "fields": {
                   "type": "array",
                   "label": "Form Fields",
-                  "default": [
-                    {
-                      "name": "name",
-                      "label": "Your Name",
-                      "type": "text",
-                      "placeholder": "Enter your name"
-                    },
-                    {
-                      "name": "email",
-                      "label": "Your Email",
-                      "type": "email",
-                      "placeholder": "Enter your email"
-                    },
-                    {
-                      "name": "subject",
-                      "label": "Subject",
-                      "type": "text",
-                      "placeholder": "Enter subject"
-                    },
-                    {
-                      "name": "message",
-                      "label": "Message",
-                      "type": "textarea",
-                      "placeholder": "Enter your message"
-                    }
-                  ],
                   "items": {
-                    "type": "object",
-                    "fields": {
-                      "name": {
-                        "type": "short-text",
-                        "label": "Field Name",
-                        "required": true
-                      },
-                      "label": {
-                        "type": "short-text",
-                        "label": "Field Label",
-                        "required": true
-                      },
-                      "type": {
-                        "type": "select",
-                        "label": "Field Type",
-                        "options": ["text", "email", "tel", "textarea"],
-                        "required": true
-                      },
-                      "placeholder": {
-                        "type": "short-text",
-                        "label": "Field Placeholder",
-                        "required": true
-                      }
+                    "name": {
+                      "type": "short-text",
+                      "label": "Field Name",
+                      "required": true
+                    },
+                    "label": {
+                      "type": "short-text",
+                      "label": "Field Label",
+                      "required": true
+                    },
+                    "type": {
+                      "type": "select",
+                      "label": "Field Type",
+                      "options": ["text", "email", "tel", "textarea"],
+                      "required": true
+                    },
+                    "placeholder": {
+                      "type": "short-text",
+                      "label": "Field Placeholder",
+                      "required": true
+                    },
+                    "required": {
+                      "type": "select",
+                      "label": "Is Required",
+                      "options": ["true", "false"]
                     }
                   }
                 }
@@ -595,12 +536,6 @@
                     "label": "Document URL",
                     "required": true,
                     "default": "/privacy-policy"
-                  },
-                  "icon": {
-                    "type": "short-text",
-                    "label": "Document Icon Class",
-                    "required": true,
-                    "default": "fas fa-file-alt"
                   }
                 }
               }
