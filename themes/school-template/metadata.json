@@ -735,120 +735,42 @@
               }
             },
             "infrastructure": {
-              "type": "object",
+              "type": "array",
               "label": "Infrastructure Details",
-              "fields": {
-                "campus_overview": {
-                  "type": "array",
-                  "label": "Campus Overview",
-                  "items": {
-                    "type": "object",
-                    "fields": {
-                      "name": {
-                        "type": "short-text",
-                        "label": "Feature Name",
-                        "minLength": 1,
-                        "default": "Campus Area"
-                      },
-                      "value": {
-                        "type": "short-text",
-                        "label": "Feature Value",
-                        "minLength": 1,
-                        "default": "5 acres"
-                      },
-                      "icon": {
-                        "type": "short-text",
-                        "label": "Feature Icon Class",
-                        "minLength": 1,
-                        "default": "fas fa-building"
-                      }
-                    }
-                  }
+              "items": {
+                "facility_type": {
+                  "type": "short-text",
+                  "label": "Facility"
                 },
-                "facilities": {
-                  "type": "array",
-                  "label": "Academic & Support Facilities",
-                  "items": {
-                    "type": "object",
-                    "fields": {
-                      "name": {
-                        "type": "short-text",
-                        "label": "Facility Name",
-                        "minLength": 1
-                      },
-                      "details": {
-                        "type": "long-text",
-                        "label": "Facility Details",
-                        "minLength": 1
-                      },
-                      "icon": {
-                        "type": "short-text",
-                        "label": "Facility Icon Class",
-                        "minLength": 1
-                      }
-                    }
-                  }
-                },
-                "additional_features": {
-                  "type": "array",
-                  "label": "Additional Features",
-                  "items": {
-                    "type": "object",
-                    "fields": {
-                      "name": {
-                        "type": "short-text",
-                        "label": "Feature Name",
-                        "minLength": 1
-                      },
-                      "details": {
-                        "type": "long-text",
-                        "label": "Feature Details",
-                        "minLength": 1
-                      },
-                      "icon": {
-                        "type": "short-text",
-                        "label": "Feature Icon Class",
-                        "minLength": 1
-                      }
-                    }
-                  }
+                "details": {
+                  "type": "long-text",
+                  "label": "Details"
                 }
               }
             },
             "faculty_info": {
               "type": "array",
               "label": "Faculty Information",
-              "default": [
-                {
-                  "department": "Primary Section",
-                  "total_teachers": "25",
-                  "qualification": "B.Ed, M.Ed",
-                  "experience_range": "5-15 years"
-                }
-              ],
               "items": {
-                "type": "object",
-                "fields": {
-                  "department": {
-                    "type": "short-text",
-                    "label": "Department",
-                    "minLength": 1
-                  },
-                  "total_teachers": {
-                    "type": "short-text",
-                    "label": "Total Teachers",
-                    "minLength": 1
-                  },
-                  "qualification": {
-                    "type": "short-text",
-                    "label": "Qualification",
-                    "minLength": 1
-                  },
-                  "experience_range": {
-                    "type": "short-text",
-                    "label": "Experience Range",
-                    "minLength": 1
-                  }
+                "department": {
+                  "type": "short-text",
+                  "label": "Department",
+                  "minLength": 1
+                },
+                "total_teachers": {
+                  "type": "short-text",
+                  "label": "Total Teachers",
+                  "minLength": 1
+                },
+                "qualification": {
+                  "type": "short-text",
+                  "label": "Qualification",
+                  "minLength": 1
+                },
+                "experience_range": {
+                  "type": "short-text",
+                  "label": "Experience Range",
+                  "minLength": 1
                 }
               }
             },
@@ -856,47 +778,25 @@
               "type": "array",
               "label": "Fee Structure",
               "items": {
-                "type": "object",
-                "fields": {
-                  "class": {
-                    "type": "short-text",
-                    "label": "Class",
-                    "minLength": 1
-                  },
-                  "admission_fee": {
-                    "type": "short-text",
-                    "label": "Admission Fee",
-                    "minLength": 1
-                  },
-                  "tuition_fee": {
-                    "type": "short-text",
-                    "label": "Tuition Fee (Monthly)",
-                    "minLength": 1
-                  },
-                  "other_charges": {
-                    "type": "short-text",
-                    "label": "Other Charges",
-                    "minLength": 1
-                  }
-                }
-              }
-            },
-            "documents": {
-              "type": "array",
-              "label": "Supporting Documents",
-              "items": {
-                "type": "object",
-                "fields": {
-                  "name": {
-                    "type": "short-text",
-                    "label": "Document Name",
-                    "minLength": 1
-                  },
-                  "file": {
-                    "type": "file",
-                    "label": "Document File",
-                    "allowedTypes": ["application/pdf"]
-                  }
+                "class": {
+                  "type": "short-text",
+                  "label": "Class",
+                  "minLength": 1
+                },
+                "admission_fee": {
+                  "type": "short-text",
+                  "label": "Admission Fee",
+                  "minLength": 1
+                },
+                "tuition_fee": {
+                  "type": "short-text",
+                  "label": "Tuition Fee (Monthly)",
+                  "minLength": 1
+                },
+                "other_charges": {
+                  "type": "short-text",
+                  "label": "Other Charges",
+                  "minLength": 1
                 }
               }
             }
