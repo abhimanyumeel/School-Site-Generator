@@ -571,7 +571,94 @@
       }
     }
   }
+},
+"gallery": {
+  "type": "page",
+  "title": "Gallery Page",
+  "sections": {
+    "main": {
+      "title": "Gallery",
+      "fields": {
+        "title": {
+          "type": "short-text",
+          "label": "Page Title",
+          "minLength": 1
+        },
+        "description": {
+          "type": "long-text",
+          "label": "Gallery Description",
+          "minLength": 1
+        },
+        "filters": {
+          "type": "object",
+          "label": "Gallery Filters",
+          "fields": {
+            "categories": {
+              "type": "array",
+              "label": "Category Filters",
+              "items": {
+                "label": {
+                  "type": "short-text",
+                  "label": "Category Label"
+                },
+                "value": {
+                  "type": "short-text",
+                  "label": "Category Value"
+                }
+              }
+            },
+            "years": {
+              "type": "array",
+              "label": "Year Filters",
+              "items": {
+                "label": {
+                  "type": "short-text",
+                  "label": "Year Label"
+                },
+                "value": {
+                  "type": "short-text",
+                  "label": "Year Value"
+                }
+              }
+            }
+          }
+        },
+        "items": {
+          "type": "array",
+          "label": "Gallery Items",
+          "items": {
+            "title": {
+              "type": "short-text",
+              "label": "Image Title",
+              "minLength": 1
+            },
+            "description": {
+              "type": "long-text",
+              "label": "Image Description",
+              "minLength": 1
+            },
+            "category": {
+              "type": "short-text",
+              "label": "Image Category",
+              "minLength": 1
+            },
+            "year": {
+              "type": "short-text",
+              "label": "Image Year",
+              "minLength": 1
+            },
+            "image": {
+              "type": "image",
+              "label": "Gallery Image",
+              "pattern": "^/images/.*\\.(jpg|jpeg|png|webp)$"
+            }
+          }
+        }
+      }
+    }
+  }
 }
+
   },
   "config": {
     "colors": {
