@@ -82,26 +82,10 @@
             </tr>
           </thead>
           <tbody>
-            {{ range
-            .Site.Data.data.mandatory_disclosure.main.infrastructure.campus_overview
-            }}
+            {{ range .Site.Data.data.mandatory_disclosure.main.infrastructure }}
             <tr class="border-b">
-              <td class="py-3 px-4 font-medium">{{ .name }}</td>
-              <td class="py-3 px-4">{{ .label }}</td>
-            </tr>
-            {{ end }} {{ range
-            .Site.Data.data.mandatory_disclosure.main.infrastructure.facilities
-            }}
-            <tr class="border-b">
-              <td class="py-3 px-4 font-medium">{{ .name }}</td>
-              <td class="py-3 px-4">{{ .label }}</td>
-            </tr>
-            {{ end }} {{ range
-            .Site.Data.data.mandatory_disclosure.main.infrastructure.additional_features
-            }}
-            <tr class="border-b">
-              <td class="py-3 px-4 font-medium">{{ .name }}</td>
-              <td class="py-3 px-4">{{ .label }}</td>
+              <td class="py-3 px-4 font-medium">{{ .facility_type }}</td>
+              <td class="py-3 px-4">{{ .details }}</td>
             </tr>
             {{ end }}
           </tbody>
