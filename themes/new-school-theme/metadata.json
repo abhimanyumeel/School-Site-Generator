@@ -288,7 +288,174 @@
           }
         }
       }
+    },
+"contact": {
+  "type": "page",
+  "title": "Contact Page",
+  "sections": {
+    "header": {
+      "title": "Page Header",
+      "fields": {
+        "title": {
+          "type": "short-text",
+          "label": "Page Title",
+          "required": true
+        },
+        "description": {
+          "type": "long-text",
+          "label": "Page Description",
+          "required": true
+        }
+      }
+    },
+    "contact_info": {
+      "title": "Contact Information",
+      "fields": {
+        "address": {
+          "type": "object",
+          "label": "Address Details",
+          "allowMultiple": false,
+          "fields": {
+            "icon": {
+              "type": "short-text",
+              "label": "Address Icon",
+              "required": true
+            },
+            "text": {
+              "type": "short-text",
+              "label": "Address Text",
+              "required": true
+            }
+          }
+        },
+        "email": {
+          "type": "object",
+          "label": "Email Details",
+          "allowMultiple": false,
+          "fields": {
+            "icon": {
+              "type": "short-text",
+              "label": "Email Icon",
+              "required": true
+            },
+            "text": {
+              "type": "short-text",
+              "label": "Email Address",
+              "required": true
+            }
+          }
+        },
+        "phone": {
+          "type": "object",
+          "label": "Phone Details",
+          "allowMultiple": false,
+          "fields": {
+            "icon": {
+              "type": "short-text",
+              "label": "Phone Icon",
+              "required": true
+            },
+            "text": {
+              "type": "short-text",
+              "label": "Phone Number",
+              "required": true
+            }
+          }
+        }
+      }
+    },
+    "contact_form": {
+      "title": "Contact Form",
+      "fields": {
+        "note": {
+          "type": "long-text",
+          "label": "Form Note"
+        },
+        "submit_text": {
+          "type": "short-text",
+          "label": "Submit Button Text",
+          "required": true
+        },
+        "form_fields": {
+          "type": "array",
+          "label": "Form Fields",
+          "items": {
+            "name": {
+              "type": "short-text",
+              "label": "Field Name",
+              "required": true
+            },
+            "type": {
+              "type": "select",
+              "label": "Field Type",
+              "options": ["text", "email", "textarea"],
+              "required": true
+            },
+            "label": {
+              "type": "short-text",
+              "label": "Field Label",
+              "required": true
+            },
+            "placeholder": {
+              "type": "short-text",
+              "label": "Field Placeholder",
+              "required": true
+            }
+          }
+        }
+      }
+    },
+    "map": {
+      "title": "Map Settings",
+      "fields": {
+        "url": {
+          "type": "short-text",
+          "label": "Google Maps URL",
+          "required": true
+        }
+      }
+    },
+    "business_hours": {
+      "title": "Business Hours",
+      "fields": {
+        "weekdays": {
+          "type": "object",
+          "label": "Weekday Hours",
+          "allowMultiple": false,
+          "fields": {
+            "days": {
+              "type": "short-text",
+              "label": "Days",
+              "required": true
+            },
+            "hours": {
+              "type": "short-text",
+              "label": "Hours",
+              "required": true
+            }
+          }
+        },
+        "weekend": {
+          "type": "object",
+          "label": "Weekend Hours",
+          "allowMultiple": false,
+          "fields": {
+            "days": {
+              "type": "short-text",
+              "label": "Days",
+              "required": true
+            },
+            "hours": {
+              "type": "short-text",
+              "label": "Hours",
+              "required": true
+            }
+          }
+        }
+      }
     }
+  }
+}
   },
   "config": {
     "colors": {
