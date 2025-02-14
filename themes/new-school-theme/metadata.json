@@ -710,7 +710,512 @@
       }
     }
   }
-}
+},
+"terms-of-service": {
+  "type": "page",
+  "title": "Terms of Service",
+  "sections": {
+    "main": {
+      "title": "Terms Content",
+      "fields": {
+        "title": {
+          "type": "short-text",
+          "label": "Page Title",
+          "minLength": 1
+        },
+        "last_updated": {
+          "type": "short-text",
+          "label": "Last Updated Date",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+        },
+        "navigation": {
+          "type": "array",
+          "label": "Table of Contents",
+          "items": {
+            "id": {
+              "type": "short-text",
+              "label": "Section ID",
+              "minLength": 1
+            },
+            "title": {
+              "type": "short-text",
+              "label": "Section Title",
+              "minLength": 1
+            }
+          }
+        },
+        "sections": {
+          "type": "object",
+          "label": "Content Sections",
+          "fields": {
+            "title": {
+              "type": "short-text",
+              "label": "Section Title",
+              "minLength": 1
+            },
+            "content": {
+              "type": "long-text",
+              "label": "Section Content",
+              "required": false
+            },
+            "intro": {
+              "type": "long-text",
+              "label": "Section Introduction",
+              "required": false
+            },
+            "items": {
+              "type": "array",
+              "label": "Section List Items",
+              "items": {
+                "type": "long-text",
+                "label": "List Item"
+              },
+              "required": false
+            },
+            "subsections": {
+              "type": "object",
+              "label": "Subsections",
+              "fields": {
+                "title": {
+                  "type": "short-text",
+                  "label": "Subsection Title"
+                },
+                "items": {
+                  "type": "array",
+                  "label": "Subsection List Items",
+                  "items": {
+                    "type": "long-text",
+                    "label": "List Item"
+                  }
+                }
+              },
+              "required": false
+            }
+          }
+        },
+        "related_documents": {
+          "type": "array",
+          "label": "Related Documents",
+          "items": {
+            "name": {
+              "type": "short-text",
+              "label": "Document Name",
+              "minLength": 1
+            },
+            "url": {
+              "type": "short-text",
+              "label": "Document URL",
+              "minLength": 1
+            },
+            "icon": {
+              "type": "short-text",
+              "label": "Document Icon Class",
+              "minLength": 1
+            }
+          }
+        },
+        "contact_info": {
+          "type": "object",
+          "label": "Contact Information",
+          "fields": {
+            "email": {
+              "type": "short-text",
+              "label": "Contact Email",
+              "format": "email"
+            },
+            "phone": {
+              "type": "short-text",
+              "label": "Contact Phone",
+              "minLength": 1
+            },
+            "address": {
+              "type": "short-text",
+              "label": "Contact Address",
+              "minLength": 1
+            }
+          }
+        }
+      }
+    }
+  }
+},
+    "privacy-policy": {
+      "type": "page",
+      "title": "Privacy Policy",
+      "sections": {
+        "main": {
+          "title": "Privacy Content",
+          "fields": {
+            "title": {
+              "type": "short-text",
+              "label": "Page Title",
+              "minLength": 1
+            },
+            "last_updated": {
+              "type": "short-text",
+              "label": "Last Updated Date",
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+            },
+            "sections": {
+              "type": "object",
+              "label": "Privacy Policy Sections",
+              "fields": {
+                "information_collected": {
+                  "type": "object",
+                  "label": "Information We Collect",
+                  "fields": {
+                    "title": {
+                      "type": "short-text",
+                      "label": "Section Title"
+                    },
+                    "personal_info": {
+                      "type": "object",
+                      "fields": {
+                        "title": {
+                          "type": "short-text",
+                          "label": "Personal Information Title"
+                        },
+                        "items": {
+                          "type": "array",
+                          "label": "Personal Information Items",
+                          "items": {
+                            "type": "long-text"
+                          }
+                        }
+                      }
+                    },
+                    "technical_info": {
+                      "type": "object",
+                      "fields": {
+                        "title": {
+                          "type": "short-text",
+                          "label": "Technical Information Title"
+                        },
+                        "items": {
+                          "type": "array",
+                          "label": "Technical Information Items",
+                          "items": {
+                            "type": "long-text"
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "information_usage": {
+                  "type": "object",
+                  "label": "How We Use Information",
+                  "fields": {
+                    "title": {
+                      "type": "short-text",
+                      "label": "Section Title"
+                    },
+                    "items": {
+                      "type": "array",
+                      "label": "Usage Items",
+                      "items": {
+                        "type": "long-text"
+                      }
+                    }
+                  }
+                },
+                "data_protection": {
+                  "type": "object",
+                  "label": "Data Protection",
+                  "fields": {
+                    "title": {
+                      "type": "short-text",
+                      "label": "Section Title"
+                    },
+                    "items": {
+                      "type": "array",
+                      "label": "Protection Measures",
+                      "items": {
+                        "type": "long-text"
+                      }
+                    }
+                  }
+                },
+                "information_sharing": {
+                  "type": "object",
+                  "label": "Information Sharing",
+                  "fields": {
+                    "title": {
+                      "type": "short-text",
+                      "label": "Section Title"
+                    },
+                    "items": {
+                      "type": "array",
+                      "label": "Sharing Policies",
+                      "items": {
+                        "type": "long-text"
+                      }
+                    }
+                  }
+                },
+                "user_rights": {
+                  "type": "object",
+                  "label": "User Rights",
+                  "fields": {
+                    "title": {
+                      "type": "short-text",
+                      "label": "Section Title"
+                    },
+                    "items": {
+                      "type": "array",
+                      "label": "User Rights Items",
+                      "items": {
+                        "type": "long-text"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "quick_links": {
+              "type": "array",
+              "label": "Quick Links",
+              "items": {
+                "name": {
+                  "type": "short-text",
+                  "label": "Link Name"
+                },
+                "url": {
+                  "type": "short-text",
+                  "label": "Link URL"
+                }
+              }
+            },
+            "contact_info": {
+              "type": "object",
+              "label": "Contact Information",
+              "fields": {
+                "email": {
+                  "type": "short-text",
+                  "label": "Contact Email",
+                  "format": "email"
+                },
+                "phone": {
+                  "type": "short-text",
+                  "label": "Contact Phone"
+                },
+                "address": {
+                  "type": "short-text",
+                  "label": "Contact Address"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "mandatory-disclosure": {
+      "type": "page",
+      "title": "Mandatory Disclosure",
+      "sections": {
+        "main": {
+          "title": "Disclosure Content",
+          "fields": {
+            "last_updated": {
+              "type": "short-text",
+              "label": "Last Updated Date",
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+            },
+            "school_info": {
+              "type": "object",
+              "label": "School Information",
+              "fields": {
+                "school_name": {
+                  "type": "short-text",
+                  "label": "School Name",
+                  "minLength": 1
+                },
+                "affiliation_number": {
+                  "type": "short-text",
+                  "label": "Affiliation Number",
+                  "minLength": 1
+                },
+                "school_code": {
+                  "type": "short-text",
+                  "label": "School Code",
+                  "minLength": 1
+                },
+                "address": {
+                  "type": "long-text",
+                  "label": "Address",
+                  "minLength": 1
+                },
+                "principal_name": {
+                  "type": "short-text",
+                  "label": "Principal Name",
+                  "minLength": 1
+                },
+                "contact_details": {
+                  "type": "long-text",
+                  "label": "Contact Details",
+                  "minLength": 1
+                }
+              }
+            },
+            "infrastructure": {
+              "type": "object",
+              "label": "Infrastructure Details",
+              "fields": {
+                "campus_overview": {
+                  "type": "array",
+                  "label": "Campus Overview",
+                  "items": {
+                    "type": "object",
+                    "fields": {
+                      "name": {
+                        "type": "short-text",
+                        "label": "Feature Name",
+                        "minLength": 1
+                      },
+                      "value": {
+                        "type": "short-text",
+                        "label": "Feature Value",
+                        "minLength": 1
+                      },
+                      "icon": {
+                        "type": "short-text",
+                        "label": "Feature Icon Class",
+                        "minLength": 1
+                      }
+                    }
+                  }
+                },
+                "facilities": {
+                  "type": "array",
+                  "label": "Academic & Support Facilities",
+                  "items": {
+                    "type": "object",
+                    "fields": {
+                      "name": {
+                        "type": "short-text",
+                        "label": "Facility Name",
+                        "minLength": 1
+                      },
+                      "details": {
+                        "type": "long-text",
+                        "label": "Facility Details",
+                        "minLength": 1
+                      },
+                      "icon": {
+                        "type": "short-text",
+                        "label": "Facility Icon Class",
+                        "minLength": 1
+                      }
+                    }
+                  }
+                },
+                "additional_features": {
+                  "type": "array",
+                  "label": "Additional Features",
+                  "items": {
+                    "type": "object",
+                    "fields": {
+                      "name": {
+                        "type": "short-text",
+                        "label": "Feature Name",
+                        "minLength": 1
+                      },
+                      "details": {
+                        "type": "long-text",
+                        "label": "Feature Details",
+                        "minLength": 1
+                      },
+                      "icon": {
+                        "type": "short-text",
+                        "label": "Feature Icon Class",
+                        "minLength": 1
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "faculty_info": {
+              "type": "array",
+              "label": "Faculty Information",
+              "items": {
+                "type": "object",
+                "fields": {
+                  "department": {
+                    "type": "short-text",
+                    "label": "Department",
+                    "minLength": 1
+                  },
+                  "total_teachers": {
+                    "type": "short-text",
+                    "label": "Total Teachers",
+                    "minLength": 1
+                  },
+                  "qualification": {
+                    "type": "short-text",
+                    "label": "Qualification",
+                    "minLength": 1
+                  },
+                  "experience_range": {
+                    "type": "short-text",
+                    "label": "Experience Range",
+                    "minLength": 1
+                  }
+                }
+              }
+            },
+            "fee_structure": {
+              "type": "array",
+              "label": "Fee Structure",
+              "items": {
+                "type": "object",
+                "fields": {
+                  "class": {
+                    "type": "short-text",
+                    "label": "Class",
+                    "minLength": 1
+                  },
+                  "admission_fee": {
+                    "type": "short-text",
+                    "label": "Admission Fee",
+                    "minLength": 1
+                  },
+                  "tuition_fee": {
+                    "type": "short-text",
+                    "label": "Tuition Fee (Monthly)",
+                    "minLength": 1
+                  },
+                  "other_charges": {
+                    "type": "short-text",
+                    "label": "Other Charges",
+                    "minLength": 1
+                  }
+                }
+              }
+            },
+            "documents": {
+              "type": "array",
+              "label": "Supporting Documents",
+              "items": {
+                "type": "object",
+                "fields": {
+                  "name": {
+                    "type": "short-text",
+                    "label": "Document Name",
+                    "minLength": 1
+                  },
+                  "file": {
+                    "type": "file",
+                    "label": "Document File",
+                    "allowedTypes": ["application/pdf"]
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
 
   },
   "config": {
