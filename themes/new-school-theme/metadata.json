@@ -455,6 +455,122 @@
       }
     }
   }
+},
+"admission": {
+  "type": "page",
+  "title": "Admission Page",
+  "sections": {
+    "welcome": {
+      "title": "Welcome Section",
+      "fields": {
+        "title": {
+          "type": "short-text",
+          "label": "Welcome Title"
+        },
+        "description": {
+          "type": "long-text",
+          "label": "Welcome Description",
+          "description": "Use line breaks (\\n\\n) to separate paragraphs"
+        }
+      }
+    },
+    "contact_info": {
+      "title": "Contact Information",
+      "fields": {
+        "title": {
+          "type": "short-text",
+          "label": "Section Title",
+          "required": true
+        },
+        "contacts": {
+          "type": "array",
+          "label": "Contact Persons",
+          "items": {
+            "info": {
+              "type": "object",
+              "fields": {
+                "name": {
+                  "type": "short-text",
+                  "label": "Contact Name"
+              },
+              "phone": {
+                "type": "short-text",
+                "label": "Phone Number"
+              },
+              "role": {
+                "type": "short-text",
+                "label": "Role/Position"
+              }
+            }
+          }
+        }
+      },
+        "campuses": {
+          "type": "array",
+          "label": "Campus Information",
+          "items": {
+            "info": {
+            "type": "object",
+            "fields": {
+              "name": {
+                "type": "short-text",
+                "label": "Campus Name"
+              },
+              "type": {
+                "type": "short-text",
+                "label": "Enquiry Type"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+    "form": {
+      "title": "Admission Form",
+      "fields": {
+        "title": {
+          "type": "short-text",
+          "label": "Form Title",
+          "required": true
+        },
+        "fields": {
+          "type": "array",
+          "label": "Form Fields",
+          "items": {
+            "connect": {
+            "type": "object",
+            "fields": {
+              "type": {
+                "type": "select",
+                "label": "Field Type",
+                "options": ["text", "tel", "email"]
+              },
+              "name": {
+                "type": "short-text",
+                "label": "Field Name"
+              },
+              "placeholder": {
+                "type": "short-text",
+                "label": "Field Placeholder"
+              }
+            }
+          }
+        }
+      },
+        "class_options": {
+          "type": "array",
+          "label": "Available Classes",
+          "items": {
+            "class": {
+              "type": "short-text",
+              "label": "Class Name"
+            }
+          }
+        }
+      }
+    }
+  }
 }
   },
   "config": {
