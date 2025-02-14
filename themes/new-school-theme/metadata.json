@@ -657,6 +657,59 @@
       }
     }
   }
+},
+"team": {
+  "type": "page",
+  "title": "Team Page",
+  "sections": {
+    "main": {
+      "title": "Team Members",
+      "fields": {
+        "title": {
+          "type": "short-text",
+          "label": "Page Title",
+          "minLength": 1
+        },
+        "members": {
+          "type": "array",
+          "label": "Team Members",
+          "items": {
+            "name": {
+              "type": "short-text",
+              "label": "Member Name",
+              "minLength": 1
+            },
+            "position": {
+              "type": "short-text",
+              "label": "Position",
+              "minLength": 1
+            },
+            "department": {
+              "type": "short-text",
+              "label": "Department",
+              "minLength": 1
+            },
+            "college": {
+              "type": "short-text",
+              "label": "College Name",
+              "minLength": 1
+            },
+            "bio": {
+              "type": "long-text",
+              "label": "Biography",
+              "minLength": 10,
+              "required": false
+            },
+            "image": {
+              "type": "image",
+              "label": "Member Photo",
+              "pattern": "^/images/.*\\.(jpg|jpeg|png|webp)$"
+            }
+          }
+        }
+      }
+    }
+  }
 }
 
   },
