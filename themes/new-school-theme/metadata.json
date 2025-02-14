@@ -235,6 +235,59 @@
           }
         }
       }
+    },
+"about": {
+      "type": "page",
+      "title": "About Page",
+      "sections": {
+        "main": {
+          "title": "Main Content",
+          "fields": {
+            "title": {
+              "type": "short-text",
+              "label": "Page Title",
+              "required": true
+            },
+            "description": {
+              "type": "long-text",
+              "label": "Page Description",
+              "minLength": 5,
+              "description": "Use line breaks to separate paragraphs"
+            },
+            "mission": {
+              "type": "long-text",
+              "label": "Mission Statement",
+              "minLength": 5
+            },
+            "vision": {
+              "type": "long-text",
+              "label": "Vision Statement",
+              "minLength": 5
+            },
+            "ceo": {
+              "type": "object",
+              "label": "CEO Information",
+              "allowMultiple": false,
+              "fields": {
+                "name": {
+                  "type": "short-text",
+                  "label": "CEO Name",
+                  "required": true
+                },
+                "position": {
+                  "type": "short-text",
+                  "label": "CEO Position",
+                  "required": true
+                },
+                "image": {
+                  "type": "image",
+                  "label": "CEO Image"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "config": {
