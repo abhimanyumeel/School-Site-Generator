@@ -204,18 +204,15 @@
               "label": "Contact Persons",
 
               "items": {
-                "type": "object",
-                "fields": {
-                  "name": {
-                    "type": "short-text",
-                    "label": "Contact Name",
-                    "required": true
-                  },
-                  "phone": {
-                    "type": "short-text",
-                    "label": "Phone Number",
-                    "required": true
-                  }
+                "name": {
+                  "type": "short-text",
+                  "label": "Contact Name",
+                  "required": true
+                },
+                "phone": {
+                  "type": "short-text",
+                  "label": "Phone Number",
+                  "required": true
                 }
               }
             }
@@ -357,22 +354,19 @@
               "type": "array",
               "label": "Team Members",
               "items": {
-                "type": "object",
-                "fields": {
-                  "name": {
-                    "type": "short-text",
-                    "label": "Member Name",
-                    "required": true
-                  },
-                  "position": {
-                    "type": "short-text",
-                    "label": "Position",
-                    "required": true
-                  },
-                  "image": {
-                    "type": "image",
-                    "label": "Member Image"
-                  }
+                "name": {
+                  "type": "short-text",
+                  "label": "Member Name",
+                  "required": true
+                },
+                "position": {
+                  "type": "short-text",
+                  "label": "Position",
+                  "required": true
+                },
+                "image": {
+                  "type": "image",
+                  "label": "Member Image"
                 }
               }
             }
