@@ -523,20 +523,17 @@
               "type": "array",
               "label": "Related Documents",
               "items": {
-                "type": "object",
-                "fields": {
-                  "name": {
-                    "type": "short-text",
-                    "label": "Document Name",
-                    "required": true,
-                    "default": "Privacy Policy"
-                  },
-                  "url": {
-                    "type": "short-text",
-                    "label": "Document URL",
-                    "required": true,
-                    "default": "/privacy-policy"
-                  }
+                "name": {
+                  "type": "short-text",
+                  "label": "Document Name",
+                  "required": true,
+                  "default": "Privacy Policy"
+                },
+                "url": {
+                  "type": "short-text",
+                  "label": "Document URL",
+                  "required": true,
+                  "default": "/privacy-policy"
                 }
               }
             },
@@ -566,26 +563,23 @@
               "type": "array",
               "label": "Terms Sections",
               "items": {
-                "type": "object",
-                "fields": {
-                  "title": {
-                    "type": "short-text",
-                    "label": "Section Title",
-                    "required": true,
-                    "default": "General Terms"
-                  },
-                  "content": {
-                    "type": "long-text",
-                    "label": "Section Content",
-                    "default": "These terms and conditions outline the rules and regulations for the use of our school's website."
-                  },
+                "title": {
+                  "type": "short-text",
+                  "label": "Section Title",
+                  "required": true,
+                  "default": "General Terms"
+                },
+                "content": {
+                  "type": "long-text",
+                  "label": "Section Content",
+                  "default": "These terms and conditions outline the rules and regulations for the use of our school's website."
+                },
+                "items": {
+                  "type": "array",
+                  "label": "Section Items",
                   "items": {
-                    "type": "array",
-                    "label": "Section Items",
-                    "items": {
-                      "type": "long-text",
-                      "default": "By accessing this website, you accept these terms and conditions in full."
-                    }
+                    "type": "long-text",
+                    "default": "By accessing this website, you accept these terms and conditions in full."
                   }
                 }
               }
@@ -616,127 +610,26 @@
               "default": "2024-01-01"
             },
             "sections": {
-              "type": "object",
+              "type": "array",
               "label": "Privacy Policy Sections",
-              "fields": {
-                "information_collected": {
-                  "type": "object",
-                  "label": "Information We Collect",
-                  "fields": {
-                    "title": {
-                      "type": "short-text",
-                      "label": "Section Title",
-                      "required": true,
-                      "default": "Information We Collect"
-                    },
-                    "personal_info": {
-                      "type": "object",
-                      "fields": {
-                        "title": {
-                          "type": "short-text",
-                          "label": "Personal Information Title",
-                          "required": true,
-                          "default": "Personal Information"
-                        },
-                        "items": {
-                          "type": "array",
-                          "label": "Personal Information Items",
-                          "items": {
-                            "type": "long-text",
-                            "default": "Name, email address, and contact information provided through forms"
-                          }
-                        }
-                      }
-                    },
-                    "technical_info": {
-                      "type": "object",
-                      "fields": {
-                        "title": {
-                          "type": "short-text",
-                          "label": "Technical Information Title",
-                          "required": true
-                        },
-                        "items": {
-                          "type": "array",
-                          "label": "Technical Information Items",
-                          "items": {
-                            "type": "long-text"
-                          }
-                        }
-                      }
-                    }
-                  }
+              "items": {
+                "title": {
+                  "type": "short-text",
+                  "label": "Section Title",
+                  "required": true,
+                  "default": "General Terms"
                 },
-                "information_usage": {
-                  "type": "object",
-                  "label": "How We Use Information",
-                  "fields": {
-                    "title": {
-                      "type": "short-text",
-                      "label": "Section Title",
-                      "required": true
-                    },
-                    "items": {
-                      "type": "array",
-                      "label": "Usage Items",
-                      "items": {
-                        "type": "long-text"
-                      }
-                    }
-                  }
+                "content": {
+                  "type": "long-text",
+                  "label": "Section Content",
+                  "default": "These terms and conditions outline the rules and regulations for the use of our school's website."
                 },
-                "data_protection": {
-                  "type": "object",
-                  "label": "Data Protection",
-                  "fields": {
-                    "title": {
-                      "type": "short-text",
-                      "label": "Section Title",
-                      "required": true
-                    },
-                    "items": {
-                      "type": "array",
-                      "label": "Protection Measures",
-                      "items": {
-                        "type": "long-text"
-                      }
-                    }
-                  }
-                },
-                "information_sharing": {
-                  "type": "object",
-                  "label": "Information Sharing",
-                  "fields": {
-                    "title": {
-                      "type": "short-text",
-                      "label": "Section Title",
-                      "required": true
-                    },
-                    "items": {
-                      "type": "array",
-                      "label": "Sharing Policies",
-                      "items": {
-                        "type": "long-text"
-                      }
-                    }
-                  }
-                },
-                "user_rights": {
-                  "type": "object",
-                  "label": "User Rights",
-                  "fields": {
-                    "title": {
-                      "type": "short-text",
-                      "label": "Section Title",
-                      "required": true
-                    },
-                    "items": {
-                      "type": "array",
-                      "label": "User Rights Items",
-                      "items": {
-                        "type": "long-text"
-                      }
-                    }
+                "items": {
+                  "type": "array",
+                  "label": "Section Items",
+                  "items": {
+                    "type": "long-text",
+                    "default": "By accessing this website, you accept these terms and conditions in full."
                   }
                 }
               }
@@ -745,18 +638,15 @@
               "type": "array",
               "label": "Quick Links",
               "items": {
-                "type": "object",
-                "fields": {
-                  "name": {
-                    "type": "short-text",
-                    "label": "Link Name",
-                    "required": true
-                  },
-                  "url": {
-                    "type": "short-text",
-                    "label": "Link URL",
-                    "required": true
-                  }
+                "name": {
+                  "type": "short-text",
+                  "label": "Link Name",
+                  "required": true
+                },
+                "url": {
+                  "type": "short-text",
+                  "label": "Link URL",
+                  "required": true
                 }
               }
             },
