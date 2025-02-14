@@ -150,6 +150,7 @@
             },
             "cta": {
               "type": "object",
+              "allowMultiple": false,
               "label": "Call to Action",
               "fields": {
                 "primary": {
@@ -175,59 +176,6 @@
                     "url": {
                       "type": "short-text",
                       "label": "Secondary Button URL"
-                    }
-                  }
-                }
-              }
-            }
-          }
-        },
-        "featured_classes": {
-          "title": "Featured Classes",
-          "fields": {
-            "items": {
-              "type": "array",
-              "label": "Class Items",
-              "items": {
-                "name": {
-                  "type": "short-text",
-                  "label": "Class Name"
-                },
-                "age_group": {
-                  "type": "short-text",
-                  "label": "Age Group"
-                },
-                "time": {
-                  "type": "short-text",
-                  "label": "Class Time"
-                },
-                "capacity": {
-                  "type": "short-text",
-                  "label": "Class Capacity"
-                },
-                "price": {
-                  "type": "short-text",
-                  "label": "Class Price"
-                },
-                "image": {
-                  "type": "image",
-                  "label": "Class Image"
-                },
-                "teacher": {
-                  "type": "object",
-                  "label": "Teacher Information",
-                  "fields": {
-                    "name": {
-                      "type": "short-text",
-                      "label": "Teacher Name"
-                    },
-                    "image": {
-                      "type": "image",
-                      "label": "Teacher Image"
-                    },
-                    "position": {
-                      "type": "short-text",
-                      "label": "Teacher Position"
                     }
                   }
                 }
