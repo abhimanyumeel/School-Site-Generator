@@ -60,9 +60,12 @@
               <img src="{{ .image | relURL }}" alt="{{ .title }}" />
               <div class="event-overlay"></div>
               <div class="event-date-badge">
-                {{ $date := time .date }}
-                <span class="date-day">{{ $date.Day }}</span>
-                <span class="date-month">{{ $date.Format "Jan" }}</span>
+                {{ if .date }}
+                  {{ $dateStr := .date }}
+                  {{ $date := time $dateStr }}
+                  <span class="date-day">{{ dateFormat "02" $date }}</span>
+                  <span class="date-month">{{ dateFormat "Jan" $date }}</span>
+                {{ end }}
               </div>
             </div>
             <div class="event-content">

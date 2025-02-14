@@ -160,13 +160,8 @@
               "required": true
             },
             "description": {
-              "type": "array",
-              "label": "Welcome Description Paragraphs",
-              "items": {
-                "type": "long-text",
-                "minLength": 10,
-                "required": true
-              }
+              "type": "long-text",
+              "label": "Welcome Description Paragraphs"
             }
           }
         },

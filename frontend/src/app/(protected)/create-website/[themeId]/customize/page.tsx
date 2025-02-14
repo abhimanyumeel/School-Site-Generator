@@ -80,6 +80,7 @@ export interface Field {
   type: string;
   label: string;
   required?: boolean;
+  allowMultiple?: boolean;
   minLength?: number;
   maxLength?: number;
   minCount?: number;
@@ -377,12 +378,65 @@ export default function CustomizeTheme() {
                     const nestedData: Record<string, any> = {};
                     Object.entries((itemDef as Field).fields || {}).forEach(
                       ([nestedKey, nestedField]) => {
-                        nestedData[nestedKey] =
-                          item[itemKey]?.[nestedKey] || '';
+                        if ((nestedField as Field).type === 'image' || 
+                        (nestedField as Field).type === 'image-set') {
+                      // Handle image fields within nested objects
+                      nestedData[nestedKey] = item[itemKey]?.[nestedKey] || 
+                        ((nestedField as Field).type === 'image-set' ? [] : '');
+                    } else if ((nestedField as Field).type === 'checkbox') {
+                      // Handle checkbox fields within nested objects
+                      nestedData[nestedKey] = !!item[itemKey]?.[nestedKey];
+                    } else {
+                      // Handle other field types (short-text, email, number, long-text, select)
+                      nestedData[nestedKey] = item[itemKey]?.[nestedKey] || '';
+                    }
                       },
                     );
                     itemData[itemKey] = nestedData;
-                  } else {
+                  }
+                  // Handle simple fields (text, number, etc.) but skip if it's an object type
+                  else if (typeof itemDef === 'object' && 'type' in itemDef && (itemDef as {type: string}).type !== 'object') {
+                    // Handle simple input fields (text, number, etc.)
+                    itemData[itemKey] = item[itemKey] || '';
+                  }
+                     // Handle select fields with special dropdown case
+                     else if ((itemDef as Field).type === 'select') {
+                      itemData[itemKey] = item[itemKey] || '';
+                      // Handle special case for dropdown type
+                      if (itemKey === 'type' && item[itemKey] === 'dropdown') {
+                       itemData.items = item.items || [];
+                      }
+                  }
+                  // handle nested arrays (for dropdown emnus and generic arrays)
+                  else if ((itemDef as Field).type === 'array') {
+                    if (item.type === 'dropdown') {
+                      // Handle dropdown-specific nested arrays with complex items
+                      itemData[itemKey] = (item[itemKey] || []).map((subItem: any) => {
+                        const subItemData: Record<string, any> = {};
+                        Object.entries((itemDef as Field).items || {}).forEach(
+                          ([subItemKey, subItemDef]) => {
+                            subItemData[subItemKey] = subItem[subItemKey] || '';
+                          }
+                        );
+                        return subItemData;
+                      });
+                    } else {
+                      // Handle generic nested arrays (like features)
+                      itemData[itemKey] = item[itemKey] || [];
+                    }
+                  }
+                  // Handle image fields directly in array items
+                  else if ((itemDef as Field).type === 'image' || 
+                  (itemDef as Field).type === 'image-set') {
+                    // Handle image fields directly in array items
+                    itemData[itemKey] = item[itemKey] || 
+                    ((itemDef as Field).type === 'image-set' ? [] : '');
+                  }
+                  // Handle checkbox fields directly in array items
+                  else if ((itemDef as Field).type === 'checkbox') {
+                    itemData[itemKey] = !!item[itemKey];
+                  }
+                  else {
                     // Handle regular fields
                     itemData[itemKey] = item[itemKey] || '';
                   }
@@ -395,15 +449,77 @@ export default function CustomizeTheme() {
             // Handle object fields
             const objectData: Record<string, any> = {};
             const fieldAsField = field as Field; // Explicit type casting
+            const allowMultiple = fieldAsField.allowMultiple !== false;
+
+            if (!allowMultiple) {
+
+                  // Handle single instance objects (like footer.about)
+    Object.entries(fieldAsField.fields || {}).forEach(([subFieldId, subField]) => {
+      if ((subField as Field).type === 'array') {
+        // Handle arrays within objects
+        const arrayData = formData[currentPage]?.[sectionId]?.[fieldId]?.[subFieldId] || [];
+        objectData[subFieldId] = arrayData.map((item: any) => item || '');
+      } else if ((subField as Field).type === 'object') {
+        // Handle nested objects
+        const nestedData: Record<string, any> = {};
+        Object.entries((subField as Field).fields || {}).forEach(
+          ([nestedKey, nestedField]) => {
+            if ((nestedField as Field).type === 'array') {
+              // Handle arrays within nested objects
+              const arrayData = formData[currentPage]?.[sectionId]?.[fieldId]?.[subFieldId]?.[nestedKey] || [];
+              nestedData[nestedKey] = arrayData;
+            } else if ((nestedField as Field).type === 'object') {
+              // Handle deep nested objects
+              const deepNestedData: Record<string, any> = {};
+              Object.entries((nestedField as Field).fields || {}).forEach(
+                ([deepNestedFieldId, deepNestedField]) => {
+                  const input = e.currentTarget.elements.namedItem(
+                    `${sectionId}.${fieldId}.${subFieldId}.${nestedKey}.${deepNestedFieldId}`
+                  ) as HTMLInputElement;
+                  deepNestedData[deepNestedFieldId] = input?.value || '';
+                }
+              );
+              nestedData[nestedKey] = deepNestedData;
+            } else {
+              // Handle regular fields within nested objects
+              const input = e.currentTarget.elements.namedItem(
+                `${sectionId}.${fieldId}.${subFieldId}.${nestedKey}`
+              ) as HTMLInputElement;
+              nestedData[nestedKey] = input?.value || '';
+            }
+          }
+        );
+        objectData[subFieldId] = nestedData;
+      } else if ((subField as Field).type === 'long-text') {
+        // Handle long-text fields
+        const input = e.currentTarget.elements.namedItem(
+          `${sectionId}.${fieldId}.${subFieldId}`
+        ) as HTMLTextAreaElement;
+        objectData[subFieldId] = input?.value || '';
+      } else {
+        // Handle regular fields
+        const input = e.currentTarget.elements.namedItem(
+          `${sectionId}.${fieldId}.${subFieldId}`
+        ) as HTMLInputElement;
+        objectData[subFieldId] = input?.value || '';
+      }
+    });
+            } else {
+
+            // Get all object instances
+            Object.entries(formData[currentPage]?.[sectionId]?.[fieldId] || {}).forEach(([objectId, objectInstance]) => {
             Object.entries(fieldAsField.fields || {}).forEach(
               ([subFieldId, subField]) => {
                 if ((subField as Field).type === 'array') {
                   // Handle arrays within objects
                   const arrayData =
-                    formData[currentPage]?.[sectionId]?.[fieldId]?.[
+                    formData[currentPage]?.[sectionId]?.[fieldId]?.[objectId]?.[
                       subFieldId
                     ] || [];
-                  objectData[subFieldId] = arrayData;
+                  objectData[subFieldId] = arrayData.map((item: any) => {
+                    // Handle simple string values
+                    return item || '';
+                  });
                   console.log('Array within object data:', {
                     path: `${sectionId}.${fieldId}.${subFieldId}`,
                     data: arrayData,
@@ -413,22 +529,57 @@ export default function CustomizeTheme() {
                   const nestedData: Record<string, any> = {};
                   Object.entries((subField as Field).fields || {}).forEach(
                     ([nestedKey, nestedField]) => {
-                      const nestedInput = e.currentTarget.elements.namedItem(
-                        `${sectionId}.${fieldId}.${subFieldId}.${nestedKey}`,
-                      ) as HTMLInputElement;
-                      nestedData[nestedKey] = nestedInput?.value || '';
+                      if ((nestedField as Field).type === 'array'){
+                        // Handle arrays within nested objects
+                        const arrayData = formData[currentPage]?.[sectionId]?.[fieldId]?.[objectId]?.[subFieldId]?.[nestedKey] || [];
+                        nestedData[nestedKey] = arrayData;
+                      }
+                      else if ((nestedField as Field).type === 'object'){
+                        // Handle deep nested objects
+                        const deepNestedData: Record<string, any> = {};
+
+                        Object.entries((nestedField as Field).fields || {}).forEach(([deepNestedFieldId, deepNestedField]) => {
+                          if ((deepNestedField as Field).type === 'array'){
+                            // Handle arrays within deep nested objects
+                            deepNestedData[deepNestedFieldId] = 
+                            formData[currentPage]?.[sectionId]?.[fieldId]?.[objectId]?.[subFieldId]?.[nestedKey]?.[deepNestedFieldId] || [];
+                          } else {
+                            // Handle regular fields within deep nested objects
+                            const deepNestedValue = 
+                            formData[currentPage]?.[sectionId]?.[fieldId]?.[objectId]?.[subFieldId]?.[nestedKey]?.[deepNestedFieldId];
+                          deepNestedData[deepNestedFieldId] = deepNestedValue || '';
+                          }
+                      });
+                      nestedData[nestedKey] = deepNestedData;
+                      } else {
+                        // Handle regular fields within nested objects
+                        const nestedInput = e.currentTarget.elements.namedItem(
+                          `${sectionId}.${fieldId}.${objectId}.${subFieldId}.${nestedKey}`,
+                        ) as HTMLInputElement;
+                        nestedData[nestedKey] = nestedInput?.value || '';
+                      }
                     },
                   );
                   objectData[subFieldId] = nestedData;
-                } else {
+                }
+                else if ((subField as Field).type === 'long-text'){
+                  // Handle long-text fields within objects
+                  const textareaInput = e.currentTarget.elements.namedItem(
+                    `${sectionId}.${fieldId}.${objectId}.${subFieldId}`,
+                  ) as HTMLTextAreaElement;
+                  objectData[subFieldId] = textareaInput?.value || '';
+                }
+                else {
                   // Handle direct fields within object (like description in footer.about)
                   const input = e.currentTarget.elements.namedItem(
-                    `${sectionId}.${fieldId}.${subFieldId}`,
+                    `${sectionId}.${fieldId}.${objectId}.${subFieldId}`,
                   ) as HTMLInputElement;
                   objectData[subFieldId] = input?.value || '';
                 }
-              },
+              }
             );
+          });
+        }
 
             // Update the page data with the object field values
             pageData[sectionId][fieldId] = objectData;
@@ -1435,13 +1586,21 @@ export default function CustomizeTheme() {
         );
 
       case 'object':
+        const allowMultiple = (field as Field).allowMultiple !== false;
+        const objectEntries = allowMultiple 
+        ? Object.entries(formData[currentPage]?.[sectionId]?.[fieldId] || {})
+        : [['single', formData[currentPage]?.[sectionId]?.[fieldId] || {}]];
+
         return (
+
+        
           <div className="p-6 bg-gray-50 rounded-lg border border-gray-100">
-            {Object.entries(
-              formData[currentPage]?.[sectionId]?.[fieldId] || {},
-            ).map(([objectId, objectData]) => (
-              <div key={objectId} className="mb-6 p-4 border-t border-gray-300">
+            
+
+            {objectEntries.map(([objectId, objectData]) => (
+              <div key={objectId} className={`${allowMultiple ? "mb-6 p-4 border-t border-gray-300" : ""}`}>
                 {/* Remove button for each object instance */}
+                {allowMultiple && (
                 <div className="flex justify-end mb-4">
                   <button
                     type="button"
@@ -1465,6 +1624,7 @@ export default function CustomizeTheme() {
                     Remove
                   </button>
                 </div>
+                )}
                 {Object.entries(field.fields || {}).map(
                   ([subFieldId, subField]) => (
                     <div key={subFieldId} className="space-y-2">
@@ -1984,6 +2144,7 @@ export default function CustomizeTheme() {
               </div>
             ))}
 
+            {allowMultiple && (
             <button
               type="button"
               onClick={() => {
@@ -2038,6 +2199,8 @@ export default function CustomizeTheme() {
               </svg>
               Add {field.label || 'Item'}
             </button>
+            )}
+
           </div>
         );
 

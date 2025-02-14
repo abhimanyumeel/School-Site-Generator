@@ -106,10 +106,12 @@
                   <h3 class="event-title">{{ .title }}</h3>
                   {{ $date := .date }}
                   <div class="event-date">
-                    <span class="day">{{ dateFormat "02" $date }}</span>
+                    <!-- Parse date string safely with fallback -->
+                     {{ with partial "format-date" .date }}
+                    <span class="day">{{ dateFormat "02" . }}</span>
                     <span class="month-year"
-                      >{{ dateFormat "Jan 2006" $date }}</span
-                    >
+                      >{{ dateFormat "Jan 2006" . }}</span >
+                    {{ end }}
                   </div>
                 </div>
                 <div class="event-meta">
