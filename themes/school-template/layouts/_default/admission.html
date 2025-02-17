@@ -50,33 +50,52 @@
       <!-- Admission Form Start -->
       <div class="col-lg-6 wow fadeInUp" data-wow-delay="0.3s">
         <div class="bg-light rounded p-5">
-          <h3 class="mb-4">{{ site.Data.data.admission.form.title }}</h3>
+          <h3 class="mb-4">Leave your details to get more information</h3>
           <form>
             <div class="row g-3">
-              {{ range site.Data.data.admission.form.fields }}
               <div class="col-12">
                 <input
-                  type="{{ .type }}"
+                  type="text"
                   class="form-control"
-                  placeholder="{{ .placeholder }}"
-                  {{
-                  if
-                  .required
-                  }}required{{
-                  end
-                  }}
+                  placeholder="Contact Name *"
+                  required
                 />
               </div>
-              {{ end }}
+              <div class="col-12">
+                <input
+                  type="tel"
+                  class="form-control"
+                  placeholder="Phone Numbers *"
+                  required
+                />
+              </div>
+              <div class="col-12">
+                <input
+                  type="email"
+                  class="form-control"
+                  placeholder="Email Address *"
+                  required
+                />
+              </div>
 
               <div class="col-12">
                 <select class="form-select" required>
                   <option selected disabled>
                     Class in which admission sought *
                   </option>
-                  {{ range site.Data.data.admission.form.class_options }}
-                  <option>{{ . }}</option>
-                  {{ end }}
+                  <option>Nursery</option>
+                  <option>Jr Kg</option>
+                  <option>Sr Kg</option>
+                  <option>I</option>
+                  <option>II</option>
+                  <option>III</option>
+                  <option>IV</option>
+                  <option>V</option>
+                  <option>VI</option>
+                  <option>VII</option>
+                  <option>VIII</option>
+                  <option>IX</option>
+                  <option>XI</option>
                 </select>
               </div>
               <div class="col-12">
@@ -128,15 +147,6 @@
     padding: 0.75rem 1rem;
     border: 1px solid #dee2e6;
     border-radius: 5px;
-  }
-
-  .btn-primary {
-    background-color: var(--primary);
-    border: none;
-  }
-
-  .btn-primary:hover {
-    background-color: var(--primary);
   }
 </style>
 
