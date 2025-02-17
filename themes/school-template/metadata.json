@@ -437,6 +437,7 @@
             },
             "info": {
               "type": "object",
+              "allowMultiple": false,
               "label": "Contact Information",
               "fields": {
                 "address": {
@@ -475,6 +476,7 @@
             "form": {
               "type": "object",
               "label": "Contact Form",
+              "allowMultiple": false,
               "fields": {
                 "note": {
                   "type": "long-text",
@@ -485,7 +487,7 @@
             },
             "map_embed_url": {
               "type": "short-text",
-              "label": "Location Map URL",
+              "label": "School Location Map URL",
               "description": "Google Maps embed URL for your location",
               "required": true
             }
@@ -518,6 +520,7 @@
             "contact_info": {
               "type": "object",
               "label": "Contact Information",
+              "allowMultiple": false,
               "fields": {
                 "email": {
                   "type": "short-text",
@@ -757,6 +760,7 @@
             "form": {
               "type": "object",
               "label": "TC Form Configuration",
+              "allowMultiple": false,
               "fields": {
                 "title": {
                   "type": "short-text",
