@@ -217,16 +217,6 @@
             "items": {
               "type": "array",
               "label": "Notice Items",
-              "default": [
-                {
-                  "title": "School Reopening Date",
-                  "link": "/notices/school-reopening"
-                },
-                {
-                  "title": "Parent-Teacher Meeting Schedule",
-                  "link": "/notices/ptm-schedule"
-                }
-              ],
               "items": {
                 "title": {
                   "type": "short-text",
@@ -380,27 +370,6 @@
               "type": "long-text",
               "label": "Vision Statement",
               "minLength": 5
-            },
-            "ceo": {
-              "type": "object",
-              "label": "CEO Information",
-
-              "fields": {
-                "name": {
-                  "type": "short-text",
-                  "label": "CEO Name",
-                  "required": true
-                },
-                "position": {
-                  "type": "short-text",
-                  "label": "CEO Position",
-                  "required": true
-                },
-                "image": {
-                  "type": "image",
-                  "label": "CEO Image"
-                }
-              }
             }
           }
         },
