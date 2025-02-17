@@ -288,6 +288,66 @@
         }
       }
     },
+    "notice": {
+      "type": "page",
+      "title": "Notice Page",
+      "sections": {
+        "main": {
+          "title": "Notice Content",
+          "fields": {
+            "title": {
+              "type": "short-text",
+              "label": "Notice Title",
+              "minLength": 1,
+              "required": true
+            },
+            "date": {
+              "type": "short-text",
+              "label": "Notice Date",
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+              "required": true
+            },
+            "content_sections": {
+              "type": "array",
+              "label": "Content Sections",
+              "items": {
+                "section_title": {
+                  "type": "short-text",
+                  "label": "Section Title",
+                  "required": true
+                },
+                "section_content": {
+                  "type": "long-text",
+                  "label": "Section Content",
+                  "required": true
+                }
+              }
+            },
+            "attachments": {
+              "type": "array",
+              "label": "Notice Attachments",
+              "items": {
+                "name": {
+                  "type": "short-text",
+                  "label": "Attachment Name",
+                  "required": true
+                },
+                "file": {
+                  "type": "file",
+                  "label": "Attachment File",
+                  "required": true
+                },
+                "size": {
+                  "type": "short-text",
+                  "label": "File Size",
+                  "required": true
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "admission": {
       "type": "page",
       "title": "Admission Page",
@@ -619,6 +679,7 @@
             "school_info": {
               "type": "object",
               "label": "School Information",
+              "allowMultiple": false,
               "fields": {
                 "school_name": {
                   "type": "short-text",
