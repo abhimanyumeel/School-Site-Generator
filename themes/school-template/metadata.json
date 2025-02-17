@@ -247,20 +247,7 @@
             "items": {
               "type": "array",
               "label": "Event Items",
-              "default": [
-                {
-                  "title": "Annual Sports Day",
-                  "description": "Join us for a day of sports and athletic excellence",
-                  "date": "2024-03-15",
-                  "image": "/defaults/sports-day.jpg"
-                },
-                {
-                  "title": "Science Exhibition",
-                  "description": "Showcasing innovative projects by our young scientists",
-                  "date": "2024-03-20",
-                  "image": "/defaults/science-fair.jpg"
-                }
-              ],
+
               "items": {
                 "title": {
                   "type": "short-text",
