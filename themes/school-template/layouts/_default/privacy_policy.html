@@ -23,12 +23,6 @@
               <h2>{{ .title }}</h2>
               {{ if .content }}
               <p>{{ .content }}</p>
-              {{ end }} {{ if .items }}
-              <ul>
-                {{ range .items }}
-                <li>{{ . }}</li>
-                {{ end }}
-              </ul>
               {{ end }}
             </div>
             {{ end }}
