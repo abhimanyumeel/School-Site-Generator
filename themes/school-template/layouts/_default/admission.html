@@ -41,7 +41,9 @@
           <div class="contact-person mb-4">
             <p><strong>Contact Us:</strong></p>
             {{ range site.Data.data.admission.contact_info.contacts }}
-            <p>{{ .name }} <strong>({{ .phone }})</strong></p>
+            <p>
+              {{ .name }} - {{ .designation }} <strong>({{ .phone }})</strong>
+            </p>
             {{ end }}
           </div>
         </div>
