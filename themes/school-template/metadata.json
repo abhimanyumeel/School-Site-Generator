@@ -857,22 +857,7 @@
               "required": true,
               "default": "Fill out the form below to request your Transfer Certificate. Please ensure all information is accurate."
             },
-            "breadcrumb": {
-              "type": "object",
-              "label": "Breadcrumb Navigation",
-              "fields": {
-                "home": {
-                  "type": "short-text",
-                  "label": "Home Link Text",
-                  "required": true
-                },
-                "current": {
-                  "type": "short-text",
-                  "label": "Current Page Text",
-                  "required": true
-                }
-              }
-            },
+
             "form": {
               "type": "object",
               "label": "TC Form Configuration",
