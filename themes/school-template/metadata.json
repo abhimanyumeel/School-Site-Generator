@@ -169,6 +169,7 @@
             },
             "cta": {
               "type": "object",
+              "allowMultiple": false,
               "label": "Call to Action",
               "fields": {
                 "primary": {
@@ -481,15 +482,14 @@
               "fields": {
                 "note": {
                   "type": "long-text",
-                  "label": "Form Note",
+                  "label": "Form Title",
                   "required": true
                 }
               }
             },
             "map_embed_url": {
               "type": "short-text",
-              "label": "Map Embed URL",
-              "format": "uri",
+              "label": "Location Map URL",
               "description": "Google Maps embed URL for your location",
               "required": true
             }
@@ -555,14 +555,6 @@
                   "type": "long-text",
                   "label": "Section Content",
                   "default": "These terms and conditions outline the rules and regulations for the use of our school's website."
-                },
-                "items": {
-                  "type": "array",
-                  "label": "Section Items",
-                  "items": {
-                    "type": "long-text",
-                    "default": "By accessing this website, you accept these terms and conditions in full."
-                  }
                 }
               }
             }
@@ -605,14 +597,6 @@
                   "type": "long-text",
                   "label": "Section Content",
                   "default": "These terms and conditions outline the rules and regulations for the use of our school's website."
-                },
-                "items": {
-                  "type": "array",
-                  "label": "Section Items",
-                  "items": {
-                    "type": "long-text",
-                    "default": "By accessing this website, you accept these terms and conditions in full."
-                  }
                 }
               }
             }
