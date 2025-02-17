@@ -402,7 +402,7 @@ export default function CustomizeTheme() {
                     itemData[itemKey] = nestedData;
                   }
                   // Handle simple fields (text, number, etc.) but skip if it's an object type
-                  else if (typeof itemDef === 'object' && 'type' in itemDef && (itemDef as {type: string}).type !== 'object') {
+                  else if (typeof itemDef === 'object' && 'type' in itemDef && ((itemDef as {type: string}).type !== 'object' || (itemDef as {type: string}).type === 'long-text')) {
                     // Handle simple input fields (text, number, etc.)
                     itemData[itemKey] = item[itemKey] || '';
                   }
@@ -1504,6 +1504,42 @@ export default function CustomizeTheme() {
                                 </div>
                               )
                             }
+
+                            // handle long text fields
+                            if (typedItemDef.type === 'long-text') {
+                              return (
+                                <div key={itemKey} className="mb-4">
+                                  <label className="block text-sm font-semibold text-gray-800 mb-2">
+                                    {typedItemDef.label || itemKey.charAt(0).toUpperCase() + itemKey.slice(1)}
+                                  </label>
+                                  <textarea
+                                    value={item[itemKey] || ''}
+                                    onChange={(e) => {
+                                      const newItems = [...(formData[currentPage]?.[sectionId]?.[fieldId] || [])];
+                                      newItems[index] = {
+                                        ...newItems[index],
+                                        [itemKey]: e.target.value,
+                                      };
+                                      setFormData({
+                                        ...formData,
+                                        [currentPage]: {
+                                          ...formData[currentPage],
+                                          [sectionId]: {
+                                            ...formData[currentPage]?.[sectionId],
+                                            [fieldId]: newItems,
+                                          },
+                                        },
+                                      });
+                                    }}
+                                    className="w-full px-3 py-2.5 border border-gray-300 rounded-md 
+                                      text-gray-900 bg-white focus:ring-2 focus:ring-blue-500 
+                                      focus:border-blue-500 shadow-sm min-h-[100px]"
+                                    placeholder={`Enter ${typedItemDef.label || itemKey}`}
+                                  />
+                                </div>
+                              );
+                            }
+
                           }
 
                           // Handle simple fields (text, number, etc.)
