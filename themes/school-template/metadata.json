@@ -335,6 +335,11 @@
                   "type": "short-text",
                   "label": "Phone Number",
                   "required": true
+                },
+                "designation": {
+                  "type": "short-text",
+                  "label": "Designation",
+                  "required": true
                 }
               }
             }
