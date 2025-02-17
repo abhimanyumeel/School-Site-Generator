@@ -17,6 +17,13 @@ import { IoCalendarOutline } from 'react-icons/io5';
 import { LuContact } from 'react-icons/lu';
 import { IoMegaphoneOutline } from 'react-icons/io5';
 import { HiTemplate } from 'react-icons/hi';
+import { GrGallery } from "react-icons/gr";
+import { FaFileContract } from "react-icons/fa";
+import { MdOutlinePrivacyTip } from "react-icons/md";
+import { RiUserAddLine } from "react-icons/ri";
+import { LiaClipboardListSolid } from "react-icons/lia";
+import { FaRegHandshake } from "react-icons/fa";
+import { PiCertificate } from "react-icons/pi";
 
 import ImageUploadField from '@/components/form/ImageUploadField';
 
@@ -685,6 +692,12 @@ export default function CustomizeTheme() {
       appointment: IoCalendarOutline,
       call_to_action: IoMegaphoneOutline,
       contact: LuContact,
+      gallery: GrGallery,
+      terms_of_service: FaRegHandshake,
+      privacy_policy: MdOutlinePrivacyTip,
+      mandatory_disclosure: LiaClipboardListSolid,
+      admission: RiUserAddLine,
+      tc: PiCertificate,
     };
     return icons[page as keyof typeof icons] || HiTemplate;
   };
@@ -2267,13 +2280,6 @@ export default function CustomizeTheme() {
       <div>
         <Navbar user={user} />
         <div className="container mx-auto px-4 py-8">
-          <Breadcrumb
-            items={[
-              { label: 'Home', href: '/' },
-              { label: 'Create Website', href: '/create-website' },
-              { label: 'Theme Not Found', href: '#' },
-            ]}
-          />
           <div className="text-center py-12">
             <h2 className="text-2xl font-bold text-gray-900">
               Theme Not Found
@@ -2299,14 +2305,6 @@ export default function CustomizeTheme() {
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100">
       <Navbar user={user} />
       <div className="container mx-auto px-4 py-12">
-        <Breadcrumb
-          items={[
-            { label: 'Home', href: '/' },
-            { label: 'Create Website', href: '/create-website' },
-            { label: `Customize ${theme.name}`, href: '#' },
-          ]}
-        />
-
         <div className="max-w-4xl mx-auto">
           <div className="mb-10">
             <h1 className="text-5xl font-black tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-violet-600 via-blue-500 to-purple-600 animate-gradient-x">
@@ -2384,23 +2382,26 @@ export default function CustomizeTheme() {
           </div>
 
           {/* Page Navigation - Single line with smaller text */}
-          <div className="flex items-center mb-8 bg-white p-2 rounded-lg shadow-sm w-full">
-            {Object.entries(theme.metadata.pages).map(([pageId, page]) => (
-              <button
-                key={pageId}
-                onClick={() => setCurrentPage(pageId)}
-                className={`px-2 py-1.5 rounded-lg text-md font-medium transition-all duration-200 whitespace-nowrap
-                  ${
-                    currentPage === pageId
-                      ? 'bg-blue-600 text-white shadow-md'
-                      : 'text-gray-600 hover:bg-gray-100'
-                  } ${pageId === 'global' ? 'mr-auto' : 'mx-1'}`}
-              >
-                {pageId === 'global'
-                  ? 'Global Settings'
-                  : page.title.replace(' Page', '')}
-              </button>
-            ))}
+          <div className="flex items-center mb-8 bg-white p-2 rounded-lg shadow-sm w-full overflow-x-auto scrollbar-thin">
+            
+            <div className="flex space-x-2 min-w-max"> {/* Added wrapper div */}
+              {Object.entries(theme.metadata.pages).map(([pageId, page]) => (
+                <button
+                  key={pageId}
+                  onClick={() => setCurrentPage(pageId)}
+                  className={`px-3 py-1.5 rounded-lg text-md font-medium transition-all duration-200 whitespace-nowrap
+                    ${
+                      currentPage === pageId
+                        ? 'bg-blue-600 text-white shadow-md'
+                        : 'text-gray-600 hover:bg-gray-100'
+                    } ${pageId === 'global' ? 'mr-auto' : ''}`}
+                >
+                  {pageId === 'global'
+                    ? 'Global Settings'
+                    : page.title.replace(' Page', '')}
+                </button>
+              ))}
+            </div>
           </div>
 
           {/* Form - Modern styling */}

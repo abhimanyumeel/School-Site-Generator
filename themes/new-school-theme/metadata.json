@@ -711,7 +711,7 @@
     }
   }
 },
-"terms-of-service": {
+"terms_of_service": {
   "type": "page",
   "title": "Terms of Service",
   "sections": {
@@ -839,7 +839,7 @@
     }
   }
 },
-    "privacy-policy": {
+    "privacy_policy": {
       "type": "page",
       "title": "Privacy Policy",
       "sections": {
@@ -1009,7 +1009,7 @@
         }
       }
     },
-    "mandatory-disclosure": {
+    "mandatory_disclosure": {
       "type": "page",
       "title": "Mandatory Disclosure",
       "sections": {
