@@ -35,56 +35,101 @@
 
             <form class="tc-form" id="tcForm">
               <div class="row">
-                {{ range .Site.Data.data.tc.main.form.fields }}
-                <div class="{{ .col }} mb-3">
+                <div class="col-md-6 mb-3">
                   <div class="form-group">
-                    <label for="{{ .id }}" class="form-label"
-                      >{{ .label }}</label
+                    <label for="enrollmentNo" class="form-label"
+                      >Enrollment/Admission No.*</label
                     >
-                    {{ if eq .type "select" }}
-                    <select
-                      class="form-control"
-                      id="{{ .id }}"
-                      {{
-                      if
-                      .required
-                      }}required{{
-                      end
-                      }}
-                    >
-                      {{ range .options }}
-                      <option value="{{ .value }}">{{ .label }}</option>
-                      {{ end }}
-                    </select>
-                    {{ else }}
                     <input
-                      type="{{ .type }}"
+                      type="text"
                       class="form-control"
-                      id="{{ .id }}"
-                      {{
-                      if
-                      .required
-                      }}required{{
-                      end
-                      }}
+                      id="enrollmentNo"
+                      required
                     />
-                    {{ end }}
                   </div>
                 </div>
-                {{ end }}
+                <div class="col-md-6 mb-3">
+                  <div class="form-group">
+                    <label for="studentName" class="form-label"
+                      >Student's Full Name*</label
+                    >
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="studentName"
+                      required
+                    />
+                  </div>
+                </div>
+                <div class="col-md-6 mb-3">
+                  <div class="form-group">
+                    <label for="dob" class="form-label">Date of Birth*</label>
+                    <input type="date" class="form-control" id="dob" required />
+                  </div>
+                </div>
+                <div class="col-md-6 mb-3">
+                  <div class="form-group">
+                    <label for="studentClass" class="form-label"
+                      >Current Class*</label
+                    >
+                    <select class="form-control" id="studentClass" required>
+                      <option value="">--Select Class--</option>
+                      <option value="UKG">Class UKG</option>
+                      <option value="I">Class I</option>
+                      <option value="II">Class II</option>
+                      <option value="III">Class III</option>
+                      <option value="IV">Class IV</option>
+                      <option value="V">Class V</option>
+                      <option value="VI">Class VI</option>
+                      <option value="VII">Class VII</option>
+                      <option value="VIII">Class VIII</option>
+                      <option value="IX">Class IX</option>
+                      <option value="X">Class X</option>
+                      <option value="XI">Class XI</option>
+                      <option value="XII">Class XII</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="col-md-6 mb-3">
+                  <div class="form-group">
+                    <label for="session" class="form-label"
+                      >Academic Session*</label
+                    >
+                    <select class="form-control" id="session" required>
+                      <option value="">--Select Session--</option>
+                      <option value="2024-25">2024-25</option>
+                      <option value="2023-24">2023-24</option>
+                      <option value="2022-23">2022-23</option>
+                      <option value="2021-22">2021-22</option>
+                      <option value="2020-21">2020-21</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="col-md-6 mb-3">
+                  <div class="form-group">
+                    <label for="reasonTC" class="form-label"
+                      >Reason for TC*</label
+                    >
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="reasonTC"
+                      required
+                    />
+                  </div>
+                </div>
               </div>
 
               <div class="alert alert-info mb-4">
                 <small
-                  ><i class="fas fa-info-circle me-2"></i> Fields marked with *
+                  ><i class="fas fa-info-circle me-2"></i>Fields marked with *
                   are mandatory</small
                 >
               </div>
 
               <div class="text-center">
                 <button type="submit" class="btn btn-primary px-4 py-2">
-                  <i class="fas fa-paper-plane me-2"></i>{{
-                  .Site.Data.data.tc.main.form.submit_button.text }}
+                  <i class="fa fa-download me-2"></i>Download TC
                 </button>
               </div>
             </form>

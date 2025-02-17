@@ -349,56 +349,6 @@
               }
             }
           }
-        },
-        "form": {
-          "title": "Admission Form",
-          "fields": {
-            "title": {
-              "type": "short-text",
-              "label": "Form Title",
-              "required": true
-            },
-            "fields": {
-              "type": "array",
-              "label": "Form Fields",
-              "items": {
-                "connect": {
-                  "type": "object",
-                  "fields": {
-                    "type": {
-                      "type": "select",
-                      "label": "Field Type",
-                      "options": ["text", "tel", "email", "select"]
-                    },
-                    "name": {
-                      "type": "short-text",
-                      "label": "Field Name"
-                    },
-                    "placeholder": {
-                      "type": "short-text",
-                      "label": "Field Placeholder"
-                    },
-                    "required": {
-                      "type": "select",
-                      "label": "Is Required",
-                      "options": ["true", "false"]
-                    }
-                  }
-                }
-              }
-            },
-            "class_options": {
-              "type": "array",
-              "label": "Available Classes",
-              "items": {
-                "class": {
-                  "type": "short-text",
-                  "label": "Class Name",
-                  "required": true
-                }
-              }
-            }
-          }
         }
       }
     },
@@ -559,44 +509,6 @@
                   "type": "long-text",
                   "label": "Form Note",
                   "required": true
-                },
-                "submit_text": {
-                  "type": "short-text",
-                  "label": "Submit Button Text",
-                  "default": "Send Message",
-                  "required": true
-                },
-                "fields": {
-                  "type": "array",
-                  "label": "Form Fields",
-                  "items": {
-                    "name": {
-                      "type": "short-text",
-                      "label": "Field Name",
-                      "required": true
-                    },
-                    "label": {
-                      "type": "short-text",
-                      "label": "Field Label",
-                      "required": true
-                    },
-                    "type": {
-                      "type": "select",
-                      "label": "Field Type",
-                      "options": ["text", "email", "tel", "textarea"],
-                      "required": true
-                    },
-                    "placeholder": {
-                      "type": "short-text",
-                      "label": "Field Placeholder",
-                      "required": true
-                    },
-                    "required": {
-                      "type": "select",
-                      "label": "Is Required",
-                      "options": ["true", "false"]
-                    }
-                  }
                 }
               }
             },
@@ -970,83 +882,6 @@
                   "label": "Form Title",
                   "required": true,
                   "default": "TC Request Form"
-                },
-                "fields": {
-                  "type": "array",
-                  "label": "Form Fields",
-                  "items": {
-                    "type": "object",
-                    "fields": {
-                      "type": {
-                        "type": "select",
-                        "label": "Field Type",
-                        "required": true,
-                        "options": ["text", "tel", "email", "select", "date"],
-                        "default": "text"
-                      },
-                      "name": {
-                        "type": "short-text",
-                        "label": "Field Name",
-                        "required": true
-                      },
-                      "label": {
-                        "type": "short-text",
-                        "label": "Field Label",
-                        "required": true
-                      },
-                      "placeholder": {
-                        "type": "short-text",
-                        "label": "Field Placeholder"
-                      },
-                      "required": {
-                        "type": "select",
-                        "label": "Is Required",
-                        "options": ["true", "false"],
-                        "default": "true"
-                      },
-                      "col": {
-                        "type": "select",
-                        "label": "Column Width",
-                        "options": ["col-12", "col-md-6", "col-md-4"],
-                        "default": "col-md-6"
-                      },
-                      "options": {
-                        "type": "array",
-                        "label": "Select Options",
-                        "condition": {
-                          "field": "type",
-                          "equals": "select"
-                        },
-                        "items": {
-                          "type": "object",
-                          "fields": {
-                            "value": {
-                              "type": "short-text",
-                              "label": "Option Value",
-                              "required": true
-                            },
-                            "label": {
-                              "type": "short-text",
-                              "label": "Option Label",
-                              "required": true
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }
-                },
-                "submit_button": {
-                  "type": "object",
-                  "label": "Submit Button",
-                  "fields": {
-                    "text": {
-                      "type": "short-text",
-                      "label": "Button Text",
-                      "required": true,
-                      "default": "Submit Request"
-                    }
-                  }
                 }
               }
             }
