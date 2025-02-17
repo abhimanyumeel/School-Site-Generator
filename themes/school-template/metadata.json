@@ -24,8 +24,7 @@
             "icon": {
               "type": "image",
               "label": "Logo Icon",
-              "required": true,
-              "description": "Font Awesome icon class"
+              "required": true
             },
             "text": {
               "type": "short-text",
@@ -65,12 +64,8 @@
             "contact": {
               "type": "object",
               "label": "Contact Section",
+              "allowMultiple": false,
               "fields": {
-                "title": {
-                  "type": "short-text",
-                  "label": "Contact Section Title",
-                  "default": "Get in Touch"
-                },
                 "address": {
                   "type": "short-text",
                   "label": "Address",
@@ -93,8 +88,8 @@
               "label": "Social Links",
               "items": {
                 "icon": {
-                  "type": "short-text",
-                  "label": "Font Awesome Icon Class",
+                  "type": "image",
+                  "label": "Social Link Icon",
                   "required": true
                 },
                 "url": {
@@ -123,6 +118,7 @@
             "copyright": {
               "type": "object",
               "label": "Copyright Section",
+              "allowMultiple": false,
               "fields": {
                 "text": {
                   "type": "short-text",
