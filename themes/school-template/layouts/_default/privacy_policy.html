@@ -15,7 +15,7 @@
   <!-- Main Content Section -->
   <div class="container py-5">
     <div class="row g-5">
-      <div class="col-lg-8">
+      <div>
         <div class="bg-light rounded p-4 p-sm-5">
           <div class="privacy-content">
             {{ range $privacy.sections }}
@@ -33,58 +33,6 @@
             </div>
             {{ end }}
           </div>
-        </div>
-      </div>
-
-      <div class="col-lg-4">
-        <div class="bg-light rounded p-4 mb-4">
-          <h4 class="mb-4">Quick Links</h4>
-          <div class="d-flex flex-column">
-            {{ range $privacy.quick_links }}
-            <a class="h6 mb-3" href="{{ .url }}">
-              <i class="fas fa-angle-right me-2"></i>{{ .name }}
-            </a>
-            {{ end }}
-          </div>
-        </div>
-
-        <div class="bg-light rounded p-4">
-          <h4 class="mb-4">Have Questions?</h4>
-          {{ with $privacy.contact_info }}
-          <div class="d-flex align-items-center mb-3">
-            <div
-              class="d-flex align-items-center justify-content-center flex-shrink-0 bg-primary rounded-circle"
-              style="width: 45px; height: 45px"
-            >
-              <i class="fa fa-envelope-open text-white"></i>
-            </div>
-            <div class="ms-3">
-              <small>{{ .email }}</small>
-            </div>
-          </div>
-          <div class="d-flex align-items-center mb-3">
-            <div
-              class="d-flex align-items-center justify-content-center flex-shrink-0 bg-primary rounded-circle"
-              style="width: 45px; height: 45px"
-            >
-              <i class="fa fa-phone-alt text-white"></i>
-            </div>
-            <div class="ms-3">
-              <small>{{ .phone }}</small>
-            </div>
-          </div>
-          <div class="d-flex align-items-center">
-            <div
-              class="d-flex align-items-center justify-content-center flex-shrink-0 bg-primary rounded-circle"
-              style="width: 45px; height: 45px"
-            >
-              <i class="fa fa-map-marker-alt text-white"></i>
-            </div>
-            <div class="ms-3">
-              <small>{{ .address }}</small>
-            </div>
-          </div>
-          {{ end }}
         </div>
       </div>
     </div>

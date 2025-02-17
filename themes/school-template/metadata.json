@@ -544,24 +544,7 @@
               "required": true,
               "default": "2024-01-01"
             },
-            "related_documents": {
-              "type": "array",
-              "label": "Related Documents",
-              "items": {
-                "name": {
-                  "type": "short-text",
-                  "label": "Document Name",
-                  "required": true,
-                  "default": "Privacy Policy"
-                },
-                "url": {
-                  "type": "short-text",
-                  "label": "Document URL",
-                  "required": true,
-                  "default": "/privacy-policy"
-                }
-              }
-            },
+
             "contact_info": {
               "type": "object",
               "label": "Contact Information",
@@ -656,47 +639,6 @@
                     "type": "long-text",
                     "default": "By accessing this website, you accept these terms and conditions in full."
                   }
-                }
-              }
-            },
-            "quick_links": {
-              "type": "array",
-              "label": "Quick Links",
-              "items": {
-                "name": {
-                  "type": "short-text",
-                  "label": "Link Name",
-                  "required": true
-                },
-                "url": {
-                  "type": "short-text",
-                  "label": "Link URL",
-                  "required": true
-                }
-              }
-            },
-            "contact_info": {
-              "type": "object",
-              "label": "Contact Information",
-              "fields": {
-                "email": {
-                  "type": "short-text",
-                  "label": "Contact Email",
-                  "format": "email",
-                  "required": true,
-                  "default": "privacy@school.edu"
-                },
-                "phone": {
-                  "type": "short-text",
-                  "label": "Contact Phone",
-                  "required": true,
-                  "default": "+1 (555) 123-4567"
-                },
-                "address": {
-                  "type": "short-text",
-                  "label": "Contact Address",
-                  "required": true,
-                  "default": "123 School Street, Education City, ST 12345"
                 }
               }
             }
