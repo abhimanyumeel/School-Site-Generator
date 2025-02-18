@@ -49,9 +49,13 @@
         <div class="notice-list-wrapper">
           <div class="notice-box">
             <ul class="notice-list">
-              {{ range .Site.Data.data.home.notices.items }}
+              {{ range sort .Site.Data.data.notice.main.content_sections "date"
+              "desc" }}
               <li>
-                <a href="{{ .link }}">{{ .title }}</a>
+                <a href="/notices/{{ .id }}/">
+                  <span class="notice-date">{{ .date }}</span>
+                  {{ .section_title }}
+                </a>
               </li>
               {{ end }}
             </ul>

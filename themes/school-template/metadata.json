@@ -162,33 +162,6 @@
             }
           }
         },
-        "notices": {
-          "title": "Notice Board Section",
-          "fields": {
-            "title": {
-              "type": "short-text",
-              "label": "Notice Board Title",
-              "required": true,
-              "default": "Latest Announcements"
-            },
-            "items": {
-              "type": "array",
-              "label": "Notice Items",
-              "items": {
-                "title": {
-                  "type": "short-text",
-                  "label": "Notice Title",
-                  "required": true
-                },
-                "link": {
-                  "type": "short-text",
-                  "label": "Notice Link",
-                  "required": true
-                }
-              }
-            }
-          }
-        },
         "events": {
           "title": "Events Section",
           "fields": {
