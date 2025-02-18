@@ -8,22 +8,24 @@
     </button>
     <div class="collapse navbar-collapse" id="navbarCollapse">
         <div class="navbar-nav mx-auto">
-            {{ range .Site.Data.data.global.navigation.main_menu }}
-                {{ if eq .type "dropdown" }}
-                    <div class="nav-item dropdown">
-                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">{{ .name }}</a>
-                        <div class="dropdown-menu rounded-0 rounded-bottom border-0 shadow-sm m-0">
-                            {{ range .items }}
-                                <a href="{{ .url | relURL }}" class="dropdown-item">{{ .name }}</a>
-                            {{ end }}
-                        </div>
-                    </div>
-                {{ else }}
-                    <a href="{{ .url | relURL }}" class="nav-item nav-link {{ if eq $.RelPermalink .url }}active{{ end }}">{{ .name }}</a>
-                {{ end }}
-            {{ end }}
+            <a href="/" class="nav-item nav-link {{ if eq .RelPermalink "/" }}active{{ end }}">Home</a>
+            <a href="/about/" class="nav-item nav-link {{ if eq .RelPermalink "/about/" }}active{{ end }}">About Us</a>
+            <a href="/gallery/" class="nav-item nav-link {{ if eq .RelPermalink "/gallery/" }}active{{ end }}">Gallery/Events</a>
+            <a href="/admission/" class="nav-item nav-link {{ if eq .RelPermalink "/admission/" }}active{{ end }}">Admission</a>
+            
+            <div class="nav-item dropdown">
+                <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Pages</a>
+                <div class="dropdown-menu rounded-0 rounded-bottom border-0 shadow-sm m-0">
+                    <a href="/mandatory_disclosure/" class="dropdown-item">Mandatory Disclosure</a>
+                    <a href="/terms_of_service/" class="dropdown-item">Terms of Service</a>
+                    <a href="/privacy_policy/" class="dropdown-item">Privacy Policy</a>
+                    <a href="/tc/" class="dropdown-item">Transfer Certificate</a>
+                    <a href="/blog/" class="dropdown-item">Blog</a>
+                </div>
+            </div>
+            <a href="/contact/" class="nav-item nav-link {{ if eq .RelPermalink "/contact/" }}active{{ end }}">Contact Us</a>
         </div>
-        <a href="{{ "/admission" | relURL }}" class="btn btn-primary rounded-pill px-3 d-none d-lg-block">Enroll Now<i class="fa fa-arrow-right ms-3"></i></a>
+        <a href="/admission/" class="btn btn-primary rounded-pill px-3 d-none d-lg-block">Enroll Now<i class="fa fa-arrow-right ms-3"></i></a>
     </div>
 </nav>
 <!-- Navbar End --> 

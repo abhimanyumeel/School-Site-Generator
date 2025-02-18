@@ -34,30 +34,6 @@
             }
           }
         },
-        "navigation": {
-          "title": "Navigation",
-          "fields": {
-            "main_menu": {
-              "type": "array",
-              "label": "Main Menu Items",
-              "items": {
-                "name": {
-                  "type": "short-text",
-                  "label": "Menu Item Name"
-                },
-                "url": {
-                  "type": "short-text",
-                  "label": "Menu Item URL"
-                },
-                "type": {
-                  "type": "select",
-                  "label": "Menu Type",
-                  "options": ["link", "dropdown"]
-                }
-              }
-            }
-          }
-        },
         "footer": {
           "title": "Footer",
           "fields": {
@@ -95,22 +71,6 @@
                 "url": {
                   "type": "short-text",
                   "label": "Social Media URL",
-                  "required": true
-                }
-              }
-            },
-            "quick_links": {
-              "type": "object",
-              "title": "Quick Links`",
-              "fields": {
-                "name": {
-                  "type": "short-text",
-                  "label": "Quick Links Title",
-                  "default": "Quick Links"
-                },
-                "url": {
-                  "type": "short-text",
-                  "label": "Link URL",
                   "required": true
                 }
               }
