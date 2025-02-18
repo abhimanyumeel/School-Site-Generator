@@ -374,7 +374,8 @@ export default function CustomizeTheme() {
             // Get existing array data from formData
             const existingItems =
               formData[currentPage]?.[sectionId]?.[fieldId] || [];
-            pageData[sectionId][fieldId] = existingItems.map((item: any) => {
+
+            pageData[sectionId][fieldId] = existingItems.map((item: any, index: number) => {
               const itemData: Record<string, any> = {};
 
               // Process each field in the array item
@@ -400,6 +401,20 @@ export default function CustomizeTheme() {
                       },
                     );
                     itemData[itemKey] = nestedData;
+                  }
+                  // Handle image fields directly in array items
+                  else if ((itemDef as Field).type === 'image' || 
+                    (itemDef as Field).type === 'image-set') {
+
+                    // Handle image fields directly in array items
+                      if ((itemDef as Field).type === 'image-set') {
+                        // Handle image sets (multiple images)
+                        itemData[itemKey] = Array.isArray(item[itemKey]) ? item[itemKey] : [];
+                      } else {
+                        // Handle single image
+                        itemData[itemKey] = item[itemKey] || '';
+                      }
+                    
                   }
                   // Handle simple fields (text, number, etc.) but skip if it's an object type
                   else if (typeof itemDef === 'object' && 'type' in itemDef && ((itemDef as {type: string}).type !== 'object' || (itemDef as {type: string}).type === 'long-text')) {
@@ -431,13 +446,6 @@ export default function CustomizeTheme() {
                       // Handle generic nested arrays (like features)
                       itemData[itemKey] = item[itemKey] || [];
                     }
-                  }
-                  // Handle image fields directly in array items
-                  else if ((itemDef as Field).type === 'image' || 
-                  (itemDef as Field).type === 'image-set') {
-                    // Handle image fields directly in array items
-                    itemData[itemKey] = item[itemKey] || 
-                    ((itemDef as Field).type === 'image-set' ? [] : '');
                   }
                   // Handle checkbox fields directly in array items
                   else if ((itemDef as Field).type === 'checkbox') {
@@ -1475,7 +1483,10 @@ export default function CustomizeTheme() {
                                   onUpload = {async (file: File | null, fieldId: string, existingUrls?: string[]) => {
                                     const uploadedUrl = await handleImageUpload(file, fieldId, existingUrls);
                                     if (uploadedUrl) {
-                                      const newItems = [...(formData[currentPage]?.[sectionId]?.[fieldId] || [{}])];
+
+                                      const baseFieldId = fieldId.split('.')[1];
+                                      const newItems = [...(formData[currentPage]?.[sectionId]?.[baseFieldId] || [{}])];
+
                                       
                                       newItems[index] = {
                                         ...newItems[index],
@@ -1483,17 +1494,23 @@ export default function CustomizeTheme() {
                                           ? [...(newItems[index][itemKey] || []), uploadedUrl]
                                           : uploadedUrl
                                       };
-                            
-                                      setFormData({
-                                        ...formData,
-                                        [currentPage]: {
-                                          ...formData[currentPage],
-                                          [sectionId]: {
-                                            ...formData[currentPage]?.[sectionId],
-                                            [fieldId]: newItems
-                                          }
-                                        }
+
+
+                                      setFormData(prevFormData => {
+                                        const newFormData = {
+                                            ...prevFormData,
+                                            [currentPage]: {
+                                              ...prevFormData[currentPage],
+                                              [sectionId]: {
+                                                ...prevFormData[currentPage]?.[sectionId],
+                                                [baseFieldId]: newItems
+                                              }
+                                            }
+                                          };
+
+                                        return newFormData;
                                       });
+
                                     }
                                     return uploadedUrl;
                                   }}
