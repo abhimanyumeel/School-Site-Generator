@@ -1,6 +1,13 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany } from 'typeorm';
 import { SchoolWebsite } from './school-website.entity';
 
+
+
+export enum UserRole {
+  SUPER_ADMIN = 'SUPER_ADMIN',
+  SINGLE_SCHOOL = 'SINGLE_SCHOOL',
+  SCHOOL_ORGANIZATION = 'SCHOOL_ORGANIZATION'
+}
 @Entity('users')
 export class User {
   @PrimaryGeneratedColumn('uuid')
@@ -18,14 +25,24 @@ export class User {
   @Column({ nullable: true })
   phone: string;
 
-  @Column({ default: 'user' })
-  role: string;
+  @Column({ 
+    type: 'enum',
+    enum: UserRole,
+    default: UserRole.SINGLE_SCHOOL
+  })
+  role: UserRole;
 
-  @Column({ nullable: true })
-  entityType: string;
+  @Column({ default: 1 })
+  websitesLimit: number;
 
-  @Column({ nullable: true })
-  entityId: string;
+  @Column({ default: 0})
+  websitesCreated: number;
+
+  @Column({ default: true })
+  isActive: boolean;
+
+  @Column({nullable: true, type: 'timestamp' })
+  lastLoginAt: Date;
 
   @CreateDateColumn()
   createdAt: Date;
