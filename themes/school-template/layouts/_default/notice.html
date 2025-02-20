@@ -1,31 +1,38 @@
 {{ define "main" }}
+<!-- All data comes from data.json -->
 <div class="container-xxl py-5">
   <div class="container">
     <div class="row">
       <!-- Notice Content -->
-      <div class="col-lg-9">
+      <div>
         <div class="notice-detail-wrapper">
           <div class="notice-header">
             <div class="notice-meta">
               <span class="notice-date">
                 <i class="far fa-calendar-alt"></i>
-                {{ .Date.Format "January 2, 2006" }}
-              </span>
-              <span class="notice-category">
-                <i class="far fa-folder"></i>
-                {{ .Params.category }}
+                {{ .Site.Data.data.notice.main.date }}
               </span>
             </div>
-            <h1 class="notice-title">{{ .Title }}</h1>
+            <h1 class="notice-title">
+              {{ .Site.Data.data.notice.main.title }}
+            </h1>
           </div>
 
-          <div class="notice-content">{{ .Content }}</div>
+          <div class="notice-content">
+            {{ range .Site.Data.data.notice.main.content_sections }}
+            <div class="notice-section mb-4">
+              <h3 class="section-title mb-3">{{ .section_title }}</h3>
+              <div class="section-content">{{ .section_content }}</div>
+            </div>
+            {{ end }}
+          </div>
 
-          {{ if .Params.attachments }}
+          {{ if .Site.Data.data.notice.main.attachments }}
           <div class="notice-attachments">
             <h4>Downloads & Attachments</h4>
             <div class="attachment-list">
-              {{ range .Params.attachments }}
+              {{ range .Site.Data.data.notice.main.attachments }} {{ if and
+              .name .file }}
               <div class="attachment-item">
                 <i class="fas fa-file-pdf"></i>
                 <a href="{{ .file }}" target="_blank" class="attachment-link">
@@ -33,30 +40,10 @@
                 </a>
                 <span class="file-size">{{ .size }}</span>
               </div>
-              {{ end }}
+              {{ end }} {{ end }}
             </div>
           </div>
           {{ end }}
-        </div>
-      </div>
-
-      <!-- Sidebar -->
-      <div class="col-lg-3">
-        <div class="notice-sidebar">
-          <!-- Recent Notices -->
-          <div class="sidebar-widget">
-            <h4>Recent Notices</h4>
-            <ul class="recent-notices">
-              {{ range first 5 (where .Site.RegularPages "Section" "notices") }}
-              <li>
-                <a href="{{ .Permalink }}">{{ .Title }}</a>
-                <span class="notice-date"
-                  >{{ .Date.Format "Jan 2, 2006" }}</span
-                >
-              </li>
-              {{ end }}
-            </ul>
-          </div>
         </div>
       </div>
     </div>
