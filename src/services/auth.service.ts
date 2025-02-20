@@ -5,7 +5,7 @@ import { Repository } from 'typeorm';
 import { RegisterDto } from '../dto/auth/register.dto';
 import { LoginDto } from '../dto/auth/login.dto';
 import * as bcrypt from 'bcrypt';
-import { User } from '../entities';
+import { User, UserRole } from '../entities/user.entity';
 
 @Injectable()
 export class AuthService {
@@ -32,9 +32,10 @@ export class AuthService {
       name: registerDto.name,
       email: registerDto.email,
       password: hashedPassword,
-      entityType: registerDto.entityType || 'user',
-      entityId: registerDto.entityId || 'default',
-      role: registerDto.role || 'user',
+      role: UserRole.SINGLE_SCHOOL,
+      websitesLimit: 1,
+      websitesCreated: 0,
+      isActive: true
     });
 
     const savedUser = await this.userRepository.save(user);
@@ -70,6 +71,10 @@ export class AuthService {
 
     console.log('User found during login:', user);
 
+    await this.userRepository.update(user.id, {
+      lastLoginAt: new Date()
+    });
+
     const token = this.generateToken(user);
     console.log('Login token payload:', this.jwtService.decode(token));
 
@@ -86,8 +91,10 @@ export class AuthService {
         name: true,
         email: true,
         role: true,
-        entityType: true,
-        entityId: true,
+        websitesLimit: true,
+        websitesCreated: true,
+        isActive: true,
+        lastLoginAt: true,
         createdAt: true,
         updatedAt: true
       }
@@ -107,8 +114,9 @@ export class AuthService {
       sub: user.id,
       email: user.email,
       role: user.role,
-      entityType: user.entityType,
-      entityId: user.entityId,
+      websitesLimit: user.websitesLimit,
+      websitesCreated: user.websitesCreated,
+      isActive: user.isActive
     };
     console.log('Generating token with payload:', payload);
     return this.jwtService.sign(payload);
@@ -129,7 +137,7 @@ export class AuthService {
   async validateUser(email: string, password: string): Promise<any> {
     const user = await this.userRepository.findOne({ 
       where: { email },
-      select: ['id', 'email', 'password', 'role', 'entityType', 'entityId'] 
+      select: ['id', 'email', 'password', 'role', 'websitesLimit', 'websitesCreated', 'isActive'] 
     });
 
     if (user && (await this.comparePasswords(password, user.password))) {
