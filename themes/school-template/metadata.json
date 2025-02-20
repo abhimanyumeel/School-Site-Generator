@@ -459,7 +459,7 @@
               "allowMultiple": false,
               "fields": {
                 "note": {
-                  "type": "long-text",
+                  "type": "short-text",
                   "label": "Form Title",
                   "required": true
                 }
