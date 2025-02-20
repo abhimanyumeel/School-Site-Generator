@@ -16,7 +16,7 @@
         <div class="d-flex pt-2">
           {{ range .Site.Data.data.global.footer.social_links }}
           <a class="btn btn-outline-light btn-social" href="{{ .url }}">
-            <img src="{{ .icon }}" alt="social media icon" class="social-icon" style="width: 16px; height: 16px;">
+            <img src="{{ .icon }}" alt="social media icon" class="social-icon" style="width: fit-content; height:inherit;">
           </a>
           {{ end }}
         </div>
