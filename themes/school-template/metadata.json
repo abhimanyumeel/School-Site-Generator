@@ -60,17 +60,39 @@
               }
             },
             "social_links": {
-              "type": "array",
+              "type": "object",
               "label": "Social Links",
-              "items": {
-                "icon": {
-                  "type": "image",
-                  "label": "Social Link Icon",
-                  "required": true
+              "allowMultiple": false,
+              "fields": {
+                "twitter": {
+                  "type": "short-text",
+                  "label": "Twitter URL",
+                  "required": false
                 },
+                "facebook": {
+                  "type": "short-text",
+                  "label": "Facebook URL",
+                  "required": false
+                },
+                "youtube": {
+                  "type": "short-text",
+                  "label": "YouTube URL",
+                  "required": false
+                },
+                "linkedin": {
+                  "type": "short-text",
+                  "label": "LinkedIn URL",
+                  "required": false
+                }
+              }
+            },
+            "extra": {
+              "type": "array",
+              "label": "Additional Website URL",
+              "items": {
                 "url": {
                   "type": "short-text",
-                  "label": "Social Media URL",
+                  "label": "Website URL",
                   "required": true
                 }
               }
@@ -122,43 +144,6 @@
               "label": "Hero Background Image",
               "required": true,
               "description": "Large background image for hero section (recommended: 1920x1080px)"
-            },
-            "cta": {
-              "type": "object",
-              "allowMultiple": false,
-              "label": "Call to Action",
-              "fields": {
-                "primary": {
-                  "type": "object",
-                  "fields": {
-                    "text": {
-                      "type": "short-text",
-                      "label": "Primary Button Text",
-                      "default": "Apply Now"
-                    },
-                    "url": {
-                      "type": "short-text",
-                      "label": "Primary Button URL",
-                      "default": "/admissions"
-                    }
-                  }
-                },
-                "secondary": {
-                  "type": "object",
-                  "fields": {
-                    "text": {
-                      "type": "short-text",
-                      "label": "Secondary Button Text",
-                      "default": "Learn More"
-                    },
-                    "url": {
-                      "type": "short-text",
-                      "label": "Secondary Button URL",
-                      "default": "/about"
-                    }
-                  }
-                }
-              }
             }
           }
         },

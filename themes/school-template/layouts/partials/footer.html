@@ -14,11 +14,33 @@
           <i class="fa fa-envelope me-3"></i>{{ .Site.Data.data.global.footer.contact.email }}
         </p>
         <div class="d-flex pt-2">
-          {{ range .Site.Data.data.global.footer.social_links }}
-          <a class="btn btn-outline-light btn-social" href="{{ .url }}">
-            <img src="{{ .icon }}" alt="social media icon" class="social-icon" style="width: fit-content; height:inherit;">
-          </a>
-          {{ end }}
+          <div class="d-flex pt-2">
+            {{ with .Site.Data.data.global.footer.social_links.twitter }}
+            <a class="btn btn-outline-light btn-social" href="{{ . }}">
+              <i class="fab fa-twitter"></i>
+            </a>
+            {{ end }}
+            {{ with .Site.Data.data.global.footer.social_links.facebook }}
+            <a class="btn btn-outline-light btn-social" href="{{ . }}">
+              <i class="fab fa-facebook-f"></i>
+            </a>
+            {{ end }}
+            {{ with .Site.Data.data.global.footer.social_links.youtube }}
+            <a class="btn btn-outline-light btn-social" href="{{ . }}">
+              <i class="fab fa-youtube"></i>
+            </a>
+            {{ end }}
+            {{ with .Site.Data.data.global.footer.social_links.linkedin }}
+            <a class="btn btn-outline-light btn-social" href="{{ . }}">
+              <i class="fab fa-linkedin-in"></i>
+            </a>
+            {{ end }}
+            {{ range .Site.Data.data.global.footer.extra }}
+            <a class="btn btn-outline-light btn-social" href="{{ .url }}" >
+              <i class="bi bi-globe"></i>
+            </a>
+            {{ end }}
+          </div>
         </div>
       </div>
       <div class="col-lg-4 col-md-6">

@@ -19,18 +19,8 @@
               {{ .Site.Data.data.home.hero.description }}
             </p>
             <div class="slide-buttons">
-              <a
-                href="{{ .Site.Data.data.home.hero.cta.primary.url }}"
-                class="btn btn-primary"
-              >
-                {{ .Site.Data.data.home.hero.cta.primary.text }}
-              </a>
-              <a
-                href="{{ .Site.Data.data.home.hero.cta.secondary.url }}"
-                class="btn btn-outline"
-              >
-                {{ .Site.Data.data.home.hero.cta.secondary.text }}
-              </a>
+              <a href="/admission" class="btn btn-primary"> Enroll Now </a>
+              <a href="#events" class="btn btn-outline">View More </a>
             </div>
           </div>
         </div>
@@ -40,31 +30,6 @@
 </div>
 <!-- Hero Section End -->
 
-<!-- Notice Board Section Start -->
-<div class="container-xxl py-5 notice-board-section">
-  <div class="container">
-    <div class="row">
-      <div class="col-12">
-        <h1 class="notice-heading">{{ .Site.Data.data.home.notices.title }}</h1>
-        <div class="notice-list-wrapper">
-          <div class="notice-box">
-            <ul class="notice-list">
-              {{ range sort .Site.Data.data.notice.main.content_sections "date"
-              "desc" }}
-              <li>
-                <a href="/notices/{{ .id }}/">
-                  <span class="notice-date">{{ .date }}</span>
-                  {{ .section_title }}
-                </a>
-              </li>
-              {{ end }}
-            </ul>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
 <!-- Notice Board Section End -->
 
 <!-- Upcoming Events Start -->
