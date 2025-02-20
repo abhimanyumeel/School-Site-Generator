@@ -58,3 +58,7 @@ report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
 temp*
 
 public/uploads/temp*
+
+#seed files with sensitive data
+seeds
+dist

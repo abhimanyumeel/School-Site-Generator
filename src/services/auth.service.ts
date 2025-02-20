@@ -47,7 +47,7 @@ export class AuthService {
     return { access_token: token };
   }
 
-  async login(loginDto: LoginDto): Promise<{ access_token: string }> {
+  async login(loginDto: LoginDto): Promise<{ access_token: string, user: any }> {
     console.log('Login attempt with email:', loginDto.email);
 
     const user = await this.userRepository.findOne({
@@ -78,7 +78,20 @@ export class AuthService {
     const token = this.generateToken(user);
     console.log('Login token payload:', this.jwtService.decode(token));
 
-    return { access_token: token };
+    // Return both token and user data
+    return { 
+      access_token: token,
+      user: {
+        id: user.id,
+        email: user.email,
+        name: user.name,
+        role: user.role,
+        websitesLimit: user.websitesLimit,
+        websitesCreated: user.websitesCreated,
+        isActive: user.isActive,
+        lastLoginAt: user.lastLoginAt
+      }
+    };
   }
 
   async getCurrentUser(id: string): Promise<Omit<User, 'password'>> {
