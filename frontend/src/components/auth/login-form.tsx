@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import axios from '@/lib/axios';
+import { useAuth } from '@/contexts/auth-context';
 
 interface FormErrors {
   email?: string;
@@ -12,6 +13,7 @@ interface FormErrors {
 
 export default function LoginForm() {
   const router = useRouter();
+  const { login } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
   const [formData, setFormData] = useState({
@@ -52,16 +54,17 @@ export default function LoginForm() {
     
     try {
       const response = await axios.post('/auth/login', formData);
-      if (response.data.access_token) {
-        const token = response.data.access_token;
-        if (rememberMe) {
-          localStorage.setItem('token', token);
-        } else {
-          sessionStorage.setItem('token', token);
-        }
-        router.push('/home');
+      const { access_token, user } = response.data;
+
+      console.log('Login response:', { access_token, user });
+
+      if (access_token && user) {
+        console.log('Calling login function with:', { access_token, user });
+        await login(access_token, user);
+        console.log('Login function completed');
       }
     } catch (err: any) {
+      console.error('Login error:', err);
       setError(err.response?.data?.message || 'Invalid credentials');
     } finally {
       setIsLoading(false);

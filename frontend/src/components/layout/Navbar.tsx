@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useAuth } from '@/contexts/auth-context';
 import { useRouter } from 'next/navigation';
 
 interface NavbarProps {
@@ -12,14 +13,9 @@ interface NavbarProps {
 }
 
 export default function Navbar({ user }: NavbarProps) {
-  const router = useRouter();
   const [showProfileMenu, setShowProfileMenu] = useState(false);
-
-  const handleLogout = () => {
-    localStorage.removeItem('token');
-    sessionStorage.removeItem('token');
-    router.push('/login');
-  };
+  const { logout } = useAuth();
+  const router = useRouter();
 
   return (
     <nav className="bg-white shadow-sm">
@@ -74,7 +70,7 @@ export default function Navbar({ user }: NavbarProps) {
                     <p className="text-sm text-gray-500">Role: {user?.role}</p>
                   </div>
                   <button
-                    onClick={handleLogout}
+                    onClick={logout}
                     className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
                   >
                     Logout
