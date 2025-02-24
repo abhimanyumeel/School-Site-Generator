@@ -17,13 +17,13 @@ import { IoCalendarOutline } from 'react-icons/io5';
 import { LuContact } from 'react-icons/lu';
 import { IoMegaphoneOutline } from 'react-icons/io5';
 import { HiTemplate } from 'react-icons/hi';
-import { GrGallery } from "react-icons/gr";
-import { FaFileContract } from "react-icons/fa";
-import { MdOutlinePrivacyTip } from "react-icons/md";
-import { RiUserAddLine } from "react-icons/ri";
-import { LiaClipboardListSolid } from "react-icons/lia";
-import { FaRegHandshake } from "react-icons/fa";
-import { PiCertificate } from "react-icons/pi";
+import { GrGallery } from 'react-icons/gr';
+import { FaFileContract } from 'react-icons/fa';
+import { MdOutlinePrivacyTip } from 'react-icons/md';
+import { RiUserAddLine } from 'react-icons/ri';
+import { LiaClipboardListSolid } from 'react-icons/lia';
+import { FaRegHandshake } from 'react-icons/fa';
+import { PiCertificate } from 'react-icons/pi';
 
 import ImageUploadField from '@/components/form/ImageUploadField';
 
@@ -375,91 +375,111 @@ export default function CustomizeTheme() {
             const existingItems =
               formData[currentPage]?.[sectionId]?.[fieldId] || [];
 
-            pageData[sectionId][fieldId] = existingItems.map((item: any, index: number) => {
-              const itemData: Record<string, any> = {};
+            pageData[sectionId][fieldId] = existingItems.map(
+              (item: any, index: number) => {
+                const itemData: Record<string, any> = {};
 
-              // Process each field in the array item
-              Object.entries(field.items || {}).forEach(
-                ([itemKey, itemDef]) => {
-                  if ((itemDef as Field).type === 'object') {
-                    // Handle nested objects within array items
-                    const nestedData: Record<string, any> = {};
-                    Object.entries((itemDef as Field).fields || {}).forEach(
-                      ([nestedKey, nestedField]) => {
-                        if ((nestedField as Field).type === 'image' || 
-                        (nestedField as Field).type === 'image-set') {
-                      // Handle image fields within nested objects
-                      nestedData[nestedKey] = item[itemKey]?.[nestedKey] || 
-                        ((nestedField as Field).type === 'image-set' ? [] : '');
-                    } else if ((nestedField as Field).type === 'checkbox') {
-                      // Handle checkbox fields within nested objects
-                      nestedData[nestedKey] = !!item[itemKey]?.[nestedKey];
-                    } else {
-                      // Handle other field types (short-text, email, number, long-text, select)
-                      nestedData[nestedKey] = item[itemKey]?.[nestedKey] || '';
+                // Process each field in the array item
+                Object.entries(field.items || {}).forEach(
+                  ([itemKey, itemDef]) => {
+                    if ((itemDef as Field).type === 'object') {
+                      // Handle nested objects within array items
+                      const nestedData: Record<string, any> = {};
+                      Object.entries((itemDef as Field).fields || {}).forEach(
+                        ([nestedKey, nestedField]) => {
+                          if (
+                            (nestedField as Field).type === 'image' ||
+                            (nestedField as Field).type === 'image-set'
+                          ) {
+                            // Handle image fields within nested objects
+                            nestedData[nestedKey] =
+                              item[itemKey]?.[nestedKey] ||
+                              ((nestedField as Field).type === 'image-set'
+                                ? []
+                                : '');
+                          } else if (
+                            (nestedField as Field).type === 'checkbox'
+                          ) {
+                            // Handle checkbox fields within nested objects
+                            nestedData[nestedKey] =
+                              !!item[itemKey]?.[nestedKey];
+                          } else {
+                            // Handle other field types (short-text, email, number, long-text, select)
+                            nestedData[nestedKey] =
+                              item[itemKey]?.[nestedKey] || '';
+                          }
+                        },
+                      );
+                      itemData[itemKey] = nestedData;
                     }
-                      },
-                    );
-                    itemData[itemKey] = nestedData;
-                  }
-                  // Handle image fields directly in array items
-                  else if ((itemDef as Field).type === 'image' || 
-                    (itemDef as Field).type === 'image-set') {
-
                     // Handle image fields directly in array items
+                    else if (
+                      (itemDef as Field).type === 'image' ||
+                      (itemDef as Field).type === 'image-set'
+                    ) {
+                      // Handle image fields directly in array items
                       if ((itemDef as Field).type === 'image-set') {
                         // Handle image sets (multiple images)
-                        itemData[itemKey] = Array.isArray(item[itemKey]) ? item[itemKey] : [];
+                        itemData[itemKey] = Array.isArray(item[itemKey])
+                          ? item[itemKey]
+                          : [];
                       } else {
                         // Handle single image
                         itemData[itemKey] = item[itemKey] || '';
                       }
-                    
-                  }
-                  // Handle simple fields (text, number, etc.) but skip if it's an object type
-                  else if (typeof itemDef === 'object' && 'type' in itemDef && ((itemDef as {type: string}).type !== 'object' || (itemDef as {type: string}).type === 'long-text')) {
-                    // Handle simple input fields (text, number, etc.)
-                    itemData[itemKey] = item[itemKey] || '';
-                  }
-                     // Handle select fields with special dropdown case
-                     else if ((itemDef as Field).type === 'select') {
+                    }
+                    // Handle simple fields (text, number, etc.) but skip if it's an object type
+                    else if (
+                      typeof itemDef === 'object' &&
+                      'type' in itemDef &&
+                      ((itemDef as { type: string }).type !== 'object' ||
+                        (itemDef as { type: string }).type === 'long-text')
+                    ) {
+                      // Handle simple input fields (text, number, etc.)
+                      itemData[itemKey] = item[itemKey] || '';
+                    }
+                    // Handle select fields with special dropdown case
+                    else if ((itemDef as Field).type === 'select') {
                       itemData[itemKey] = item[itemKey] || '';
                       // Handle special case for dropdown type
                       if (itemKey === 'type' && item[itemKey] === 'dropdown') {
-                       itemData.items = item.items || [];
+                        itemData.items = item.items || [];
                       }
-                  }
-                  // handle nested arrays (for dropdown emnus and generic arrays)
-                  else if ((itemDef as Field).type === 'array') {
-                    if (item.type === 'dropdown') {
-                      // Handle dropdown-specific nested arrays with complex items
-                      itemData[itemKey] = (item[itemKey] || []).map((subItem: any) => {
-                        const subItemData: Record<string, any> = {};
-                        Object.entries((itemDef as Field).items || {}).forEach(
-                          ([subItemKey, subItemDef]) => {
-                            subItemData[subItemKey] = subItem[subItemKey] || '';
-                          }
-                        );
-                        return subItemData;
-                      });
-                    } else {
-                      // Handle generic nested arrays (like features)
-                      itemData[itemKey] = item[itemKey] || [];
                     }
-                  }
-                  // Handle checkbox fields directly in array items
-                  else if ((itemDef as Field).type === 'checkbox') {
-                    itemData[itemKey] = !!item[itemKey];
-                  }
-                  else {
-                    // Handle regular fields
-                    itemData[itemKey] = item[itemKey] || '';
-                  }
-                },
-              );
+                    // handle nested arrays (for dropdown emnus and generic arrays)
+                    else if ((itemDef as Field).type === 'array') {
+                      if (item.type === 'dropdown') {
+                        // Handle dropdown-specific nested arrays with complex items
+                        itemData[itemKey] = (item[itemKey] || []).map(
+                          (subItem: any) => {
+                            const subItemData: Record<string, any> = {};
+                            Object.entries(
+                              (itemDef as Field).items || {},
+                            ).forEach(([subItemKey, subItemDef]) => {
+                              subItemData[subItemKey] =
+                                subItem[subItemKey] || '';
+                            });
+                            return subItemData;
+                          },
+                        );
+                      } else {
+                        // Handle generic nested arrays (like features)
+                        itemData[itemKey] = item[itemKey] || [];
+                      }
+                    }
+                    // Handle checkbox fields directly in array items
+                    else if ((itemDef as Field).type === 'checkbox') {
+                      itemData[itemKey] = !!item[itemKey];
+                    } else {
+                      // Handle regular fields
+                      itemData[itemKey] = item[itemKey] || '';
+                    }
+                  },
+                );
 
-              return itemData;
-            });
+                return itemData;
+              },
+            );
           } else if (field.type === 'object') {
             // Handle object fields
             const objectData: Record<string, any> = {};
@@ -467,134 +487,161 @@ export default function CustomizeTheme() {
             const allowMultiple = fieldAsField.allowMultiple !== false;
 
             if (!allowMultiple) {
-
-                  // Handle single instance objects (like footer.about)
-    Object.entries(fieldAsField.fields || {}).forEach(([subFieldId, subField]) => {
-      if ((subField as Field).type === 'array') {
-        // Handle arrays within objects
-        const arrayData = formData[currentPage]?.[sectionId]?.[fieldId]?.[subFieldId] || [];
-        objectData[subFieldId] = arrayData.map((item: any) => item || '');
-      } else if ((subField as Field).type === 'object') {
-        // Handle nested objects
-        const nestedData: Record<string, any> = {};
-        Object.entries((subField as Field).fields || {}).forEach(
-          ([nestedKey, nestedField]) => {
-            if ((nestedField as Field).type === 'array') {
-              // Handle arrays within nested objects
-              const arrayData = formData[currentPage]?.[sectionId]?.[fieldId]?.[subFieldId]?.[nestedKey] || [];
-              nestedData[nestedKey] = arrayData;
-            } else if ((nestedField as Field).type === 'object') {
-              // Handle deep nested objects
-              const deepNestedData: Record<string, any> = {};
-              Object.entries((nestedField as Field).fields || {}).forEach(
-                ([deepNestedFieldId, deepNestedField]) => {
-                  const input = e.currentTarget.elements.namedItem(
-                    `${sectionId}.${fieldId}.${subFieldId}.${nestedKey}.${deepNestedFieldId}`
-                  ) as HTMLInputElement;
-                  deepNestedData[deepNestedFieldId] = input?.value || '';
-                }
+              // Handle single instance objects (like footer.about)
+              Object.entries(fieldAsField.fields || {}).forEach(
+                ([subFieldId, subField]) => {
+                  if ((subField as Field).type === 'array') {
+                    // Handle arrays within objects
+                    const arrayData =
+                      formData[currentPage]?.[sectionId]?.[fieldId]?.[
+                        subFieldId
+                      ] || [];
+                    objectData[subFieldId] = arrayData.map(
+                      (item: any) => item || '',
+                    );
+                  } else if ((subField as Field).type === 'object') {
+                    // Handle nested objects
+                    const nestedData: Record<string, any> = {};
+                    Object.entries((subField as Field).fields || {}).forEach(
+                      ([nestedKey, nestedField]) => {
+                        if ((nestedField as Field).type === 'array') {
+                          // Handle arrays within nested objects
+                          const arrayData =
+                            formData[currentPage]?.[sectionId]?.[fieldId]?.[
+                              subFieldId
+                            ]?.[nestedKey] || [];
+                          nestedData[nestedKey] = arrayData;
+                        } else if ((nestedField as Field).type === 'object') {
+                          // Handle deep nested objects
+                          const deepNestedData: Record<string, any> = {};
+                          Object.entries(
+                            (nestedField as Field).fields || {},
+                          ).forEach(([deepNestedFieldId, deepNestedField]) => {
+                            const input = e.currentTarget.elements.namedItem(
+                              `${sectionId}.${fieldId}.${subFieldId}.${nestedKey}.${deepNestedFieldId}`,
+                            ) as HTMLInputElement;
+                            deepNestedData[deepNestedFieldId] =
+                              input?.value || '';
+                          });
+                          nestedData[nestedKey] = deepNestedData;
+                        } else {
+                          // Handle regular fields within nested objects
+                          const input = e.currentTarget.elements.namedItem(
+                            `${sectionId}.${fieldId}.${subFieldId}.${nestedKey}`,
+                          ) as HTMLInputElement;
+                          nestedData[nestedKey] = input?.value || '';
+                        }
+                      },
+                    );
+                    objectData[subFieldId] = nestedData;
+                  } else if ((subField as Field).type === 'long-text') {
+                    // Handle long-text fields
+                    const input = e.currentTarget.elements.namedItem(
+                      `${sectionId}.${fieldId}.${subFieldId}`,
+                    ) as HTMLTextAreaElement;
+                    objectData[subFieldId] = input?.value || '';
+                  } else {
+                    // Handle regular fields
+                    const input = e.currentTarget.elements.namedItem(
+                      `${sectionId}.${fieldId}.${subFieldId}`,
+                    ) as HTMLInputElement;
+                    objectData[subFieldId] = input?.value || '';
+                  }
+                },
               );
-              nestedData[nestedKey] = deepNestedData;
             } else {
-              // Handle regular fields within nested objects
-              const input = e.currentTarget.elements.namedItem(
-                `${sectionId}.${fieldId}.${subFieldId}.${nestedKey}`
-              ) as HTMLInputElement;
-              nestedData[nestedKey] = input?.value || '';
-            }
-          }
-        );
-        objectData[subFieldId] = nestedData;
-      } else if ((subField as Field).type === 'long-text') {
-        // Handle long-text fields
-        const input = e.currentTarget.elements.namedItem(
-          `${sectionId}.${fieldId}.${subFieldId}`
-        ) as HTMLTextAreaElement;
-        objectData[subFieldId] = input?.value || '';
-      } else {
-        // Handle regular fields
-        const input = e.currentTarget.elements.namedItem(
-          `${sectionId}.${fieldId}.${subFieldId}`
-        ) as HTMLInputElement;
-        objectData[subFieldId] = input?.value || '';
-      }
-    });
-            } else {
-
-            // Get all object instances
-            Object.entries(formData[currentPage]?.[sectionId]?.[fieldId] || {}).forEach(([objectId, objectInstance]) => {
-            Object.entries(fieldAsField.fields || {}).forEach(
-              ([subFieldId, subField]) => {
-                if ((subField as Field).type === 'array') {
-                  // Handle arrays within objects
-                  const arrayData =
-                    formData[currentPage]?.[sectionId]?.[fieldId]?.[objectId]?.[
-                      subFieldId
-                    ] || [];
-                  objectData[subFieldId] = arrayData.map((item: any) => {
-                    // Handle simple string values
-                    return item || '';
-                  });
-                  console.log('Array within object data:', {
-                    path: `${sectionId}.${fieldId}.${subFieldId}`,
-                    data: arrayData,
-                  });
-                } else if ((subField as Field).type === 'object') {
-                  // Handle nested objects (like social_links in footer.about)
-                  const nestedData: Record<string, any> = {};
-                  Object.entries((subField as Field).fields || {}).forEach(
-                    ([nestedKey, nestedField]) => {
-                      if ((nestedField as Field).type === 'array'){
-                        // Handle arrays within nested objects
-                        const arrayData = formData[currentPage]?.[sectionId]?.[fieldId]?.[objectId]?.[subFieldId]?.[nestedKey] || [];
-                        nestedData[nestedKey] = arrayData;
-                      }
-                      else if ((nestedField as Field).type === 'object'){
-                        // Handle deep nested objects
-                        const deepNestedData: Record<string, any> = {};
-
-                        Object.entries((nestedField as Field).fields || {}).forEach(([deepNestedFieldId, deepNestedField]) => {
-                          if ((deepNestedField as Field).type === 'array'){
-                            // Handle arrays within deep nested objects
-                            deepNestedData[deepNestedFieldId] = 
-                            formData[currentPage]?.[sectionId]?.[fieldId]?.[objectId]?.[subFieldId]?.[nestedKey]?.[deepNestedFieldId] || [];
-                          } else {
-                            // Handle regular fields within deep nested objects
-                            const deepNestedValue = 
-                            formData[currentPage]?.[sectionId]?.[fieldId]?.[objectId]?.[subFieldId]?.[nestedKey]?.[deepNestedFieldId];
-                          deepNestedData[deepNestedFieldId] = deepNestedValue || '';
-                          }
+              // Get all object instances
+              Object.entries(
+                formData[currentPage]?.[sectionId]?.[fieldId] || {},
+              ).forEach(([objectId, objectInstance]) => {
+                Object.entries(fieldAsField.fields || {}).forEach(
+                  ([subFieldId, subField]) => {
+                    if ((subField as Field).type === 'array') {
+                      // Handle arrays within objects
+                      const arrayData =
+                        formData[currentPage]?.[sectionId]?.[fieldId]?.[
+                          objectId
+                        ]?.[subFieldId] || [];
+                      objectData[subFieldId] = arrayData.map((item: any) => {
+                        // Handle simple string values
+                        return item || '';
                       });
-                      nestedData[nestedKey] = deepNestedData;
-                      } else {
-                        // Handle regular fields within nested objects
-                        const nestedInput = e.currentTarget.elements.namedItem(
-                          `${sectionId}.${fieldId}.${objectId}.${subFieldId}.${nestedKey}`,
-                        ) as HTMLInputElement;
-                        nestedData[nestedKey] = nestedInput?.value || '';
-                      }
-                    },
-                  );
-                  objectData[subFieldId] = nestedData;
-                }
-                else if ((subField as Field).type === 'long-text'){
-                  // Handle long-text fields within objects
-                  const textareaInput = e.currentTarget.elements.namedItem(
-                    `${sectionId}.${fieldId}.${objectId}.${subFieldId}`,
-                  ) as HTMLTextAreaElement;
-                  objectData[subFieldId] = textareaInput?.value || '';
-                }
-                else {
-                  // Handle direct fields within object (like description in footer.about)
-                  const input = e.currentTarget.elements.namedItem(
-                    `${sectionId}.${fieldId}.${objectId}.${subFieldId}`,
-                  ) as HTMLInputElement;
-                  objectData[subFieldId] = input?.value || '';
-                }
-              }
-            );
-          });
-        }
+                      console.log('Array within object data:', {
+                        path: `${sectionId}.${fieldId}.${subFieldId}`,
+                        data: arrayData,
+                      });
+                    } else if ((subField as Field).type === 'object') {
+                      // Handle nested objects (like social_links in footer.about)
+                      const nestedData: Record<string, any> = {};
+                      Object.entries((subField as Field).fields || {}).forEach(
+                        ([nestedKey, nestedField]) => {
+                          if ((nestedField as Field).type === 'array') {
+                            // Handle arrays within nested objects
+                            const arrayData =
+                              formData[currentPage]?.[sectionId]?.[fieldId]?.[
+                                objectId
+                              ]?.[subFieldId]?.[nestedKey] || [];
+                            nestedData[nestedKey] = arrayData;
+                          } else if ((nestedField as Field).type === 'object') {
+                            // Handle deep nested objects
+                            const deepNestedData: Record<string, any> = {};
+
+                            Object.entries(
+                              (nestedField as Field).fields || {},
+                            ).forEach(
+                              ([deepNestedFieldId, deepNestedField]) => {
+                                if (
+                                  (deepNestedField as Field).type === 'array'
+                                ) {
+                                  // Handle arrays within deep nested objects
+                                  deepNestedData[deepNestedFieldId] =
+                                    formData[currentPage]?.[sectionId]?.[
+                                      fieldId
+                                    ]?.[objectId]?.[subFieldId]?.[nestedKey]?.[
+                                      deepNestedFieldId
+                                    ] || [];
+                                } else {
+                                  // Handle regular fields within deep nested objects
+                                  const deepNestedValue =
+                                    formData[currentPage]?.[sectionId]?.[
+                                      fieldId
+                                    ]?.[objectId]?.[subFieldId]?.[nestedKey]?.[
+                                      deepNestedFieldId
+                                    ];
+                                  deepNestedData[deepNestedFieldId] =
+                                    deepNestedValue || '';
+                                }
+                              },
+                            );
+                            nestedData[nestedKey] = deepNestedData;
+                          } else {
+                            // Handle regular fields within nested objects
+                            const nestedInput =
+                              e.currentTarget.elements.namedItem(
+                                `${sectionId}.${fieldId}.${objectId}.${subFieldId}.${nestedKey}`,
+                              ) as HTMLInputElement;
+                            nestedData[nestedKey] = nestedInput?.value || '';
+                          }
+                        },
+                      );
+                      objectData[subFieldId] = nestedData;
+                    } else if ((subField as Field).type === 'long-text') {
+                      // Handle long-text fields within objects
+                      const textareaInput = e.currentTarget.elements.namedItem(
+                        `${sectionId}.${fieldId}.${objectId}.${subFieldId}`,
+                      ) as HTMLTextAreaElement;
+                      objectData[subFieldId] = textareaInput?.value || '';
+                    } else {
+                      // Handle direct fields within object (like description in footer.about)
+                      const input = e.currentTarget.elements.namedItem(
+                        `${sectionId}.${fieldId}.${objectId}.${subFieldId}`,
+                      ) as HTMLInputElement;
+                      objectData[subFieldId] = input?.value || '';
+                    }
+                  },
+                );
+              });
+            }
 
             // Update the page data with the object field values
             pageData[sectionId][fieldId] = objectData;
@@ -741,6 +788,7 @@ export default function CustomizeTheme() {
       case 'email':
       case 'url':
       case 'number':
+      case 'date':
         return (
           <input
             type={field.type === 'short-text' ? 'text' : field.type}
@@ -800,8 +848,6 @@ export default function CustomizeTheme() {
                     key={index}
                     className="p-6 bg-gray-50 rounded-lg border border-gray-100"
                   >
-
-
                     <div className="flex justify-between items-center mb-4">
                       <span className="text-sm font-medium text-gray-700">
                         {field.label || 'Item'} {index + 1}
@@ -835,44 +881,54 @@ export default function CustomizeTheme() {
                       )}
                     </div>
 
-              {typeof field.items === 'object' && 
-               'type' in field.items && 
-               (field.items as unknown as Field).type === 'object' && 
-               'fields' in field.items && 
-               field.items.fields && (
-                <div className="space-y-3">
-                  {Object.entries((field.items as unknown as {fields: Record<string, Field>}).fields).map(([fieldKey, fieldDef]) => (
-                    <div key={fieldKey} className="flex flex-col">
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
-                        {(fieldDef as Field).label}
-                      </label>
-                      <input
-                        type="text"
-                        value={item[fieldKey] || ''}
-                        onChange={(e) => {
-                          const newItems = [...(formData[currentPage]?.[sectionId]?.[fieldId] || [])];
-                          newItems[index] = {
-                            ...newItems[index],
-                            [fieldKey]: e.target.value,
-                          };
-                          setFormData({
-                            ...formData,
-                            [currentPage]: {
-                              ...formData[currentPage],
-                              [sectionId]: {
-                                ...formData[currentPage]?.[sectionId],
-                                [fieldId]: newItems,
-                              },
-                            },
-                          });
-                        }}
-                        className="flex-1 px-4 py-2.5 text-gray-900 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                        placeholder={`Enter ${(fieldDef as Field).label}`}
-                      />
-                    </div>
-                  ))}
-                </div>
-              )}
+                    {typeof field.items === 'object' &&
+                      'type' in field.items &&
+                      (field.items as unknown as Field).type === 'object' &&
+                      'fields' in field.items &&
+                      field.items.fields && (
+                        <div className="space-y-3">
+                          {Object.entries(
+                            (
+                              field.items as unknown as {
+                                fields: Record<string, Field>;
+                              }
+                            ).fields,
+                          ).map(([fieldKey, fieldDef]) => (
+                            <div key={fieldKey} className="flex flex-col">
+                              <label className="block text-sm font-medium text-gray-700 mb-1">
+                                {(fieldDef as Field).label}
+                              </label>
+                              <input
+                                type="text"
+                                value={item[fieldKey] || ''}
+                                onChange={(e) => {
+                                  const newItems = [
+                                    ...(formData[currentPage]?.[sectionId]?.[
+                                      fieldId
+                                    ] || []),
+                                  ];
+                                  newItems[index] = {
+                                    ...newItems[index],
+                                    [fieldKey]: e.target.value,
+                                  };
+                                  setFormData({
+                                    ...formData,
+                                    [currentPage]: {
+                                      ...formData[currentPage],
+                                      [sectionId]: {
+                                        ...formData[currentPage]?.[sectionId],
+                                        [fieldId]: newItems,
+                                      },
+                                    },
+                                  });
+                                }}
+                                className="flex-1 px-4 py-2.5 text-gray-900 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                placeholder={`Enter ${(fieldDef as Field).label}`}
+                              />
+                            </div>
+                          ))}
+                        </div>
+                      )}
 
                     {/* Render item fields */}
                     <div className="space-y-4">
@@ -909,7 +965,8 @@ export default function CustomizeTheme() {
                                         </label>
                                         {fieldDef.type === 'short-text' ||
                                         fieldDef.type === 'email' ||
-                                        fieldDef.type === 'number' ? (
+                                        fieldDef.type === 'number' ||
+                                        fieldDef.type === 'date' ? (
                                           <input
                                             type={
                                               fieldDef.type === 'short-text'
@@ -1474,52 +1531,82 @@ export default function CustomizeTheme() {
                             }
 
                             // handle Image fields
-                            if (typedItemDef.type === 'image' || typedItemDef.type === 'image-set'){
+                            if (
+                              typedItemDef.type === 'image' ||
+                              typedItemDef.type === 'image-set'
+                            ) {
                               return (
                                 <div key={itemKey} className="mb-4">
-                                <ImageUploadField
-                                  id = {`${sectionId}.${fieldId}.${index}.${itemKey}`}
-                                  field = {typedItemDef as ImageField}
-                                  onUpload = {async (file: File | null, fieldId: string, existingUrls?: string[]) => {
-                                    const uploadedUrl = await handleImageUpload(file, fieldId, existingUrls);
-                                    if (uploadedUrl) {
+                                  <ImageUploadField
+                                    id={`${sectionId}.${fieldId}.${index}.${itemKey}`}
+                                    field={typedItemDef as ImageField}
+                                    onUpload={async (
+                                      file: File | null,
+                                      fieldId: string,
+                                      existingUrls?: string[],
+                                    ) => {
+                                      const uploadedUrl =
+                                        await handleImageUpload(
+                                          file,
+                                          fieldId,
+                                          existingUrls,
+                                        );
+                                      if (uploadedUrl) {
+                                        const baseFieldId =
+                                          fieldId.split('.')[1];
+                                        const newItems = [
+                                          ...(formData[currentPage]?.[
+                                            sectionId
+                                          ]?.[baseFieldId] || [{}]),
+                                        ];
 
-                                      const baseFieldId = fieldId.split('.')[1];
-                                      const newItems = [...(formData[currentPage]?.[sectionId]?.[baseFieldId] || [{}])];
+                                        newItems[index] = {
+                                          ...newItems[index],
+                                          [itemKey]:
+                                            typedItemDef.type === 'image-set'
+                                              ? [
+                                                  ...(newItems[index][
+                                                    itemKey
+                                                  ] || []),
+                                                  uploadedUrl,
+                                                ]
+                                              : uploadedUrl,
+                                        };
 
-                                      
-                                      newItems[index] = {
-                                        ...newItems[index],
-                                        [itemKey]: typedItemDef.type === 'image-set'
-                                          ? [...(newItems[index][itemKey] || []), uploadedUrl]
-                                          : uploadedUrl
-                                      };
-
-
-                                      setFormData(prevFormData => {
-                                        const newFormData = {
+                                        setFormData((prevFormData) => {
+                                          const newFormData = {
                                             ...prevFormData,
                                             [currentPage]: {
                                               ...prevFormData[currentPage],
                                               [sectionId]: {
-                                                ...prevFormData[currentPage]?.[sectionId],
-                                                [baseFieldId]: newItems
-                                              }
-                                            }
+                                                ...prevFormData[currentPage]?.[
+                                                  sectionId
+                                                ],
+                                                [baseFieldId]: newItems,
+                                              },
+                                            },
                                           };
 
-                                        return newFormData;
-                                      });
-
+                                          return newFormData;
+                                        });
+                                      }
+                                      return uploadedUrl;
+                                    }}
+                                    value={
+                                      item[itemKey] ||
+                                      (typedItemDef.type === 'image-set'
+                                        ? []
+                                        : '')
                                     }
-                                    return uploadedUrl;
-                                  }}
-                                  value = {item[itemKey] || (typedItemDef.type === 'image-set' ? [] : '')}
-                                  isUploading = {uploadingImages[`${sectionId}.${fieldId}.${index}.${itemKey}`]}
-                                  schoolWebsiteId = {website?.id || ''}
-                                />
+                                    isUploading={
+                                      uploadingImages[
+                                        `${sectionId}.${fieldId}.${index}.${itemKey}`
+                                      ]
+                                    }
+                                    schoolWebsiteId={website?.id || ''}
+                                  />
                                 </div>
-                              )
+                              );
                             }
 
                             // handle long text fields
@@ -1527,12 +1614,18 @@ export default function CustomizeTheme() {
                               return (
                                 <div key={itemKey} className="mb-4">
                                   <label className="block text-sm font-semibold text-gray-800 mb-2">
-                                    {typedItemDef.label || itemKey.charAt(0).toUpperCase() + itemKey.slice(1)}
+                                    {typedItemDef.label ||
+                                      itemKey.charAt(0).toUpperCase() +
+                                        itemKey.slice(1)}
                                   </label>
                                   <textarea
                                     value={item[itemKey] || ''}
                                     onChange={(e) => {
-                                      const newItems = [...(formData[currentPage]?.[sectionId]?.[fieldId] || [])];
+                                      const newItems = [
+                                        ...(formData[currentPage]?.[
+                                          sectionId
+                                        ]?.[fieldId] || []),
+                                      ];
                                       newItems[index] = {
                                         ...newItems[index],
                                         [itemKey]: e.target.value,
@@ -1542,7 +1635,9 @@ export default function CustomizeTheme() {
                                         [currentPage]: {
                                           ...formData[currentPage],
                                           [sectionId]: {
-                                            ...formData[currentPage]?.[sectionId],
+                                            ...formData[currentPage]?.[
+                                              sectionId
+                                            ],
                                             [fieldId]: newItems,
                                           },
                                         },
@@ -1557,12 +1652,113 @@ export default function CustomizeTheme() {
                               );
                             }
 
+                            // Add handling for date type
+                            if (typedItemDef.type === 'date') {
+                              return (
+                                <div key={itemKey} className="mb-4">
+                                  <label className="block text-sm font-semibold text-gray-800 mb-2">
+                                    {typedItemDef.label ||
+                                      itemKey.charAt(0).toUpperCase() +
+                                        itemKey.slice(1)}
+                                  </label>
+                                  <input
+                                    type="date"
+                                    value={item[itemKey] || ''}
+                                    onChange={(e) => {
+                                      const newItems = [
+                                        ...(formData[currentPage]?.[
+                                          sectionId
+                                        ]?.[fieldId] || []),
+                                      ];
+                                      newItems[index] = {
+                                        ...newItems[index],
+                                        [itemKey]: e.target.value,
+                                      };
+                                      setFormData({
+                                        ...formData,
+                                        [currentPage]: {
+                                          ...formData[currentPage],
+                                          [sectionId]: {
+                                            ...formData[currentPage]?.[
+                                              sectionId
+                                            ],
+                                            [fieldId]: newItems,
+                                          },
+                                        },
+                                      });
+                                    }}
+                                    className="w-full px-3 py-2.5 border border-gray-300 rounded-md 
+                                      text-gray-900 bg-white focus:ring-2 focus:ring-blue-500 
+                                      focus:border-blue-500 shadow-sm"
+                                  />
+                                </div>
+                              );
+                            }
+
+                            // Handle simple fields (text, number, etc.)
+
+                            // Handle simple fields (text, number, etc.) but skip if it's an object type
+                            if (
+                              typeof itemDef === 'object' &&
+                              'type' in itemDef &&
+                              (itemDef as { type: string }).type !== 'object'
+                            ) {
+                              return (
+                                <div key={itemKey} className="mb-4">
+                                  <label className="block text-sm font-semibold text-gray-800 mb-2">
+                                    {(itemDef as Field).label ||
+                                      itemKey.charAt(0).toUpperCase() +
+                                        itemKey.slice(1)}
+                                  </label>
+                                  <input
+                                    type={
+                                      (itemDef as Field).type === 'date'
+                                        ? 'date'
+                                        : 'text'
+                                    }
+                                    value={item[itemKey] || ''}
+                                    onChange={(e) => {
+                                      const newItems = [
+                                        ...(formData[currentPage]?.[
+                                          sectionId
+                                        ]?.[fieldId] || []),
+                                      ];
+                                      newItems[index] = {
+                                        ...newItems[index],
+                                        [itemKey]: e.target.value,
+                                      };
+                                      setFormData({
+                                        ...formData,
+                                        [currentPage]: {
+                                          ...formData[currentPage],
+                                          [sectionId]: {
+                                            ...formData[currentPage]?.[
+                                              sectionId
+                                            ],
+                                            [fieldId]: newItems,
+                                          },
+                                        },
+                                      });
+                                    }}
+                                    className="w-full px-3 py-2.5 border border-gray-300 rounded-md 
+                                  text-gray-900 bg-white focus:ring-2 focus:ring-blue-500 
+                                  focus:border-blue-500 shadow-sm"
+                                    placeholder={`Enter ${(itemDef as Field).label}`}
+                                  />
+                                </div>
+                              );
+                            }
+                            return null;
                           }
 
                           // Handle simple fields (text, number, etc.)
 
                           // Handle simple fields (text, number, etc.) but skip if it's an object type
-                          if (typeof itemDef === 'object' && 'type' in itemDef && (itemDef as { type: string }).type !== 'object') {
+                          if (
+                            typeof itemDef === 'object' &&
+                            'type' in itemDef &&
+                            (itemDef as { type: string }).type !== 'object'
+                          ) {
                             return (
                               <div key={itemKey} className="mb-4">
                                 <label className="block text-sm font-semibold text-gray-800 mb-2">
@@ -1571,7 +1767,11 @@ export default function CustomizeTheme() {
                                       itemKey.slice(1)}
                                 </label>
                                 <input
-                                  type="text"
+                                  type={
+                                    (itemDef as Field).type === 'date'
+                                      ? 'date'
+                                      : 'text'
+                                  }
                                   value={item[itemKey] || ''}
                                   onChange={(e) => {
                                     const newItems = [
@@ -1653,43 +1853,44 @@ export default function CustomizeTheme() {
 
       case 'object':
         const allowMultiple = (field as Field).allowMultiple !== false;
-        const objectEntries = allowMultiple 
-        ? Object.entries(formData[currentPage]?.[sectionId]?.[fieldId] || {})
-        : [['single', formData[currentPage]?.[sectionId]?.[fieldId] || {}]];
+        const objectEntries = allowMultiple
+          ? Object.entries(formData[currentPage]?.[sectionId]?.[fieldId] || {})
+          : [['single', formData[currentPage]?.[sectionId]?.[fieldId] || {}]];
 
         return (
-
-        
           <div className="p-6 bg-gray-50 rounded-lg border border-gray-100">
-            
-
             {objectEntries.map(([objectId, objectData]) => (
-              <div key={objectId} className={`${allowMultiple ? "mb-6 p-4 border-t border-gray-300" : ""}`}>
+              <div
+                key={objectId}
+                className={`${allowMultiple ? 'mb-6 p-4 border-t border-gray-300' : ''}`}
+              >
                 {/* Remove button for each object instance */}
                 {allowMultiple && (
-                <div className="flex justify-end mb-4">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setFormData((prevData) => {
-                        const newState = structuredClone(prevData);
+                  <div className="flex justify-end mb-4">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setFormData((prevData) => {
+                          const newState = structuredClone(prevData);
 
-                        if (
-                          newState[currentPage] &&
-                          newState[currentPage][sectionId] &&
-                          newState[currentPage][sectionId][fieldId]
-                        ) {
-                          delete newState[currentPage][sectionId][fieldId][objectId];
-                        }
+                          if (
+                            newState[currentPage] &&
+                            newState[currentPage][sectionId] &&
+                            newState[currentPage][sectionId][fieldId]
+                          ) {
+                            delete newState[currentPage][sectionId][fieldId][
+                              objectId
+                            ];
+                          }
 
-                        return newState;
-                      });
-                    }}
-                    className="text-red-500 hover:text-red-700 text-sm"
-                  >
-                    Remove
-                  </button>
-                </div>
+                          return newState;
+                        });
+                      }}
+                      className="text-red-500 hover:text-red-700 text-sm"
+                    >
+                      Remove
+                    </button>
+                  </div>
                 )}
                 {Object.entries(field.fields || {}).map(
                   ([subFieldId, subField]) => (
@@ -1707,385 +1908,182 @@ export default function CustomizeTheme() {
                                 </label>
                                 {(nestedField as Field).type === 'array' ? (
                                   <div className="space-y-4">
-                                    {(formData[currentPage]?.[sectionId]?.[fieldId]?.[objectId]?.[subFieldId]?.[nestedFieldId] || []).map((item: any, index: number) => (
-                                      <div key={item.id || index} className="p-4 bg-white rounded-lg border border-gray-200 shadow-sm">
+                                    {(
+                                      formData[currentPage]?.[sectionId]?.[
+                                        fieldId
+                                      ]?.[objectId]?.[subFieldId]?.[
+                                        nestedFieldId
+                                      ] || []
+                                    ).map((item: any, index: number) => (
+                                      <div
+                                        key={item.id || index}
+                                        className="p-4 bg-white rounded-lg border border-gray-200 shadow-sm"
+                                      >
                                         {/*Array item fields*/}
-                                              <div className="flex items-center gap-2 w-full">
-                                                <textarea
-                                                  value={item || ''}
-                                                  onChange={(e) => {
-                                                    const newFields = [...(formData[currentPage]?.[sectionId]?.[fieldId]?.[objectId]?.[subFieldId]?.[nestedFieldId] || [])];
-                                                    newFields[index] =  e.target.value;
-                                                    setFormData({
-                                                      ...formData,
-                                                      [currentPage]:{
-                                                        ...(formData[currentPage] || {}),
-                                                        [sectionId]: {
-                                                          ...(formData[currentPage]?.[sectionId] || {}),
-                                                          [fieldId]: {
-                                                            ...(formData[currentPage]?.[sectionId]?.[fieldId] || {}),
-                                                            [objectId]: {
-                                                              ...(formData[currentPage]?.[sectionId]?.[fieldId]?.[objectId] || {}),
-                                                            [subFieldId]: {
-                                                              ...(formData[currentPage]?.[sectionId]?.[fieldId]?.[objectId]?.[subFieldId] || {}),
-                                                              [nestedFieldId]: newFields
-                                                            }
-                                                          }
-                                                          },
-                                                        },
-                                                      },
-                                                    });
-                                                  }}
-                                                  className="flex-1 px-4 py-2.5 text-gray-900 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                                                  placeholder={`Enter ${(nestedField as Field).label}`}
-                                                  />
-
-                                                  <button
-                                                  type="button"
-                                                  onClick={(e) => {
-                                                    e.stopPropagation();
-                                                    const parentObject = formData[currentPage]?.[sectionId]?.[fieldId]?.[objectId];
-                                                    const currentItems = parentObject?.[subFieldId]?.[nestedFieldId] || [];
-                                                    const newItems = [...currentItems]
-                                                    newItems.splice(index, 1);
-
-                                                    setFormData(prevData => ({
-                                                      ...prevData,
-                                                        [currentPage]: {
-                                                          ...(prevData[currentPage] || {}),
-                                                        [sectionId]: {
-                                                          ...(prevData[currentPage]?.[sectionId] || {}),
-                                                          [fieldId]: {
-                                                            ...(prevData[currentPage]?.[sectionId]?.[fieldId] || {}),
-                                                            [objectId]: {
-                                                              ...parentObject,
-                                                            [subFieldId]:{
-                                                              ...(parentObject?.[subFieldId] || {}),
-                                                              [nestedFieldId]: newItems
-                                                            }
-                                                          },
-                                                        },
-                                                      },
-                                                    }}
-                                                  ));
-                                                  }}
-                                                  className="p-2.5 text-red-600 hover:text-red-700 bg-transparent transition-color duration-200 flex items-center justify-center"
-                                                  title="Remove item"
-                                                  >
-                                                                                        <svg 
-                                   xmlns="http://www.w3.org/2000/svg" 
-                                  className="h-5 w-5" 
-                                   viewBox="0 0 20 20" 
-                                  fill="currentColor"
-                                    >
-                                    <path 
-                                    fillRule="evenodd" 
-                                    d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" 
-                                  clipRule="evenodd" 
-                                    />
-                                   </svg>
-                                                  </button>
-                                              </div>
-
-                                      </div>
-                                    ))}
-                                  
-
-                                  {/* Add new item button */}
-                                  <button
-                                    type="button"
-                                    onClick = {(e) => {
-                                      e.preventDefault();
-                                      e.stopPropagation();
-                                      console.log('First button clicked');
-                                      console.log({
-                                        currentPage,
-                                        sectionId,
-                                        fieldId,
-                                        objectId,
-                                        subFieldId,
-                                        nestedFieldId,
-                                        currentFormData: formData[currentPage]?.[sectionId]?.[fieldId]?.[objectId]
-                                      });
-
-                                      const parentObject = formData[currentPage]?.[sectionId]?.[fieldId]?.[objectId];
-
-                                      console.log('Before update:', {
-                                        parentObject,
-                                        currentItems: parentObject?.[subFieldId]?.[nestedFieldId] || [],
-                                        fullPath: `${currentPage}.${sectionId}.${fieldId}.${objectId}.${subFieldId}.${nestedFieldId}`
-                                      });
-                                      const currentItems = parentObject?.[subFieldId]?.[nestedFieldId] || [];
-                                      const newItems = [...currentItems, ''];
-
-                                      setFormData(prevData => ({
-                                        
-                                        ...prevData,
-                                        [currentPage]: {
-                                          ...(prevData[currentPage] || {}),
-                                          [sectionId]: {
-                                            ...(prevData[currentPage]?.[sectionId] || {}),
-                                            [fieldId]: {
-                                              ...(prevData[currentPage]?.[sectionId]?.[fieldId] || {}),
-                                              [objectId]: {
-                                                ...parentObject,
-                                              [subFieldId]: {
-                                                ...(parentObject?.[subFieldId] || {}),
-                                                [nestedFieldId]: newItems
-                                              }
-                                              }
-                                            }
-                                          }
-                                          }
-                                        
-                                      }));
-
-                                      console.log('After update:', {
-                                        parentObject,
-                                        currentItems: parentObject?.[subFieldId]?.[nestedFieldId] || [],
-                                        fullPath: `${currentPage}.${sectionId}.${fieldId}.${objectId}.${subFieldId}.${nestedFieldId}`
-                                      });
-                                    }}
-                                    className="w-full px-4 py-2.5 text-sm font-medium text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-lg border border-blue-200 transition-colors duration-200"
-                                  >
-                                    {`Add ${nestedField.label}`}
-                                  </button>
-                                </div>
-                                ) : (nestedField as Field).type === 'object' ? (
-                                                              // Handle object within nested object
-                            <div className="pl-4 space-y-4 border-l-2 border-blue-100 bg-gray-50 rounded-lg p-4">
-                            {Object.entries((nestedField as Field).fields || {}).map(
-                              ([deepNestedFieldId, deepNestedField]) => (
-                                <div key={deepNestedFieldId} className="space-y-2">
-                                  <label className="block text-sm font-semibold text-gray-800">
-                                    {(deepNestedField as Field).label}
-                                  </label>
-                                  {(deepNestedField as Field).type === 'array' ? (
-                                      // Handle array within deep nested object
-                                      <div className="space-y-4">
-                                        {(formData[currentPage]?.[sectionId]?.[fieldId]?.[objectId]?.[subFieldId]?.[nestedFieldId]?.[deepNestedFieldId] || []).map((item: any, index: number) => (
-                                          <div key={item.id ||index} className="p-4 bg-white rounded-lg border border-gray-200 shadow-sm">
-                                            <div className="flex items-center gap-2 w-full">
-                                              <textarea
-                                                value={item || ''}
-                                                onChange={(e) => {
-                                                  const newItems = [
-                                                    ...(formData[currentPage]?.[sectionId]?.[fieldId]?.[objectId]?.[subFieldId]?.[nestedFieldId]?.[deepNestedFieldId] || []),
-                                                  ];
-                                                  newItems[index] = e.target.value;
-                                                  setFormData({
-                                                    ...formData,
-                                                    [currentPage]: {
-                                                      ...(formData[currentPage] || {}),
-                                                      [sectionId]: {
-                                                        ...(formData[currentPage]?.[sectionId] || {}),
-                                                        [fieldId]: {
-                                                          ...(formData[currentPage]?.[sectionId]?.[fieldId] || {}),
-                                                          [objectId]: {
-                                                            ...(formData[currentPage]?.[sectionId]?.[fieldId]?.[objectId] || {}),
-                                                            [subFieldId]: {
-                                                              ...(formData[currentPage]?.[sectionId]?.[fieldId]?.[objectId]?.[subFieldId] || {}),
-                                                              [nestedFieldId]: {
-                                                                ...(formData[currentPage]?.[sectionId]?.[fieldId]?.[objectId]?.[subFieldId]?.[nestedFieldId] || {}),
-                                                                [deepNestedFieldId]: newItems
-                                                              }
-                                                            }
-                                                          }
-                                                        }
-                                                      }
-                                                    }
-                                                  });
-                                                }}
-                                                className="flex-1 px-4 py-2.5 text-gray-900 bg-white border border-gray-300 rounded-lg"
-                                                placeholder={`Enter ${(deepNestedField as Field).label}`}
-                                              />
-                                                <button
-                                                type="button"
-                                                onClick={(e) => {
-                                                  e.stopPropagation();
-                                                  const currentItems = formData[currentPage]?.[sectionId]?.[fieldId]?.[objectId]?.[subFieldId]?.[nestedFieldId]?.[deepNestedFieldId] || [];
-                                                  const newItems = [...currentItems];
-                                                  newItems.splice(index, 1);
-                                                  setFormData({
-                                                    ...formData,
-                                                    [currentPage]: {
-                                                      ...(formData[currentPage] || {}),
-                                                      [sectionId]: {
-                                                        ...(formData[currentPage]?.[sectionId] || {}),
-                                                        [fieldId]: {
-                                                          ...(formData[currentPage]?.[sectionId]?.[fieldId] || {}),
-                                                          [objectId]: {
-                                                            ...(formData[currentPage]?.[sectionId]?.[fieldId]?.[objectId] || {}),
-                                                            [subFieldId]: {
-                                                              ...(formData[currentPage]?.[sectionId]?.[fieldId]?.[objectId]?.[subFieldId] || {}),
-                                                              [nestedFieldId]: {
-                                                                ...(formData[currentPage]?.[sectionId]?.[fieldId]?.[objectId]?.[subFieldId]?.[nestedFieldId] || {}),
-                                                                [deepNestedFieldId]: newItems
-                                                              }
-                                                            }
-                                                          }
-                                                        }
-                                                      }
-                                                    }
-                                                  });
-                                                }}
-                                                className="text-red-600 hover:text-red-700"
-                                              >
-                                                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                                                  <path fillRule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd" />
-                                                </svg>
-                                              </button>
-                                              </div>
-                                              </div>
-                                        ))}
-
-                                        {/* Add button for deep nested array */}
-                                        <button
-                                          type="button"
-                                          onClick={() => {
-                                            const currentItems = formData[currentPage]?.[sectionId]?.[fieldId]?.[objectId]?.[subFieldId]?.[nestedFieldId]?.[deepNestedFieldId] || [];
-                                            const newItems = [...currentItems, ''];
-                                            setFormData({
-                                              ...formData,
-                                              [currentPage]: {
-                                                ...(formData[currentPage] || {}),
-                                                [sectionId]: {
-                                                  ...(formData[currentPage]?.[sectionId] || {}),
-                                                  [fieldId]: {
-                                                    ...(formData[currentPage]?.[sectionId]?.[fieldId] || {}),
-                                                    [objectId]: {
-                                                      ...(formData[currentPage]?.[sectionId]?.[fieldId]?.[objectId] || {}),
-                                                      [subFieldId]: {
-                                                        ...(formData[currentPage]?.[sectionId]?.[fieldId]?.[objectId]?.[subFieldId] || {}),
-                                                        [nestedFieldId]: {
-                                                          ...(formData[currentPage]?.[sectionId]?.[fieldId]?.[objectId]?.[subFieldId]?.[nestedFieldId] || {}),
-                                                          [deepNestedFieldId]: newItems
-                                                        }
-                                                      }
-                                                    }
-                                                  }
-                                                }
-                                              }
-                                            });
-                                          }}
-                                          className="w-full px-4 py-2.5 text-sm font-medium text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-lg border border-blue-200 transition-colors duration-200"
-                                        >
-                                          {`Add ${(deepNestedField as Field).label}`}
-                                        </button>
-                                        </div>
-                                  ) : (
-                                      // Handle regular fields in deep nested object
-                                      <input
-                                        type="text"
-                                        value={formData[currentPage]?.[sectionId]?.[fieldId]?.[objectId]?.[subFieldId]?.[nestedFieldId]?.[deepNestedFieldId] || ''}
-                                        onChange={(e) => {
-                                          setFormData({
-                                            ...formData,
-                                            [currentPage]: {
-                                              ...(formData[currentPage] || {}),
-                                              [sectionId]: {
-                                                ...(formData[currentPage]?.[sectionId] || {}),
-                                                [fieldId]: {
-                                                  ...(formData[currentPage]?.[sectionId]?.[fieldId] || {}),
-                                                  [objectId]: {
-                                                    ...(formData[currentPage]?.[sectionId]?.[fieldId]?.[objectId] || {}),
-                                                    [subFieldId]: {
-                                                      ...(formData[currentPage]?.[sectionId]?.[fieldId]?.[objectId]?.[subFieldId] || {}),
-                                                      [nestedFieldId]: {
-                                                        ...(formData[currentPage]?.[sectionId]?.[fieldId]?.[objectId]?.[subFieldId]?.[nestedFieldId] || {}),
-                                                        [deepNestedFieldId]: e.target.value
-                                                      }
-                                                    }
-                                                  }
-                                                }
-                                              }
-                                            }
-                                          });
-                                        }}
-                                        className="w-full px-4 py-2.5 rounded-lg border border-gray-300 text-gray-900 bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 shadow-sm"
-                                        placeholder={`Enter ${(deepNestedField as Field).label}`}
-                                      />
-                                  )}
-                                </div>
-                              )
-                            )}
-                            </div>
-
-                                ) : (
-
-                                  <input
-                                  type="text"
-                                  id={`${sectionId}.${fieldId}.${subFieldId}.${nestedFieldId}`}
-                                  name={`${sectionId}.${fieldId}.${subFieldId}.${nestedFieldId}`}
-                                  className="w-full px-4 py-2.5 rounded-lg border border-gray-300 
-                                  text-gray-900 bg-white focus:ring-2 focus:ring-blue-500 
-                                  focus:border-blue-500 shadow-sm"
-                                  placeholder={`Enter ${(nestedField as Field).label}`}
-                                  defaultValue={formData[currentPage]?.[sectionId]?.[fieldId]?.[subFieldId]?.[nestedFieldId]}
-                                  />
-                                )
-                                }
-                              </div>
-                            )
-                          )}
-                        </div>
-                      ): (subField as Field).type === 'array' ? (
-                        // Handle array within object
-                        <div className="space-y-4">
-                              {/* Show existing fields */}
-                              {(
-                                formData[currentPage]?.[sectionId]?.[fieldId]?.[objectId]?.[subFieldId] || []).map((item: any, index: number) => (
-                                <div
-                                  key={item.id ||index}
-                                  className="p-4 bg-white rounded-lg border border-gray-200 shadow-sm"
-                                >
-                                  <div className="flex items-center gap-2 w-full">
-                                    <textarea
-                                      value={item.name || ''}
-                                      onChange={(e) => {
-                                        const newFields = [
-                                          ...(formData[currentPage]?.[sectionId]?.[fieldId]?.[objectId]?.[subFieldId] || []),
-                                        ];
-                                        newFields[index] = e.target.value;
-                                        
-                                        setFormData({
-                                          ...formData,
-                                          [currentPage]: {
-                                            ...(formData[currentPage] || {}),
-                                            [sectionId]: {
-                                              ...(formData[currentPage]?.[
-                                                sectionId
-                                              ] || {}),
-                                              [fieldId]: {
+                                        <div className="flex items-center gap-2 w-full">
+                                          <textarea
+                                            value={item || ''}
+                                            onChange={(e) => {
+                                              const newFields = [
                                                 ...(formData[currentPage]?.[
                                                   sectionId
-                                                ]?.[fieldId] || {}),
-                                                [objectId]: {
-                                                  ...(formData[currentPage]?.[sectionId]?.[fieldId]?.[objectId] || {}),
-                                                [subFieldId]: newFields,
-                                              }
-                                            }
-                                            },
-                                          },
-                                        });
-                                      }}
-                                      placeholder={`Enter ${subField.label}`}
-                                      className="flex-1 px-4 py-2.5 text-gray-900 bg-white border border-gray-300 
-                                                rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500
-                                                placeholder-gray-400"
-                                    />
+                                                ]?.[fieldId]?.[objectId]?.[
+                                                  subFieldId
+                                                ]?.[nestedFieldId] || []),
+                                              ];
+                                              newFields[index] = e.target.value;
+                                              setFormData({
+                                                ...formData,
+                                                [currentPage]: {
+                                                  ...(formData[currentPage] ||
+                                                    {}),
+                                                  [sectionId]: {
+                                                    ...(formData[currentPage]?.[
+                                                      sectionId
+                                                    ] || {}),
+                                                    [fieldId]: {
+                                                      ...(formData[
+                                                        currentPage
+                                                      ]?.[sectionId]?.[
+                                                        fieldId
+                                                      ] || {}),
+                                                      [objectId]: {
+                                                        ...(formData[
+                                                          currentPage
+                                                        ]?.[sectionId]?.[
+                                                          fieldId
+                                                        ]?.[objectId] || {}),
+                                                        [subFieldId]: {
+                                                          ...(formData[
+                                                            currentPage
+                                                          ]?.[sectionId]?.[
+                                                            fieldId
+                                                          ]?.[objectId]?.[
+                                                            subFieldId
+                                                          ] || {}),
+                                                          [nestedFieldId]:
+                                                            newFields,
+                                                        },
+                                                      },
+                                                    },
+                                                  },
+                                                },
+                                              });
+                                            }}
+                                            className="flex-1 px-4 py-2.5 text-gray-900 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                            placeholder={`Enter ${(nestedField as Field).label}`}
+                                          />
+
+                                          <button
+                                            type="button"
+                                            onClick={(e) => {
+                                              e.stopPropagation();
+                                              const parentObject =
+                                                formData[currentPage]?.[
+                                                  sectionId
+                                                ]?.[fieldId]?.[objectId];
+                                              const currentItems =
+                                                parentObject?.[subFieldId]?.[
+                                                  nestedFieldId
+                                                ] || [];
+                                              const newItems = [
+                                                ...currentItems,
+                                              ];
+                                              newItems.splice(index, 1);
+
+                                              setFormData((prevData) => ({
+                                                ...prevData,
+                                                [currentPage]: {
+                                                  ...(prevData[currentPage] ||
+                                                    {}),
+                                                  [sectionId]: {
+                                                    ...(prevData[currentPage]?.[
+                                                      sectionId
+                                                    ] || {}),
+                                                    [fieldId]: {
+                                                      ...(prevData[
+                                                        currentPage
+                                                      ]?.[sectionId]?.[
+                                                        fieldId
+                                                      ] || {}),
+                                                      [objectId]: {
+                                                        ...parentObject,
+                                                        [subFieldId]: {
+                                                          ...(parentObject?.[
+                                                            subFieldId
+                                                          ] || {}),
+                                                          [nestedFieldId]:
+                                                            newItems,
+                                                        },
+                                                      },
+                                                    },
+                                                  },
+                                                },
+                                              }));
+                                            }}
+                                            className="p-2.5 text-red-600 hover:text-red-700 bg-transparent transition-color duration-200 flex items-center justify-center"
+                                            title="Remove item"
+                                          >
+                                            <svg
+                                              xmlns="http://www.w3.org/2000/svg"
+                                              className="h-5 w-5"
+                                              viewBox="0 0 20 20"
+                                              fill="currentColor"
+                                            >
+                                              <path
+                                                fillRule="evenodd"
+                                                d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z"
+                                                clipRule="evenodd"
+                                              />
+                                            </svg>
+                                          </button>
+                                        </div>
+                                      </div>
+                                    ))}
+
+                                    {/* Add new item button */}
                                     <button
                                       type="button"
                                       onClick={(e) => {
+                                        e.preventDefault();
                                         e.stopPropagation();
-                                        setFormData((prevData) => {
-                                          const newFields = [...(formData[currentPage]?.[sectionId]?.[fieldId]?.[objectId]?.[subFieldId] || []),];
-                                          newFields.splice(index, 1);
+                                        console.log('First button clicked');
+                                        console.log({
+                                          currentPage,
+                                          sectionId,
+                                          fieldId,
+                                          objectId,
+                                          subFieldId,
+                                          nestedFieldId,
+                                          currentFormData:
+                                            formData[currentPage]?.[
+                                              sectionId
+                                            ]?.[fieldId]?.[objectId],
+                                        });
 
-                                          return {
-                                            ...prevData,
-                                            [currentPage]: {
-                                              ...(prevData[currentPage] || {}),
+                                        const parentObject =
+                                          formData[currentPage]?.[sectionId]?.[
+                                            fieldId
+                                          ]?.[objectId];
+
+                                        console.log('Before update:', {
+                                          parentObject,
+                                          currentItems:
+                                            parentObject?.[subFieldId]?.[
+                                              nestedFieldId
+                                            ] || [],
+                                          fullPath: `${currentPage}.${sectionId}.${fieldId}.${objectId}.${subFieldId}.${nestedFieldId}`,
+                                        });
+                                        const currentItems =
+                                          parentObject?.[subFieldId]?.[
+                                            nestedFieldId
+                                          ] || [];
+                                        const newItems = [...currentItems, ''];
+
+                                        setFormData((prevData) => ({
+                                          ...prevData,
+                                          [currentPage]: {
+                                            ...(prevData[currentPage] || {}),
                                             [sectionId]: {
                                               ...(prevData[currentPage]?.[
                                                 sectionId
@@ -2095,79 +2093,594 @@ export default function CustomizeTheme() {
                                                   sectionId
                                                 ]?.[fieldId] || {}),
                                                 [objectId]: {
-                                                  ...(prevData[currentPage]?.[sectionId]?.[fieldId]?.[objectId] || {}),
-                                                [subFieldId]: newFields,
-                                              }
-                                            }
+                                                  ...parentObject,
+                                                  [subFieldId]: {
+                                                    ...(parentObject?.[
+                                                      subFieldId
+                                                    ] || {}),
+                                                    [nestedFieldId]: newItems,
+                                                  },
+                                                },
+                                              },
                                             },
                                           },
-                                        };
-                                      });
+                                        }));
+
+                                        console.log('After update:', {
+                                          parentObject,
+                                          currentItems:
+                                            parentObject?.[subFieldId]?.[
+                                              nestedFieldId
+                                            ] || [],
+                                          fullPath: `${currentPage}.${sectionId}.${fieldId}.${objectId}.${subFieldId}.${nestedFieldId}`,
+                                        });
                                       }}
-                                      className=" text-red-600 hover:text-red-700 
-                                      bg-transparent 
-                                      transition-colors duration-200 flex items-center justify-center"
-                                      title="Remove field"
+                                      className="w-full px-4 py-2.5 text-sm font-medium text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-lg border border-blue-200 transition-colors duration-200"
                                     >
-                                    <svg 
-                                   xmlns="http://www.w3.org/2000/svg" 
-                                  className="h-5 w-5" 
-                                   viewBox="0 0 20 20" 
-                                  fill="currentColor"
-                                    >
-                                    <path 
-                                    fillRule="evenodd" 
-                                    d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" 
-                                  clipRule="evenodd" 
-                                    />
-                                   </svg>
+                                      {`Add ${nestedField.label}`}
                                     </button>
                                   </div>
-                                </div>
-                              ))}
+                                ) : (nestedField as Field).type === 'object' ? (
+                                  // Handle object within nested object
+                                  <div className="pl-4 space-y-4 border-l-2 border-blue-100 bg-gray-50 rounded-lg p-4">
+                                    {Object.entries(
+                                      (nestedField as Field).fields || {},
+                                    ).map(
+                                      ([
+                                        deepNestedFieldId,
+                                        deepNestedField,
+                                      ]) => (
+                                        <div
+                                          key={deepNestedFieldId}
+                                          className="space-y-2"
+                                        >
+                                          <label className="block text-sm font-semibold text-gray-800">
+                                            {(deepNestedField as Field).label}
+                                          </label>
+                                          {(deepNestedField as Field).type ===
+                                          'array' ? (
+                                            // Handle array within deep nested object
+                                            <div className="space-y-4">
+                                              {(
+                                                formData[currentPage]?.[
+                                                  sectionId
+                                                ]?.[fieldId]?.[objectId]?.[
+                                                  subFieldId
+                                                ]?.[nestedFieldId]?.[
+                                                  deepNestedFieldId
+                                                ] || []
+                                              ).map(
+                                                (item: any, index: number) => (
+                                                  <div
+                                                    key={item.id || index}
+                                                    className="p-4 bg-white rounded-lg border border-gray-200 shadow-sm"
+                                                  >
+                                                    <div className="flex items-center gap-2 w-full">
+                                                      <textarea
+                                                        value={item || ''}
+                                                        onChange={(e) => {
+                                                          const newItems = [
+                                                            ...(formData[
+                                                              currentPage
+                                                            ]?.[sectionId]?.[
+                                                              fieldId
+                                                            ]?.[objectId]?.[
+                                                              subFieldId
+                                                            ]?.[
+                                                              nestedFieldId
+                                                            ]?.[
+                                                              deepNestedFieldId
+                                                            ] || []),
+                                                          ];
+                                                          newItems[index] =
+                                                            e.target.value;
+                                                          setFormData({
+                                                            ...formData,
+                                                            [currentPage]: {
+                                                              ...(formData[
+                                                                currentPage
+                                                              ] || {}),
+                                                              [sectionId]: {
+                                                                ...(formData[
+                                                                  currentPage
+                                                                ]?.[
+                                                                  sectionId
+                                                                ] || {}),
+                                                                [fieldId]: {
+                                                                  ...(formData[
+                                                                    currentPage
+                                                                  ]?.[
+                                                                    sectionId
+                                                                  ]?.[
+                                                                    fieldId
+                                                                  ] || {}),
+                                                                  [objectId]: {
+                                                                    ...(formData[
+                                                                      currentPage
+                                                                    ]?.[
+                                                                      sectionId
+                                                                    ]?.[
+                                                                      fieldId
+                                                                    ]?.[
+                                                                      objectId
+                                                                    ] || {}),
+                                                                    [subFieldId]:
+                                                                      {
+                                                                        ...(formData[
+                                                                          currentPage
+                                                                        ]?.[
+                                                                          sectionId
+                                                                        ]?.[
+                                                                          fieldId
+                                                                        ]?.[
+                                                                          objectId
+                                                                        ]?.[
+                                                                          subFieldId
+                                                                        ] ||
+                                                                          {}),
+                                                                        [nestedFieldId]:
+                                                                          {
+                                                                            ...(formData[
+                                                                              currentPage
+                                                                            ]?.[
+                                                                              sectionId
+                                                                            ]?.[
+                                                                              fieldId
+                                                                            ]?.[
+                                                                              objectId
+                                                                            ]?.[
+                                                                              subFieldId
+                                                                            ]?.[
+                                                                              nestedFieldId
+                                                                            ] ||
+                                                                              {}),
+                                                                            [deepNestedFieldId]:
+                                                                              newItems,
+                                                                          },
+                                                                      },
+                                                                  },
+                                                                },
+                                                              },
+                                                            },
+                                                          });
+                                                        }}
+                                                        className="flex-1 px-4 py-2.5 text-gray-900 bg-white border border-gray-300 rounded-lg"
+                                                        placeholder={`Enter ${(deepNestedField as Field).label}`}
+                                                      />
+                                                      <button
+                                                        type="button"
+                                                        onClick={(e) => {
+                                                          e.stopPropagation();
+                                                          const currentItems =
+                                                            formData[
+                                                              currentPage
+                                                            ]?.[sectionId]?.[
+                                                              fieldId
+                                                            ]?.[objectId]?.[
+                                                              subFieldId
+                                                            ]?.[
+                                                              nestedFieldId
+                                                            ]?.[
+                                                              deepNestedFieldId
+                                                            ] || [];
+                                                          const newItems = [
+                                                            ...currentItems,
+                                                          ];
+                                                          newItems.splice(
+                                                            index,
+                                                            1,
+                                                          );
+                                                          setFormData({
+                                                            ...formData,
+                                                            [currentPage]: {
+                                                              ...(formData[
+                                                                currentPage
+                                                              ] || {}),
+                                                              [sectionId]: {
+                                                                ...(formData[
+                                                                  currentPage
+                                                                ]?.[
+                                                                  sectionId
+                                                                ] || {}),
+                                                                [fieldId]: {
+                                                                  ...(formData[
+                                                                    currentPage
+                                                                  ]?.[
+                                                                    sectionId
+                                                                  ]?.[
+                                                                    fieldId
+                                                                  ] || {}),
+                                                                  [objectId]: {
+                                                                    ...(formData[
+                                                                      currentPage
+                                                                    ]?.[
+                                                                      sectionId
+                                                                    ]?.[
+                                                                      fieldId
+                                                                    ]?.[
+                                                                      objectId
+                                                                    ] || {}),
+                                                                    [subFieldId]:
+                                                                      {
+                                                                        ...(formData[
+                                                                          currentPage
+                                                                        ]?.[
+                                                                          sectionId
+                                                                        ]?.[
+                                                                          fieldId
+                                                                        ]?.[
+                                                                          objectId
+                                                                        ]?.[
+                                                                          subFieldId
+                                                                        ] ||
+                                                                          {}),
+                                                                        [nestedFieldId]:
+                                                                          {
+                                                                            ...(formData[
+                                                                              currentPage
+                                                                            ]?.[
+                                                                              sectionId
+                                                                            ]?.[
+                                                                              fieldId
+                                                                            ]?.[
+                                                                              objectId
+                                                                            ]?.[
+                                                                              subFieldId
+                                                                            ]?.[
+                                                                              nestedFieldId
+                                                                            ] ||
+                                                                              {}),
+                                                                            [deepNestedFieldId]:
+                                                                              newItems,
+                                                                          },
+                                                                      },
+                                                                  },
+                                                                },
+                                                              },
+                                                            },
+                                                          });
+                                                        }}
+                                                        className="text-red-600 hover:text-red-700"
+                                                      >
+                                                        <svg
+                                                          xmlns="http://www.w3.org/2000/svg"
+                                                          className="h-5 w-5"
+                                                          viewBox="0 0 20 20"
+                                                          fill="currentColor"
+                                                        >
+                                                          <path
+                                                            fillRule="evenodd"
+                                                            d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z"
+                                                            clipRule="evenodd"
+                                                          />
+                                                        </svg>
+                                                      </button>
+                                                    </div>
+                                                  </div>
+                                                ),
+                                              )}
 
-                              {/* Add new field button */}
-                              <button
-                                type="button"
-                                onClick={(e) => {
-                                  console.log('Second button clicked');
-                                  e.preventDefault();
-                                  e.stopPropagation();
+                                              {/* Add button for deep nested array */}
+                                              <button
+                                                type="button"
+                                                onClick={() => {
+                                                  const currentItems =
+                                                    formData[currentPage]?.[
+                                                      sectionId
+                                                    ]?.[fieldId]?.[objectId]?.[
+                                                      subFieldId
+                                                    ]?.[nestedFieldId]?.[
+                                                      deepNestedFieldId
+                                                    ] || [];
+                                                  const newItems = [
+                                                    ...currentItems,
+                                                    '',
+                                                  ];
+                                                  setFormData({
+                                                    ...formData,
+                                                    [currentPage]: {
+                                                      ...(formData[
+                                                        currentPage
+                                                      ] || {}),
+                                                      [sectionId]: {
+                                                        ...(formData[
+                                                          currentPage
+                                                        ]?.[sectionId] || {}),
+                                                        [fieldId]: {
+                                                          ...(formData[
+                                                            currentPage
+                                                          ]?.[sectionId]?.[
+                                                            fieldId
+                                                          ] || {}),
+                                                          [objectId]: {
+                                                            ...(formData[
+                                                              currentPage
+                                                            ]?.[sectionId]?.[
+                                                              fieldId
+                                                            ]?.[objectId] ||
+                                                              {}),
+                                                            [subFieldId]: {
+                                                              ...(formData[
+                                                                currentPage
+                                                              ]?.[sectionId]?.[
+                                                                fieldId
+                                                              ]?.[objectId]?.[
+                                                                subFieldId
+                                                              ] || {}),
+                                                              [nestedFieldId]: {
+                                                                ...(formData[
+                                                                  currentPage
+                                                                ]?.[
+                                                                  sectionId
+                                                                ]?.[fieldId]?.[
+                                                                  objectId
+                                                                ]?.[
+                                                                  subFieldId
+                                                                ]?.[
+                                                                  nestedFieldId
+                                                                ] || {}),
+                                                                [deepNestedFieldId]:
+                                                                  newItems,
+                                                              },
+                                                            },
+                                                          },
+                                                        },
+                                                      },
+                                                    },
+                                                  });
+                                                }}
+                                                className="w-full px-4 py-2.5 text-sm font-medium text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-lg border border-blue-200 transition-colors duration-200"
+                                              >
+                                                {`Add ${(deepNestedField as Field).label}`}
+                                              </button>
+                                            </div>
+                                          ) : (
+                                            // Handle regular fields in deep nested object
+                                            <input
+                                              type="text"
+                                              value={
+                                                formData[currentPage]?.[
+                                                  sectionId
+                                                ]?.[fieldId]?.[objectId]?.[
+                                                  subFieldId
+                                                ]?.[nestedFieldId]?.[
+                                                  deepNestedFieldId
+                                                ] || ''
+                                              }
+                                              onChange={(e) => {
+                                                setFormData({
+                                                  ...formData,
+                                                  [currentPage]: {
+                                                    ...(formData[currentPage] ||
+                                                      {}),
+                                                    [sectionId]: {
+                                                      ...(formData[
+                                                        currentPage
+                                                      ]?.[sectionId] || {}),
+                                                      [fieldId]: {
+                                                        ...(formData[
+                                                          currentPage
+                                                        ]?.[sectionId]?.[
+                                                          fieldId
+                                                        ] || {}),
+                                                        [objectId]: {
+                                                          ...(formData[
+                                                            currentPage
+                                                          ]?.[sectionId]?.[
+                                                            fieldId
+                                                          ]?.[objectId] || {}),
+                                                          [subFieldId]: {
+                                                            ...(formData[
+                                                              currentPage
+                                                            ]?.[sectionId]?.[
+                                                              fieldId
+                                                            ]?.[objectId]?.[
+                                                              subFieldId
+                                                            ] || {}),
+                                                            [nestedFieldId]: {
+                                                              ...(formData[
+                                                                currentPage
+                                                              ]?.[sectionId]?.[
+                                                                fieldId
+                                                              ]?.[objectId]?.[
+                                                                subFieldId
+                                                              ]?.[
+                                                                nestedFieldId
+                                                              ] || {}),
+                                                              [deepNestedFieldId]:
+                                                                e.target.value,
+                                                            },
+                                                          },
+                                                        },
+                                                      },
+                                                    },
+                                                  },
+                                                });
+                                              }}
+                                              className="w-full px-4 py-2.5 rounded-lg border border-gray-300 text-gray-900 bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 shadow-sm"
+                                              placeholder={`Enter ${(deepNestedField as Field).label}`}
+                                            />
+                                          )}
+                                        </div>
+                                      ),
+                                    )}
+                                  </div>
+                                ) : (
+                                  <input
+                                    type="text"
+                                    id={`${sectionId}.${fieldId}.${subFieldId}.${nestedFieldId}`}
+                                    name={`${sectionId}.${fieldId}.${subFieldId}.${nestedFieldId}`}
+                                    className="w-full px-4 py-2.5 rounded-lg border border-gray-300 
+                                  text-gray-900 bg-white focus:ring-2 focus:ring-blue-500 
+                                  focus:border-blue-500 shadow-sm"
+                                    placeholder={`Enter ${(nestedField as Field).label}`}
+                                    defaultValue={
+                                      formData[currentPage]?.[sectionId]?.[
+                                        fieldId
+                                      ]?.[subFieldId]?.[nestedFieldId]
+                                    }
+                                  />
+                                )}
+                              </div>
+                            ),
+                          )}
+                        </div>
+                      ) : (subField as Field).type === 'array' ? (
+                        // Handle array within object
+                        <div className="space-y-4">
+                          {/* Show existing fields */}
+                          {(
+                            formData[currentPage]?.[sectionId]?.[fieldId]?.[
+                              objectId
+                            ]?.[subFieldId] || []
+                          ).map((item: any, index: number) => (
+                            <div
+                              key={item.id || index}
+                              className="p-4 bg-white rounded-lg border border-gray-200 shadow-sm"
+                            >
+                              <div className="flex items-center gap-2 w-full">
+                                <textarea
+                                  value={item.name || ''}
+                                  onChange={(e) => {
+                                    const newFields = [
+                                      ...(formData[currentPage]?.[sectionId]?.[
+                                        fieldId
+                                      ]?.[objectId]?.[subFieldId] || []),
+                                    ];
+                                    newFields[index] = e.target.value;
 
-                                  //Get the specific parent object
-                                  const parentObject = formData[currentPage]?.[sectionId]?.[fieldId]?.[objectId];
-                                  const currentFields = parentObject?.[subFieldId] || [];
-
-                                  const newFields = [
-                                    ...currentFields,''];
-
-                                  setFormData({
-                                    ...formData,
+                                    setFormData({
+                                      ...formData,
                                       [currentPage]: {
                                         ...(formData[currentPage] || {}),
                                         [sectionId]: {
-                                        ...(formData[currentPage]?.[
-                                          sectionId
-                                        ] || {}),
-                                        [fieldId]: {
                                           ...(formData[currentPage]?.[
                                             sectionId
-                                          ]?.[fieldId] || {}),
-                                          [objectId]: {
-                                            ...parentObject,
-                                          [subFieldId]: newFields,
-                                        }
+                                          ] || {}),
+                                          [fieldId]: {
+                                            ...(formData[currentPage]?.[
+                                              sectionId
+                                            ]?.[fieldId] || {}),
+                                            [objectId]: {
+                                              ...(formData[currentPage]?.[
+                                                sectionId
+                                              ]?.[fieldId]?.[objectId] || {}),
+                                              [subFieldId]: newFields,
+                                            },
+                                          },
+                                        },
+                                      },
+                                    });
+                                  }}
+                                  placeholder={`Enter ${subField.label}`}
+                                  className="flex-1 px-4 py-2.5 text-gray-900 bg-white border border-gray-300 
+                                                rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500
+                                                placeholder-gray-400"
+                                />
+                                <button
+                                  type="button"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    setFormData((prevData) => {
+                                      const newFields = [
+                                        ...(formData[currentPage]?.[
+                                          sectionId
+                                        ]?.[fieldId]?.[objectId]?.[
+                                          subFieldId
+                                        ] || []),
+                                      ];
+                                      newFields.splice(index, 1);
+
+                                      return {
+                                        ...prevData,
+                                        [currentPage]: {
+                                          ...(prevData[currentPage] || {}),
+                                          [sectionId]: {
+                                            ...(prevData[currentPage]?.[
+                                              sectionId
+                                            ] || {}),
+                                            [fieldId]: {
+                                              ...(prevData[currentPage]?.[
+                                                sectionId
+                                              ]?.[fieldId] || {}),
+                                              [objectId]: {
+                                                ...(prevData[currentPage]?.[
+                                                  sectionId
+                                                ]?.[fieldId]?.[objectId] || {}),
+                                                [subFieldId]: newFields,
+                                              },
+                                            },
+                                          },
+                                        },
+                                      };
+                                    });
+                                  }}
+                                  className=" text-red-600 hover:text-red-700 
+                                      bg-transparent 
+                                      transition-colors duration-200 flex items-center justify-center"
+                                  title="Remove field"
+                                >
+                                  <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    className="h-5 w-5"
+                                    viewBox="0 0 20 20"
+                                    fill="currentColor"
+                                  >
+                                    <path
+                                      fillRule="evenodd"
+                                      d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z"
+                                      clipRule="evenodd"
+                                    />
+                                  </svg>
+                                </button>
+                              </div>
+                            </div>
+                          ))}
+
+                          {/* Add new field button */}
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              console.log('Second button clicked');
+                              e.preventDefault();
+                              e.stopPropagation();
+
+                              //Get the specific parent object
+                              const parentObject =
+                                formData[currentPage]?.[sectionId]?.[fieldId]?.[
+                                  objectId
+                                ];
+                              const currentFields =
+                                parentObject?.[subFieldId] || [];
+
+                              const newFields = [...currentFields, ''];
+
+                              setFormData({
+                                ...formData,
+                                [currentPage]: {
+                                  ...(formData[currentPage] || {}),
+                                  [sectionId]: {
+                                    ...(formData[currentPage]?.[sectionId] ||
+                                      {}),
+                                    [fieldId]: {
+                                      ...(formData[currentPage]?.[sectionId]?.[
+                                        fieldId
+                                      ] || {}),
+                                      [objectId]: {
+                                        ...parentObject,
+                                        [subFieldId]: newFields,
                                       },
                                     },
                                   },
-                                });
-                                }}
-                                className="w-full px-4 py-2.5 text-sm font-medium text-blue-600 
+                                },
+                              });
+                            }}
+                            className="w-full px-4 py-2.5 text-sm font-medium text-blue-600 
                       bg-blue-50 hover:bg-blue-100 rounded-lg border border-blue-200
                       transition-colors duration-200"
-                              >
-                                {`Add ${subField.label}`}
-                              </button>
+                          >
+                            {`Add ${subField.label}`}
+                          </button>
                         </div>
                       ) : (
                         <div>
@@ -2180,6 +2693,20 @@ export default function CustomizeTheme() {
                         focus:border-blue-500 shadow-sm"
                               rows={4}
                               placeholder={`Enter ${(subField as Field).label}`}
+                              defaultValue={
+                                formData[currentPage]?.[sectionId]?.[fieldId]?.[
+                                  subFieldId
+                                ]
+                              }
+                            />
+                          ) : (subField as Field).type === 'date' ? (
+                            <input
+                              type="date"
+                              id={`${sectionId}.${fieldId}.${subFieldId}`}
+                              name={`${sectionId}.${fieldId}.${subFieldId}`}
+                              className="w-full px-4 py-2.5 rounded-lg border border-gray-300 
+                      text-gray-900 bg-white focus:ring-2 focus:ring-blue-500 
+                      focus:border-blue-500 shadow-sm"
                               defaultValue={
                                 formData[currentPage]?.[sectionId]?.[fieldId]?.[
                                   subFieldId
@@ -2211,62 +2738,61 @@ export default function CustomizeTheme() {
             ))}
 
             {allowMultiple && (
-            <button
-              type="button"
-              onClick={() => {
-                console.log('Outer button clicked');
-                const newObjectId = `item_${Date.now()}`;
-                // Create new object with empty values for all fields
-                const newObject: Record<string, any> = {};
-                Object.entries(field.fields || {}).forEach(([key, value]) => {
-                  if ((value as Field).type === 'array') {
-                    newObject[key] = [];
-                  } else if ((value as Field).type === 'object') {
-                    newObject[key] = {};
-                  } else {
-                    newObject[key] = '';
-                  }
-                });
+              <button
+                type="button"
+                onClick={() => {
+                  console.log('Outer button clicked');
+                  const newObjectId = `item_${Date.now()}`;
+                  // Create new object with empty values for all fields
+                  const newObject: Record<string, any> = {};
+                  Object.entries(field.fields || {}).forEach(([key, value]) => {
+                    if ((value as Field).type === 'array') {
+                      newObject[key] = [];
+                    } else if ((value as Field).type === 'object') {
+                      newObject[key] = {};
+                    } else {
+                      newObject[key] = '';
+                    }
+                  });
 
-                setFormData((prevData) => {
-                  const newstate = structuredClone(prevData);
-                  return {
-                    ...newstate,
-                    [currentPage]: {
-                      ...(newstate[currentPage] || {}),
-                    [sectionId]: {
-                      ...(newstate[currentPage]?.[sectionId] || {}),
-                      [fieldId]: {
-                        ...(newstate[currentPage]?.[sectionId]?.[fieldId] ||
-                          {}),
-                        [newObjectId]: newObject,
+                  setFormData((prevData) => {
+                    const newstate = structuredClone(prevData);
+                    return {
+                      ...newstate,
+                      [currentPage]: {
+                        ...(newstate[currentPage] || {}),
+                        [sectionId]: {
+                          ...(newstate[currentPage]?.[sectionId] || {}),
+                          [fieldId]: {
+                            ...(newstate[currentPage]?.[sectionId]?.[fieldId] ||
+                              {}),
+                            [newObjectId]: newObject,
+                          },
+                        },
                       },
-                    },
-                    },
-                  };
-                });
-              }}
-              className="w-full mt-4 px-4 py-2.5 bg-blue-50 hover:bg-blue-100 
+                    };
+                  });
+                }}
+                className="w-full mt-4 px-4 py-2.5 bg-blue-50 hover:bg-blue-100 
           text-blue-600 font-medium rounded-lg text-sm
           border border-blue-100 transition-colors duration-200
           flex items-center justify-center gap-2"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-5 w-5"
-                viewBox="0 0 20 20"
-                fill="currentColor"
               >
-                <path
-                  fillRule="evenodd"
-                  d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z"
-                  clipRule="evenodd"
-                />
-              </svg>
-              Add {field.label || 'Item'}
-            </button>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-5 w-5"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+                Add {field.label || 'Item'}
+              </button>
             )}
-
           </div>
         );
 
@@ -2436,8 +2962,9 @@ export default function CustomizeTheme() {
 
           {/* Page Navigation - Single line with smaller text */}
           <div className="flex items-center mb-8 bg-white p-2 rounded-lg shadow-sm w-full overflow-x-auto scrollbar-thin">
-            
-            <div className="flex space-x-2 min-w-max"> {/* Added wrapper div */}
+            <div className="flex space-x-2 min-w-max">
+              {' '}
+              {/* Added wrapper div */}
               {Object.entries(theme.metadata.pages).map(([pageId, page]) => (
                 <button
                   key={pageId}

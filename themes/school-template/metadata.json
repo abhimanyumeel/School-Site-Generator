@@ -178,7 +178,7 @@
                   "required": true
                 },
                 "date": {
-                  "type": "short-text",
+                  "type": "date",
                   "label": "Event Date",
                   "required": true
                 },
@@ -207,7 +207,7 @@
               "required": true
             },
             "date": {
-              "type": "short-text",
+              "type": "date",
               "label": "Notice Date",
               "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
               "required": true
