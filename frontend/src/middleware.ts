@@ -13,31 +13,29 @@ export function middleware(request: NextRequest) {
 
   // If trying to access a public path with a token, redirect to appropriate dashboard
   if (isPublicPath && token) {
-    // Try to parse the token to get the role (you might need to adjust this based on your token structure)
     try {
       const tokenData = JSON.parse(atob(token.split('.')[1]));
       if (tokenData.role === 'SUPER_ADMIN') {
-        return NextResponse.redirect(new URL('/super-admin/dashboard', request.url));
+        return NextResponse.redirect(new URL('/protected/super-admin/dashboard', request.url));
       } else {
-        return NextResponse.redirect(new URL('/home', request.url));
+        return NextResponse.redirect(new URL('/protected/home', request.url));
       }
     } catch (error) {
-      // If token parsing fails, continue with the request
       console.error('Error parsing token:', error);
     }
   }
 
   // If trying to access a protected path without a token, redirect to login
-  if (!isPublicPath && !token) {
+  if (path.startsWith('/protected') && !token) {
     return NextResponse.redirect(new URL('/login', request.url));
   }
 
   // If trying to access super-admin routes, check role
-  if (path.startsWith('/super-admin')) {
+  if (path.includes('/super-admin')) {
     try {
       const tokenData = JSON.parse(atob(token!.split('.')[1]));
       if (tokenData.role !== 'SUPER_ADMIN') {
-        return NextResponse.redirect(new URL('/home', request.url));
+        return NextResponse.redirect(new URL('/protected/home', request.url));
       }
     } catch (error) {
       console.error('Error parsing token:', error);
@@ -46,11 +44,11 @@ export function middleware(request: NextRequest) {
   }
 
   // If trying to access regular user routes (/home), prevent super admin access
-  if (path === '/home') {
+  if (path.includes('/protected/home')) {
     try {
       const tokenData = JSON.parse(atob(token!.split('.')[1]));
       if (tokenData.role === 'SUPER_ADMIN') {
-        return NextResponse.redirect(new URL('/super-admin/dashboard', request.url));
+        return NextResponse.redirect(new URL('/protected/super-admin/dashboard', request.url));
       }
     } catch (error) {
       console.error('Error parsing token:', error);
