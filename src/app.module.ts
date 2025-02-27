@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { APP_GUARD } from '@nestjs/core';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ConfigModule, ConfigService } from '@nestjs/config';
@@ -19,6 +20,8 @@ import { UploadService } from './services/upload.service';
 import { Document } from './entities/document.entity';
 import { DocumentGroup } from './entities/document-group.entity';
 import { MinioService } from './services/minio.service';
+import { RolesGuard } from './guards/roles.guard';
+import { JwtAuthGuard } from './guards/jwt-auth.guard';
 
 @Module({
   imports: [
@@ -42,6 +45,20 @@ import { MinioService } from './services/minio.service';
     AuthModule,
   ],
   controllers: [AppController, WebsiteController, PreviewController, UploadController],
-  providers: [AppService, WebsiteService, PreviewService, UploadService, MinioService],
+  providers: [
+    AppService,
+    WebsiteService,
+    PreviewService,
+    UploadService,
+    MinioService,
+    {
+      provide: APP_GUARD,
+      useClass: JwtAuthGuard,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: RolesGuard,
+    },
+  ],
 })
 export class AppModule {}
