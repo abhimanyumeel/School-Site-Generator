@@ -199,6 +199,8 @@ export default function CustomizeTheme() {
   }>({});
   const [uploadError, setUploadError] = useState<string | null>(null);
   const [website, setWebsite] = useState<Website | null>(null);
+  const [isDirty, setIsDirty] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
 
   // Fetch theme metadata when component mounts
 
@@ -234,7 +236,7 @@ export default function CustomizeTheme() {
     fetchTheme();
   }, [params.themeId]);
 
-  // Load saved form data from localStorage when component mounts
+  // Load saved form data when component mounts
   useEffect(() => {
     const savedFormData = localStorage.getItem(`formData-${params.themeId}`);
     if (savedFormData) {
@@ -242,15 +244,49 @@ export default function CustomizeTheme() {
     }
   }, [params.themeId]);
 
-  // Save form data to localStorage whenever it changes
-  useEffect(() => {
-    if (Object.keys(formData).length > 0) {
-      localStorage.setItem(
-        `formData-${params.themeId}`,
-        JSON.stringify(formData),
-      );
+  // Save form data function
+  const saveFormData = useCallback(async (pageData: Record<string, any>) => {
+    try {
+      setIsSaving(true);
+      const updatedFormData = {
+        ...formData,
+        [currentPage]: pageData
+      };
+      localStorage.setItem(`formData-${params.themeId}`, JSON.stringify(updatedFormData));
+      setFormData(updatedFormData);
+      setIsDirty(false);
+    } catch (error) {
+      console.error('Error saving form data:', error);
+    } finally {
+      setIsSaving(false);
     }
-  }, [formData, params.themeId]);
+  }, [formData, currentPage, params.themeId]);
+
+  // Handle page navigation
+  const handlePageChange = async (newPage: string) => {
+      if (isDirty) {
+      await saveFormData(formData[currentPage] || {});
+      }
+      setCurrentPage(newPage);
+  };
+
+  // Handle previous page
+  const handlePreviousPage = async () => {
+    const pages = Object.keys(theme?.metadata.pages || {});
+    const currentIndex = pages.indexOf(currentPage);
+    if (currentIndex > 0) {
+      await handlePageChange(pages[currentIndex - 1]);
+    }
+  };
+
+  // Handle next page
+  const handleNextPage = async () => {
+    const pages = Object.keys(theme?.metadata.pages || {});
+    const currentIndex = pages.indexOf(currentPage);
+    if (currentIndex < pages.length - 1) {
+      await handlePageChange(pages[currentIndex + 1]);
+    }
+  };
 
   // Update handleImageUpload to ensure proper image URL storage
   const handleImageUpload = async (
@@ -281,6 +317,7 @@ export default function CustomizeTheme() {
             },
           };
           console.log('Updated form data for image set:', newData);
+          setIsDirty(true);
           return newData;
         });
         return null;
@@ -333,6 +370,7 @@ export default function CustomizeTheme() {
           },
         };
         console.log('Updated form data after upload:', newData);
+        setIsDirty(true);
         return newData;
       });
 
@@ -655,17 +693,13 @@ export default function CustomizeTheme() {
         });
       });
 
-      // Merge with existing form data
-      const updatedFormData = {
-        ...formData,
-        [currentPage]: pageData,
-      };
+      // Save the current page data
+      await saveFormData(pageData);
 
       // Check if this is the last page
-      const pages = theme?.metadata.pages || {};
-      const pageIds = Object.keys(pages);
-      const currentIndex = pageIds.indexOf(currentPage);
-      const isLastPage = currentIndex === pageIds.length - 1;
+      const pages = Object.keys(theme?.metadata.pages || {});
+      const currentIndex = pages.indexOf(currentPage);
+      const isLastPage = currentIndex === pages.length - 1;
 
       if (isLastPage) {
         try {
@@ -678,13 +712,13 @@ export default function CustomizeTheme() {
               themeName: theme?.id, // Use theme.id as themeName
               websiteId: 'new', // Special value to indicate new website
               data: {
-                name: updatedFormData.home?.hero?.title || 'My Website',
+                name: formData.home?.hero?.title || 'My Website',
                 description:
-                  updatedFormData.home?.hero?.subtitle ||
+                  formData.home?.hero?.subtitle ||
                   'My Website Description',
                 author: 'Anonymous',
                 createdAt: new Date().toISOString(),
-                ...updatedFormData,
+                ...formData,
               },
             });
 
@@ -724,11 +758,8 @@ export default function CustomizeTheme() {
         }
       } else {
         // Move to next page
-        setCurrentPage(pageIds[currentIndex + 1]);
+        await handlePageChange(pages[currentIndex + 1]);
       }
-
-      // Update form data state
-      setFormData(updatedFormData);
     } catch (error) {
       console.error('Form submission error:', error);
       setError('Failed to submit form. Please try again.');
@@ -793,9 +824,22 @@ export default function CustomizeTheme() {
           <input
             type={field.type === 'short-text' ? 'text' : field.type}
             {...commonProps}
+            value={formData[currentPage]?.[sectionId]?.[fieldId] || ''}
+            onChange={(e) => {
+              setFormData(prev => ({
+                ...prev,
+                [currentPage]:{
+                  ...prev[currentPage],
+                  [sectionId]: {
+                    ...prev[currentPage]?.[sectionId],
+                    [fieldId]: e.target.value,
+                  },
+                }
+              }));
+              setIsDirty(true);
+            }}
             minLength={field.minLength}
             maxLength={field.maxLength}
-            defaultValue={field.default}
             placeholder={`Enter ${field.label.toLowerCase()}`}
           />
         );
@@ -804,17 +848,43 @@ export default function CustomizeTheme() {
         return (
           <textarea
             {...commonProps}
+            value={formData[currentPage]?.[sectionId]?.[fieldId] || ''}
+            onChange={(e) => {
+              setFormData(prev => ({
+                ...prev,
+                [currentPage]:{
+                  ...prev[currentPage],
+                  [sectionId]: {
+                    ...prev[currentPage]?.[sectionId],
+                    [fieldId]: e.target.value,
+                  },
+                },
+              }));
+              setIsDirty(true);
+            }}
             rows={4}
             minLength={field.minLength}
             maxLength={field.maxLength}
-            defaultValue={field.default}
             placeholder={`Enter ${field.label.toLowerCase()}`}
           />
         );
 
       case 'select':
         return (
-          <select {...commonProps} defaultValue={field.default}>
+          <select {...commonProps} value={formData[currentPage]?.[sectionId]?.[fieldId] || ''}
+            onChange={(e) => {
+              setFormData(prev => ({
+                ...prev,
+                [currentPage]:{
+                  ...prev[currentPage],
+                  [sectionId]: {
+                    ...prev[currentPage]?.[sectionId],
+                    [fieldId]: e.target.value,
+                  },
+                },
+              }));
+              setIsDirty(true);
+            }}>
             <option value="">Select {field.label}</option>
             {field.options?.map((option) => (
               <option key={option} value={option}>
@@ -836,7 +906,6 @@ export default function CustomizeTheme() {
             schoolWebsiteId={website?.id || ''}
           />
         );
-
       case 'array':
         return (
           <div className="space-y-4">
@@ -873,6 +942,7 @@ export default function CustomizeTheme() {
                                 },
                               },
                             });
+                            setIsDirty(true);
                           }}
                           className="text-red-500 hover:text-red-700 text-sm"
                         >
@@ -921,6 +991,7 @@ export default function CustomizeTheme() {
                                       },
                                     },
                                   });
+                                  setIsDirty(true);
                                 }}
                                 className="flex-1 px-4 py-2.5 text-gray-900 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                                 placeholder={`Enter ${(fieldDef as Field).label}`}
@@ -1003,6 +1074,7 @@ export default function CustomizeTheme() {
                                                   },
                                                 },
                                               });
+                                              setIsDirty(true);
                                             }}
                                             className="..."
                                             placeholder={`Enter ${fieldDef.label}`}
@@ -1039,6 +1111,7 @@ export default function CustomizeTheme() {
                                                   },
                                                 },
                                               });
+                                              setIsDirty(true);
                                             }}
                                             className="..."
                                             placeholder={`Enter ${fieldDef.label}`}
@@ -1077,6 +1150,7 @@ export default function CustomizeTheme() {
                                                   },
                                                 },
                                               });
+                                              setIsDirty(true);
                                             }}
                                             className="..."
                                           >
@@ -1122,6 +1196,7 @@ export default function CustomizeTheme() {
                                                   },
                                                 },
                                               });
+                                              setIsDirty(true);
                                             }}
                                             className="..."
                                           />
@@ -1293,6 +1368,7 @@ export default function CustomizeTheme() {
                                                             },
                                                           },
                                                         });
+                                                        setIsDirty(true);
                                                       }}
                                                       className="w-full px-3 py-2.5 border border-gray-300 rounded-md 
                                                 text-gray-900 bg-white focus:ring-2 focus:ring-blue-500 
@@ -1324,6 +1400,7 @@ export default function CustomizeTheme() {
                                                       },
                                                     },
                                                   });
+                                                  setIsDirty(true);
                                                 }}
                                                 className="text-red-500 hover:text-red-700 text-sm mt-6"
                                               >
@@ -1355,6 +1432,7 @@ export default function CustomizeTheme() {
                                                 },
                                               },
                                             });
+                                            setIsDirty(true);
                                           }}
                                           className="mt-2 text-sm text-blue-600 hover:text-blue-700"
                                         >
@@ -1397,6 +1475,7 @@ export default function CustomizeTheme() {
                                                       },
                                                     },
                                                   });
+                                                  setIsDirty(true);
                                                 }}
                                                 className="flex-1 px-3 py-2.5 border border-gray-300 rounded-md 
                                               text-gray-900 bg-white focus:ring-2 focus:ring-blue-500 
@@ -1426,6 +1505,7 @@ export default function CustomizeTheme() {
                                                       },
                                                     },
                                                   });
+                                                  setIsDirty(true);
                                                 }}
                                                 className="text-red-500 hover:text-red-700 text-sm mt-2"
                                               >
@@ -1457,6 +1537,7 @@ export default function CustomizeTheme() {
                                                 },
                                               },
                                             });
+                                            setIsDirty(true);
                                           }}
                                           className="mt-2 text-sm text-blue-600 hover:text-blue-700"
                                         >
@@ -1505,6 +1586,7 @@ export default function CustomizeTheme() {
                                           },
                                         },
                                       });
+                                      setIsDirty(true);
                                     }}
                                     className="w-full px-3 py-2.5 border border-gray-300 rounded-md 
                                   text-gray-900 bg-white focus:ring-2 focus:ring-blue-500 
@@ -1642,6 +1724,7 @@ export default function CustomizeTheme() {
                                           },
                                         },
                                       });
+                                      setIsDirty(true);
                                     }}
                                     className="w-full px-3 py-2.5 border border-gray-300 rounded-md 
                                       text-gray-900 bg-white focus:ring-2 focus:ring-blue-500 
@@ -1686,6 +1769,7 @@ export default function CustomizeTheme() {
                                           },
                                         },
                                       });
+                                      setIsDirty(true);
                                     }}
                                     className="w-full px-3 py-2.5 border border-gray-300 rounded-md 
                                       text-gray-900 bg-white focus:ring-2 focus:ring-blue-500 
@@ -1739,6 +1823,7 @@ export default function CustomizeTheme() {
                                           },
                                         },
                                       });
+                                      setIsDirty(true);
                                     }}
                                     className="w-full px-3 py-2.5 border border-gray-300 rounded-md 
                                   text-gray-900 bg-white focus:ring-2 focus:ring-blue-500 
@@ -1793,6 +1878,7 @@ export default function CustomizeTheme() {
                                         },
                                       },
                                     });
+                                    setIsDirty(true);
                                   }}
                                   className="w-full px-3 py-2.5 border border-gray-300 rounded-md 
                                 text-gray-900 bg-white focus:ring-2 focus:ring-blue-500 
@@ -1828,6 +1914,7 @@ export default function CustomizeTheme() {
                     },
                   },
                 });
+                setIsDirty(true);
               }}
               className="w-full px-4 py-2.5 bg-blue-50 hover:bg-blue-100 
                 text-blue-600 font-medium rounded-lg text-sm
@@ -1851,6 +1938,7 @@ export default function CustomizeTheme() {
           </div>
         );
 
+
       case 'object':
         const allowMultiple = (field as Field).allowMultiple !== false;
         const objectEntries = allowMultiple
@@ -1872,7 +1960,6 @@ export default function CustomizeTheme() {
                       onClick={() => {
                         setFormData((prevData) => {
                           const newState = structuredClone(prevData);
-
                           if (
                             newState[currentPage] &&
                             newState[currentPage][sectionId] &&
@@ -1882,9 +1969,9 @@ export default function CustomizeTheme() {
                               objectId
                             ];
                           }
-
                           return newState;
                         });
+                        setIsDirty(true); 
                       }}
                       className="text-red-500 hover:text-red-700 text-sm"
                     >
@@ -2243,6 +2330,7 @@ export default function CustomizeTheme() {
                                                               },
                                                             },
                                                           });
+                                                          setIsDirty(true);
                                                         }}
                                                         className="flex-1 px-4 py-2.5 text-gray-900 bg-white border border-gray-300 rounded-lg"
                                                         placeholder={`Enter ${(deepNestedField as Field).label}`}
@@ -2339,6 +2427,7 @@ export default function CustomizeTheme() {
                                                               },
                                                             },
                                                           });
+                                                          setIsDirty(true);
                                                         }}
                                                         className="text-red-600 hover:text-red-700"
                                                       >
@@ -2496,6 +2585,7 @@ export default function CustomizeTheme() {
                                                     },
                                                   },
                                                 });
+                                                setIsDirty(true);
                                               }}
                                               className="w-full px-4 py-2.5 rounded-lg border border-gray-300 text-gray-900 bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 shadow-sm"
                                               placeholder={`Enter ${(deepNestedField as Field).label}`}
@@ -2519,6 +2609,25 @@ export default function CustomizeTheme() {
                                         fieldId
                                       ]?.[subFieldId]?.[nestedFieldId]
                                     }
+                                    onChange={(e) => {
+                                      setFormData(prev => ({
+                                        ...prev,
+                                        [currentPage]: {
+                                          ...prev[currentPage],
+                                          [sectionId]: {
+                                            ...prev[currentPage]?.[sectionId],
+                                            [fieldId]: {
+                                              ...prev[currentPage]?.[sectionId]?.[fieldId],
+                                              [subFieldId]: {
+                                                ...prev[currentPage]?.[sectionId]?.[fieldId]?.[subFieldId],
+                                                [nestedFieldId]: e.target.value
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }));
+                                      setIsDirty(true);
+                                    }}
                                   />
                                 )}
                               </div>
@@ -2772,6 +2881,7 @@ export default function CustomizeTheme() {
                       },
                     };
                   });
+                  setIsDirty(true); // Add here
                 }}
                 className="w-full mt-4 px-4 py-2.5 bg-blue-50 hover:bg-blue-100 
           text-blue-600 font-medium rounded-lg text-sm
@@ -2963,12 +3073,10 @@ export default function CustomizeTheme() {
           {/* Page Navigation - Single line with smaller text */}
           <div className="flex items-center mb-8 bg-white p-2 rounded-lg shadow-sm w-full overflow-x-auto scrollbar-thin">
             <div className="flex space-x-2 min-w-max">
-              {' '}
-              {/* Added wrapper div */}
               {Object.entries(theme.metadata.pages).map(([pageId, page]) => (
                 <button
                   key={pageId}
-                  onClick={() => setCurrentPage(pageId)}
+                  onClick={async () => await handlePageChange(pageId)}  // Updated to use handlePageChange
                   className={`px-3 py-1.5 rounded-lg text-md font-medium transition-all duration-200 whitespace-nowrap
                     ${
                       currentPage === pageId
@@ -2976,9 +3084,7 @@ export default function CustomizeTheme() {
                         : 'text-gray-600 hover:bg-gray-100'
                     } ${pageId === 'global' ? 'mr-auto' : ''}`}
                 >
-                  {pageId === 'global'
-                    ? 'Global Settings'
-                    : page.title.replace(' Page', '')}
+                  {pageId === 'global' ? 'Global Settings' : page.title.replace(' Page', '')}
                 </button>
               ))}
             </div>
@@ -3027,17 +3133,41 @@ export default function CustomizeTheme() {
             )}
 
             {/* Form buttons - Updated styling */}
-            <div className="flex justify-end space-x-4 sticky bottom-4 bg-white p-4 rounded-lg shadow-lg border border-gray-100 backdrop-blur-sm bg-opacity-90">
-              <button
-                type="button"
-                onClick={() => router.push('/create-website')}
-                className="px-6 py-2.5 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 
-                  hover:bg-gray-50 hover:border-gray-400
-                  transition-all duration-200
-                  focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
-              >
-                Cancel
-              </button>
+            <div className="flex justify-between space-x-4 sticky bottom-4 bg-white p-4 rounded-lg shadow-lg border border-gray-100 backdrop-blur-sm bg-opacity-90">
+              <div className="flex space-x-4">
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (isDirty) {
+                      if (window.confirm('You have unsaved changes. Are you sure you want to leave?')) {
+                        router.push('/create-website');
+                      }
+                    } else {
+                      router.push('/create-website');
+                    }
+                  }}
+                  className="px-6 py-2.5 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 
+                    hover:bg-gray-50 hover:border-gray-400
+                    transition-all duration-200
+                    focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  onClick={handlePreviousPage}
+                  disabled={currentPage === Object.keys(theme.metadata.pages)[0]}
+                  className={`px-6 py-2.5 border rounded-lg text-sm font-medium
+                    ${currentPage === Object.keys(theme.metadata.pages)[0]
+                      ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                      : 'border-gray-300 text-gray-700 hover:bg-gray-50 hover:border-gray-400'}
+                    transition-all duration-200
+                    focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500`}
+                >
+                  Previous
+                </button>
+              </div>
+              
               <button
                 type="submit"
                 className="px-6 py-2.5 rounded-lg text-sm font-medium text-white
