@@ -475,7 +475,7 @@
               "default": "Terms of Service"
             },
             "last_updated": {
-              "type": "short-text",
+              "type": "date",
               "label": "Last Updated Date",
               "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
               "required": true,
@@ -541,7 +541,7 @@
               "default": "Privacy Policy"
             },
             "last_updated": {
-              "type": "short-text",
+              "type": "date",
               "label": "Last Updated Date",
               "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
               "required": true,
@@ -576,7 +576,7 @@
           "title": "Disclosure Content",
           "fields": {
             "last_updated": {
-              "type": "short-text",
+              "type": "date",
               "label": "Last Updated Date",
               "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
               "default": "2024-01-01"
